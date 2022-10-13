@@ -85,11 +85,9 @@ class transposh_plugin_widget extends WP_Widget {
         $control_ops = array('width' => 200, 'height' => 300);
         parent::__construct('transposh', __('Transposh'), $widget_ops, $control_ops);
 
-        // PHP 5.3 and up...
-        add_action('widgets_init', function () {
+        add_action('widgets_init', static function () {
             register_widget("transposh_plugin_widget");
         });
-//        add_action('widgets_init', create_function('', 'register_widget("transposh_plugin_widget");'));
         // We only need to add those actions once, makes life simpler
         if (is_active_widget(false, false, $this->id_base) && self::$first_init) {
             self::$first_init = false;
@@ -463,10 +461,9 @@ class transposh_plugin_widget extends WP_Widget {
 
             $tp_widgets[plugin_basename($widget_file)] = $widget_data;
         }
-        uasort($tp_widgets, function ($a, $b) {
+        uasort($tp_widgets, static function ($a, $b) {
             return strnatcasecmp($a["Name"], $b["Name"]);
         });
-        //uasort($tp_widgets, create_function('$a, $b', 'return strnatcasecmp( $a["Name"], $b["Name"] );'));
 
         return $tp_widgets;
     }
