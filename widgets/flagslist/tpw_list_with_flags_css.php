@@ -23,28 +23,30 @@
 
 class tpw_list_with_flags_css extends transposh_base_widget {
 
-    /**
-     * Instructs usage of a different .css file
-     * @global transposh_plugin $my_transposh_plugin
-     */
-    static function tp_widget_css($file, $dir, $url) {
-        wp_enqueue_style("flags_tpw_flags_css", "$url/widgets/flags/tpw_flags_css.css", array(), TRANSPOSH_PLUGIN_VER);
-    }
+	/**
+	 * Instructs usage of a different .css file
+	 * @global transposh_plugin $my_transposh_plugin
+	 */
+	static function tp_widget_css( $file, $dir, $url ) {
+		wp_enqueue_style( "flags_tpw_flags_css", "$url/widgets/flags/tpw_flags_css.css", array(), TRANSPOSH_PLUGIN_VER );
+	}
 
-    /**
-     * Creates the list of flags (using css sprites) - followed by a language name link
-     * @global transposh_plugin $my_transposh_plugin
-     * @param array $args - http://trac.transposh.org/wiki/WidgetWritingGuide#functiontp_widgets_doargs
-     */
-    static function tp_widget_do($args) {
-        echo "<div class=\"" . NO_TRANSLATE_CLASS . " transposh_flags\" >";
-        foreach ($args as $langrecord) {
-            echo "<a href=\"{$langrecord['url']}\"" . ($langrecord['active'] ? ' class="tr_active"' : '' ) . '>' .
-            transposh_utils::display_flag('', $langrecord['flag'], $langrecord['langorig'], true) . '</a>';
-            echo "<a href=\"{$langrecord['url']}\"" . ($langrecord['active'] ? ' class="tr_active"' : '' ) . '>' . "{$langrecord['langorig']}</a><br/>";
-        }
-        echo "</div>";
-    }
+	/**
+	 * Creates the list of flags (using css sprites) - followed by a language name link
+	 *
+	 * @param array $args - http://trac.transposh.org/wiki/WidgetWritingGuide#functiontp_widgets_doargs
+	 *
+	 * @global transposh_plugin $my_transposh_plugin
+	 */
+	static function tp_widget_do( $args ) {
+		echo "<div class=\"" . NO_TRANSLATE_CLASS . " transposh_flags\" >";
+		foreach ( $args as $langrecord ) {
+			echo "<a href=\"{$langrecord['url']}\"" . ( $langrecord['active'] ? ' class="tr_active"' : '' ) . '>' .
+			     transposh_utils::display_flag( '', $langrecord['flag'], $langrecord['langorig'], true ) . '</a>';
+			echo "<a href=\"{$langrecord['url']}\"" . ( $langrecord['active'] ? ' class="tr_active"' : '' ) . '>' . "{$langrecord['langorig']}</a><br/>";
+		}
+		echo "</div>";
+	}
 
 }
 
