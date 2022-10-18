@@ -13,23 +13,25 @@
   Redistributions of files must retain the above copyright notice.
  * ***************************************************************************** */
 
-define( 'HDOM_TYPE_ELEMENT', 1 );
-define( 'HDOM_TYPE_COMMENT', 2 );
-define( 'HDOM_TYPE_TEXT', 3 );
-define( 'HDOM_TYPE_ENDTAG', 4 );
-define( 'HDOM_TYPE_ROOT', 5 );
-define( 'HDOM_TYPE_UNKNOWN', 6 );
-define( 'HDOM_QUOTE_DOUBLE', 0 );
-define( 'HDOM_QUOTE_SINGLE', 1 );
-define( 'HDOM_QUOTE_NO', 3 );
-define( 'HDOM_INFO_BEGIN', 0 );
-define( 'HDOM_INFO_END', 1 );
-define( 'HDOM_INFO_QUOTE', 2 );
-define( 'HDOM_INFO_SPACE', 3 );
-define( 'HDOM_INFO_TEXT', 4 );
-define( 'HDOM_INFO_INNER', 5 );
-define( 'HDOM_INFO_OUTER', 6 );
-define( 'HDOM_INFO_ENDSPACE', 7 );
+class simple_html_dom_constants {
+	const HDOM_TYPE_ELEMENT = 1;
+	const HDOM_TYPE_COMMENT = 2;
+	const HDOM_TYPE_TEXT = 3;
+	const HDOM_TYPE_ENDTAG = 4;
+	const HDOM_TYPE_ROOT = 5;
+	const HDOM_TYPE_UNKNOWN = 6;
+	const HDOM_QUOTE_DOUBLE = 0;
+	const HDOM_QUOTE_SINGLE = 1;
+	const HDOM_QUOTE_NO = 3;
+	const HDOM_INFO_BEGIN = 0;
+	const HDOM_INFO_END = 1;
+	const HDOM_INFO_QUOTE = 2;
+	const HDOM_INFO_SPACE = 3;
+	const HDOM_INFO_TEXT = 4;
+	const HDOM_INFO_INNER = 5;
+	const HDOM_INFO_OUTER = 6;
+	const HDOM_INFO_ENDSPACE = 7;
+}
 
 // helper functions
 // -----------------------------------------------------------------------------
@@ -72,7 +74,7 @@ function dump_html_tree_transposh( $node, $show_attr = true, $deep = 0 ) {
 // -----------------------------------------------------------------------------
 class simple_html_dom_node_transposh {
 
-	public $nodetype = HDOM_TYPE_TEXT;
+	public $nodetype = simple_html_dom_constants::HDOM_TYPE_TEXT;
 	public $tag = 'text';
 	public $attr = array();
 	public $children = array();
@@ -178,11 +180,11 @@ class simple_html_dom_node_transposh {
 
 	// get dom node's inner html
 	function innertext() {
-		if ( isset( $this->_[ HDOM_INFO_INNER ] ) ) {
-			return $this->_[ HDOM_INFO_INNER ];
+		if ( isset( $this->_[ simple_html_dom_constants::HDOM_INFO_INNER ] ) ) {
+			return $this->_[ simple_html_dom_constants::HDOM_INFO_INNER ];
 		}
-		if ( isset( $this->_[ HDOM_INFO_TEXT ] ) ) {
-			return $this->dom->restore_noise( $this->_[ HDOM_INFO_TEXT ] );
+		if ( isset( $this->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] ) ) {
+			return $this->dom->restore_noise( $this->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] );
 		}
 
 		$ret = '';
@@ -204,19 +206,19 @@ class simple_html_dom_node_transposh {
 			call_user_func_array( $this->dom->callback, array( $this ) );
 		}
 
-		if ( isset( $this->_[ HDOM_INFO_OUTER ] ) ) {
-			return $this->_[ HDOM_INFO_OUTER ];
+		if ( isset( $this->_[ simple_html_dom_constants::HDOM_INFO_OUTER ] ) ) {
+			return $this->_[ simple_html_dom_constants::HDOM_INFO_OUTER ];
 		}
-		if ( isset( $this->_[ HDOM_INFO_TEXT ] ) ) {
-			return $this->dom->restore_noise( $this->_[ HDOM_INFO_TEXT ] );
+		if ( isset( $this->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] ) ) {
+			return $this->dom->restore_noise( $this->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] );
 		}
 
 		// render begin tag
-		$ret = $this->dom->nodes[ $this->_[ HDOM_INFO_BEGIN ] ]->makeup();
+		$ret = $this->dom->nodes[ $this->_[ simple_html_dom_constants::HDOM_INFO_BEGIN ] ]->makeup();
 
 		// render inner text
-		if ( isset( $this->_[ HDOM_INFO_INNER ] ) ) {
-			$ret .= $this->_[ HDOM_INFO_INNER ];
+		if ( isset( $this->_[ simple_html_dom_constants::HDOM_INFO_INNER ] ) ) {
+			$ret .= $this->_[ simple_html_dom_constants::HDOM_INFO_INNER ];
 		} else {
 			foreach ( $this->nodes as $n ) {
 				$ret .= $n->outertext();
@@ -224,7 +226,7 @@ class simple_html_dom_node_transposh {
 		}
 
 		// render end tag
-		if ( isset( $this->_[ HDOM_INFO_END ] ) && $this->_[ HDOM_INFO_END ] != 0 ) {
+		if ( isset( $this->_[ simple_html_dom_constants::HDOM_INFO_END ] ) && $this->_[ simple_html_dom_constants::HDOM_INFO_END ] != 0 ) {
 			$ret .= '</' . $this->tag . '>';
 		}
 
@@ -233,15 +235,15 @@ class simple_html_dom_node_transposh {
 
 	// get dom node's plain text
 	function text() {
-		if ( isset( $this->_[ HDOM_INFO_INNER ] ) ) {
-			return $this->_[ HDOM_INFO_INNER ];
+		if ( isset( $this->_[ simple_html_dom_constants::HDOM_INFO_INNER ] ) ) {
+			return $this->_[ simple_html_dom_constants::HDOM_INFO_INNER ];
 		}
 		switch ( $this->nodetype ) {
-			case HDOM_TYPE_TEXT:
-				return $this->dom->restore_noise( $this->_[ HDOM_INFO_TEXT ] );
-			case HDOM_TYPE_COMMENT:
+			case simple_html_dom_constants::HDOM_TYPE_TEXT:
+				return $this->dom->restore_noise( $this->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] );
+			case simple_html_dom_constants::HDOM_TYPE_COMMENT:
 				return '';
-			case HDOM_TYPE_UNKNOWN:
+			case simple_html_dom_constants::HDOM_TYPE_UNKNOWN:
 				return '';
 		}
 		if ( strcasecmp( $this->tag, 'script' ) === 0 ) {
@@ -270,8 +272,8 @@ class simple_html_dom_node_transposh {
 	// build node's text with tag
 	function makeup() {
 		// text, comment, unknown
-		if ( isset( $this->_[ HDOM_INFO_TEXT ] ) ) {
-			return $this->dom->restore_noise( $this->_[ HDOM_INFO_TEXT ] );
+		if ( isset( $this->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] ) ) {
+			return $this->dom->restore_noise( $this->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] );
 		}
 
 		$ret = '<' . $this->tag;
@@ -285,27 +287,27 @@ class simple_html_dom_node_transposh {
 				continue;
 			}
 
-			$ret .= $this->_[ HDOM_INFO_SPACE ][ $i ][0];
+			$ret .= $this->_[ simple_html_dom_constants::HDOM_INFO_SPACE ][ $i ][0];
 			//no value attr: nowrap, checked selected...
 			if ( $val === true ) {
 				$ret .= $key;
 			} else {
-				switch ( $this->_[ HDOM_INFO_QUOTE ][ $i ] ) {
-					case HDOM_QUOTE_DOUBLE:
+				switch ( $this->_[ simple_html_dom_constants::HDOM_INFO_QUOTE ][ $i ] ) {
+					case simple_html_dom_constants::HDOM_QUOTE_DOUBLE:
 						$quote = '"';
 						break;
-					case HDOM_QUOTE_SINGLE:
+					case simple_html_dom_constants::HDOM_QUOTE_SINGLE:
 						$quote = '\'';
 						break;
 					default:
 						$quote = '';
 				}
-				$ret .= $key . $this->_[ HDOM_INFO_SPACE ][ $i ][1] . '=' . $this->_[ HDOM_INFO_SPACE ][ $i ][2] . $quote . $val . $quote;
+				$ret .= $key . $this->_[ simple_html_dom_constants::HDOM_INFO_SPACE ][ $i ][1] . '=' . $this->_[ simple_html_dom_constants::HDOM_INFO_SPACE ][ $i ][2] . $quote . $val . $quote;
 			}
 		}
 		$ret = $this->dom->restore_noise( $ret );
 
-		return $ret . $this->_[ HDOM_INFO_ENDSPACE ] . '>';
+		return $ret . $this->_[ simple_html_dom_constants::HDOM_INFO_ENDSPACE ] . '>';
 	}
 
 	// find elements by css selector
@@ -321,11 +323,11 @@ class simple_html_dom_node_transposh {
 			if ( ( $levle = count( $selectors[0] ) ) === 0 ) {
 				return array();
 			}
-			if ( ! isset( $this->_[ HDOM_INFO_BEGIN ] ) ) {
+			if ( ! isset( $this->_[ simple_html_dom_constants::HDOM_INFO_BEGIN ] ) ) {
 				return array();
 			}
 
-			$head = array( $this->_[ HDOM_INFO_BEGIN ] => 1 );
+			$head = array( $this->_[ simple_html_dom_constants::HDOM_INFO_BEGIN ] => 1 );
 
 			// handle descendant selectors, no recursive!
 			for ( $l = 0; $l < $levle; ++ $l ) {
@@ -372,7 +374,7 @@ class simple_html_dom_node_transposh {
 			foreach ( $this->children as $c ) {
 				if ( $tag === '*' || $tag === $c->tag ) {
 					if ( ++ $count == $key ) {
-						$ret[ $c->_[ HDOM_INFO_BEGIN ] ] = 1;
+						$ret[ $c->_[ simple_html_dom_constants::HDOM_INFO_BEGIN ] ] = 1;
 
 						return;
 					}
@@ -382,17 +384,17 @@ class simple_html_dom_node_transposh {
 			return;
 		}
 
-		$end = ( ! empty( $this->_[ HDOM_INFO_END ] ) ) ? $this->_[ HDOM_INFO_END ] : 0;
+		$end = ( ! empty( $this->_[ simple_html_dom_constants::HDOM_INFO_END ] ) ) ? $this->_[ simple_html_dom_constants::HDOM_INFO_END ] : 0;
 		if ( $end == 0 ) {
 			$parent = $this->parent;
-			while ( ! isset( $parent->_[ HDOM_INFO_END ] ) && $parent !== null ) {
+			while ( ! isset( $parent->_[ simple_html_dom_constants::HDOM_INFO_END ] ) && $parent !== null ) {
 				$end    -= 1;
 				$parent = $parent->parent;
 			}
-			$end += $parent->_[ HDOM_INFO_END ];
+			$end += $parent->_[ simple_html_dom_constants::HDOM_INFO_END ];
 		}
 
-		for ( $i = $this->_[ HDOM_INFO_BEGIN ] + 1; $i < $end; ++ $i ) {
+		for ( $i = $this->_[ simple_html_dom_constants::HDOM_INFO_BEGIN ] + 1; $i < $end; ++ $i ) {
 			$node = $this->dom->nodes[ $i ];
 			$pass = true;
 
@@ -543,17 +545,17 @@ class simple_html_dom_node_transposh {
 	function __set( $name, $value ) {
 		switch ( $name ) {
 			case 'outertext':
-				return $this->_[ HDOM_INFO_OUTER ] = $value;
+				return $this->_[ simple_html_dom_constants::HDOM_INFO_OUTER ] = $value;
 			case 'innertext':
-				if ( isset( $this->_[ HDOM_INFO_TEXT ] ) ) {
-					return $this->_[ HDOM_INFO_TEXT ] = $value;
+				if ( isset( $this->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] ) ) {
+					return $this->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] = $value;
 				}
 
-				return $this->_[ HDOM_INFO_INNER ] = $value;
+				return $this->_[ simple_html_dom_constants::HDOM_INFO_INNER ] = $value;
 		}
 		if ( ! isset( $this->attr[ $name ] ) ) {
-			$this->_[ HDOM_INFO_SPACE ][] = array( ' ', '', '' );
-			$this->_[ HDOM_INFO_QUOTE ][] = HDOM_QUOTE_DOUBLE;
+			$this->_[ simple_html_dom_constants::HDOM_INFO_SPACE ][] = array( ' ', '', '' );
+			$this->_[ simple_html_dom_constants::HDOM_INFO_QUOTE ][] = simple_html_dom_constants::HDOM_QUOTE_DOUBLE;
 		}
 		$this->attr[ $name ] = $value;
 	}
@@ -725,7 +727,7 @@ class simple_html_dom_transposh {
 		while ( $this->parse() ) {
 		}
 		// end
-		$this->root->_[ HDOM_INFO_END ] = $this->cursor;
+		$this->root->_[ simple_html_dom_constants::HDOM_INFO_END ] = $this->cursor;
 	}
 
 	// load html from file
@@ -799,8 +801,8 @@ class simple_html_dom_transposh {
 		$this->lowercase                  = $lowercase;
 		$this->root                       = new simple_html_dom_node_transposh( $this );
 		$this->root->tag                  = 'root';
-		$this->root->_[ HDOM_INFO_BEGIN ] = - 1;
-		$this->root->nodetype             = HDOM_TYPE_ROOT;
+		$this->root->_[ simple_html_dom_constants::HDOM_INFO_BEGIN ] = - 1;
+		$this->root->nodetype             = simple_html_dom_constants::HDOM_TYPE_ROOT;
 		$this->parent                     = $this->root;
 		// set the length of content
 		$this->size = strlen( $str );
@@ -818,7 +820,7 @@ class simple_html_dom_transposh {
 		// text
 		$node = new simple_html_dom_node_transposh( $this );
 		++ $this->cursor;
-		$node->_[ HDOM_INFO_TEXT ] = $s;
+		$node->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] = $s;
 		$this->link_nodes( $node, false );
 
 		return true;
@@ -827,7 +829,7 @@ class simple_html_dom_transposh {
 	// read tag info
 	protected function read_tag() {
 		if ( $this->char !== '<' ) {
-			$this->root->_[ HDOM_INFO_END ] = $this->cursor;
+			$this->root->_[ simple_html_dom_constants::HDOM_INFO_END ] = $this->cursor;
 
 			return false;
 		}
@@ -849,7 +851,7 @@ class simple_html_dom_transposh {
 
 			if ( $parent_lower !== $tag_lower ) {
 				if ( isset( $this->optional_closing_tags[ $parent_lower ] ) && isset( $this->block_tags[ $tag_lower ] ) ) {
-					$this->parent->_[ HDOM_INFO_END ] = 0;
+					$this->parent->_[ simple_html_dom_constants::HDOM_INFO_END ] = 0;
 					$org_parent                       = $this->parent;
 
 					while ( ( $this->parent->parent ) && strtolower( $this->parent->tag ) !== $tag_lower ) {
@@ -861,12 +863,12 @@ class simple_html_dom_transposh {
 						if ( $this->parent->parent ) {
 							$this->parent = $this->parent->parent;
 						}
-						$this->parent->_[ HDOM_INFO_END ] = $this->cursor;
+						$this->parent->_[ simple_html_dom_constants::HDOM_INFO_END ] = $this->cursor;
 
 						return $this->as_text_node( $tag );
 					}
 				} else if ( ( $this->parent->parent ) && isset( $this->block_tags[ $tag_lower ] ) ) {
-					$this->parent->_[ HDOM_INFO_END ] = 0;
+					$this->parent->_[ simple_html_dom_constants::HDOM_INFO_END ] = 0;
 					$org_parent                       = $this->parent;
 
 					while ( ( $this->parent->parent ) && strtolower( $this->parent->tag ) !== $tag_lower ) {
@@ -875,19 +877,19 @@ class simple_html_dom_transposh {
 
 					if ( strtolower( $this->parent->tag ) !== $tag_lower ) {
 						$this->parent                     = $org_parent; // restore origonal parent
-						$this->parent->_[ HDOM_INFO_END ] = $this->cursor;
+						$this->parent->_[ simple_html_dom_constants::HDOM_INFO_END ] = $this->cursor;
 
 						return $this->as_text_node( $tag );
 					}
 				} else if ( ( $this->parent->parent ) && strtolower( $this->parent->parent->tag ) === $tag_lower ) {
-					$this->parent->_[ HDOM_INFO_END ] = 0;
+					$this->parent->_[ simple_html_dom_constants::HDOM_INFO_END ] = 0;
 					$this->parent                     = $this->parent->parent;
 				} else {
 					return $this->as_text_node( $tag );
 				}
 			}
 
-			$this->parent->_[ HDOM_INFO_END ] = $this->cursor;
+			$this->parent->_[ simple_html_dom_constants::HDOM_INFO_END ] = $this->cursor;
 			if ( $this->parent->parent ) {
 				$this->parent = $this->parent->parent;
 			}
@@ -898,24 +900,24 @@ class simple_html_dom_transposh {
 		}
 
 		$node                       = new simple_html_dom_node_transposh( $this );
-		$node->_[ HDOM_INFO_BEGIN ] = $this->cursor;
+		$node->_[ simple_html_dom_constants::HDOM_INFO_BEGIN ] = $this->cursor;
 		++ $this->cursor;
 		$tag = $this->copy_until( $this->token_slash );
 
 		// doctype, cdata & comments...
 		if ( isset( $tag[0] ) && $tag[0] === '!' ) {
-			$node->_[ HDOM_INFO_TEXT ] = '<' . $tag . $this->copy_until_char( '>' );
+			$node->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] = '<' . $tag . $this->copy_until_char( '>' );
 
 			if ( isset( $tag[2] ) && $tag[1] === '-' && $tag[2] === '-' ) {
-				$node->nodetype = HDOM_TYPE_COMMENT;
+				$node->nodetype = simple_html_dom_constants::HDOM_TYPE_COMMENT;
 				$node->tag      = 'comment';
 			} else {
-				$node->nodetype = HDOM_TYPE_UNKNOWN;
+				$node->nodetype = simple_html_dom_constants::HDOM_TYPE_UNKNOWN;
 				$node->tag      = 'unknown';
 			}
 
 			if ( $this->char === '>' ) {
-				$node->_[ HDOM_INFO_TEXT ] .= '>';
+				$node->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] .= '>';
 			}
 			$this->link_nodes( $node, true );
 			$this->char = ( ++ $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
@@ -926,7 +928,7 @@ class simple_html_dom_transposh {
 		// text
 		if ( $pos = strpos( $tag, '<' ) !== false ) {
 			$tag                       = '<' . substr( $tag, 0, - 1 );
-			$node->_[ HDOM_INFO_TEXT ] = $tag;
+			$node->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] = $tag;
 			$this->link_nodes( $node, false );
 			$this->char = $this->doc[ -- $this->pos ]; // prev
 
@@ -934,7 +936,7 @@ class simple_html_dom_transposh {
 		}
 
 		if ( ! preg_match( "/^[\w\-:]+$/", $tag ) ) {
-			$node->_[ HDOM_INFO_TEXT ] = '<' . $tag . $this->copy_until( '<>' );
+			$node->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] = '<' . $tag . $this->copy_until( '<>' );
 			if ( $this->char === '<' ) {
 				$this->link_nodes( $node, false );
 
@@ -942,7 +944,7 @@ class simple_html_dom_transposh {
 			}
 
 			if ( $this->char === '>' ) {
-				$node->_[ HDOM_INFO_TEXT ] .= '>';
+				$node->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] .= '>';
 			}
 			$this->link_nodes( $node, false );
 			$this->char = ( ++ $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
@@ -951,14 +953,14 @@ class simple_html_dom_transposh {
 		}
 
 		// begin tag
-		$node->nodetype = HDOM_TYPE_ELEMENT;
+		$node->nodetype = simple_html_dom_constants::HDOM_TYPE_ELEMENT;
 		$tag_lower      = strtolower( $tag );
 		$node->tag      = ( $this->lowercase ) ? $tag_lower : $tag;
 
 		// handle optional closing tags
 		if ( isset( $this->optional_closing_tags[ $tag_lower ] ) ) {
 			while ( isset( $this->optional_closing_tags[ $tag_lower ][ strtolower( $this->parent->tag ) ] ) ) {
-				$this->parent->_[ HDOM_INFO_END ] = 0;
+				$this->parent->_[ simple_html_dom_constants::HDOM_INFO_END ] = 0;
 				$this->parent                     = $this->parent->parent;
 			}
 			$node->parent = $this->parent;
@@ -981,9 +983,9 @@ class simple_html_dom_transposh {
 
 			// handle endless '<'
 			if ( $this->pos >= $this->size - 1 && $this->char !== '>' ) {
-				$node->nodetype            = HDOM_TYPE_TEXT;
-				$node->_[ HDOM_INFO_END ]  = 0;
-				$node->_[ HDOM_INFO_TEXT ] = '<' . $tag . $space[0] . $name;
+				$node->nodetype            = simple_html_dom_constants::HDOM_TYPE_TEXT;
+				$node->_[ simple_html_dom_constants::HDOM_INFO_END ]  = 0;
+				$node->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] = '<' . $tag . $space[0] . $name;
 				$node->tag                 = 'text';
 				$this->link_nodes( $node, false );
 
@@ -992,11 +994,11 @@ class simple_html_dom_transposh {
 
 			// handle mismatch '<'
 			if ( $this->doc[ $this->pos - 1 ] == '<' ) {
-				$node->nodetype            = HDOM_TYPE_TEXT;
+				$node->nodetype            = simple_html_dom_constants::HDOM_TYPE_TEXT;
 				$node->tag                 = 'text';
 				$node->attr                = array();
-				$node->_[ HDOM_INFO_END ]  = 0;
-				$node->_[ HDOM_INFO_TEXT ] = substr( $this->doc, $begin_tag_pos, $this->pos - $begin_tag_pos - 1 );
+				$node->_[ simple_html_dom_constants::HDOM_INFO_END ]  = 0;
+				$node->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] = substr( $this->doc, $begin_tag_pos, $this->pos - $begin_tag_pos - 1 );
 				$this->pos                 -= 2;
 				$this->char                = ( ++ $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
 				$this->link_nodes( $node, false );
@@ -1015,13 +1017,13 @@ class simple_html_dom_transposh {
 					$this->parse_attr( $node, $name, $space );
 				} else {
 					//no value attr: nowrap, checked selected...
-					$node->_[ HDOM_INFO_QUOTE ][] = HDOM_QUOTE_NO;
+					$node->_[ simple_html_dom_constants::HDOM_INFO_QUOTE ][] = simple_html_dom_constants::HDOM_QUOTE_NO;
 					$node->attr[ $name ]          = true;
 					if ( $this->char != '>' ) {
 						$this->char = $this->doc[ -- $this->pos ];
 					} // prev
 				}
-				$node->_[ HDOM_INFO_SPACE ][] = $space;
+				$node->_[ simple_html_dom_constants::HDOM_INFO_SPACE ][] = $space;
 				$space                        = array( $this->copy_skip( $this->token_blank ), '', '' );
 			} else {
 				break;
@@ -1029,12 +1031,12 @@ class simple_html_dom_transposh {
 		} while ( $this->char !== '>' && $this->char !== '/' );
 
 		$this->link_nodes( $node, true );
-		$node->_[ HDOM_INFO_ENDSPACE ] = $space[0];
+		$node->_[ simple_html_dom_constants::HDOM_INFO_ENDSPACE ] = $space[0];
 
 		// check self closing
 		if ( $this->copy_until_char_escape( '>' ) === '/' ) {
-			$node->_[ HDOM_INFO_ENDSPACE ] .= '/';
-			$node->_[ HDOM_INFO_END ]      = 0;
+			$node->_[ simple_html_dom_constants::HDOM_INFO_ENDSPACE ] .= '/';
+			$node->_[ simple_html_dom_constants::HDOM_INFO_END ]      = 0;
 		} else {
 			// reset parent
 			if ( ! isset( $this->self_closing_tags[ strtolower( $node->tag ) ] ) ) {
@@ -1051,19 +1053,19 @@ class simple_html_dom_transposh {
 		$space[2] = $this->copy_skip( $this->token_blank );
 		switch ( $this->char ) {
 			case '"':
-				$node->_[ HDOM_INFO_QUOTE ][] = HDOM_QUOTE_DOUBLE;
+				$node->_[ simple_html_dom_constants::HDOM_INFO_QUOTE ][] = simple_html_dom_constants::HDOM_QUOTE_DOUBLE;
 				$this->char                   = ( ++ $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
 				$node->attr[ $name ]          = $this->restore_noise( $this->copy_until_char_escape( '"' ) );
 				$this->char                   = ( ++ $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
 				break;
 			case '\'':
-				$node->_[ HDOM_INFO_QUOTE ][] = HDOM_QUOTE_SINGLE;
+				$node->_[ simple_html_dom_constants::HDOM_INFO_QUOTE ][] = simple_html_dom_constants::HDOM_QUOTE_SINGLE;
 				$this->char                   = ( ++ $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
 				$node->attr[ $name ]          = $this->restore_noise( $this->copy_until_char_escape( '\'' ) );
 				$this->char                   = ( ++ $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
 				break;
 			default:
-				$node->_[ HDOM_INFO_QUOTE ][] = HDOM_QUOTE_NO;
+				$node->_[ simple_html_dom_constants::HDOM_INFO_QUOTE ][] = simple_html_dom_constants::HDOM_QUOTE_NO;
 				$node->attr[ $name ]          = $this->restore_noise( $this->copy_until( $this->token_attr ) );
 		}
 	}
@@ -1081,7 +1083,7 @@ class simple_html_dom_transposh {
 	protected function as_text_node( $tag ) {
 		$node = new simple_html_dom_node_transposh( $this );
 		++ $this->cursor;
-		$node->_[ HDOM_INFO_TEXT ] = '</' . $tag . '>';
+		$node->_[ simple_html_dom_constants::HDOM_INFO_TEXT ] = '</' . $tag . '>';
 		$this->link_nodes( $node, false );
 		$this->char = ( ++ $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
 
