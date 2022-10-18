@@ -15,6 +15,8 @@
  * Provides the side widget in the page/edit pages which will do translations
  */
 
+use BetterTransposh\Core\Constants;
+
 /**
  * class that makes changed to the edit page and post page, adding our change to the side ba
  */
@@ -71,10 +73,10 @@ class transposh_postpublish {
 			$script_params = array(
 				'post'             => $_GET['post'],
 				'l10n_print_after' =>
-					't_be.a_langs = ' . json_encode( transposh_consts::$engines['a']['langs'] ) . ';' .
-					't_be.b_langs = ' . json_encode( transposh_consts::$engines['b']['langs'] ) . ';' .
-					't_be.g_langs = ' . json_encode( transposh_consts::$engines['g']['langs'] ) . ';' .
-					't_be.y_langs = ' . json_encode( transposh_consts::$engines['y']['langs'] ) . ';'
+					't_be.a_langs = ' . json_encode( Constants::$engines['a']['langs'] ) . ';' .
+					't_be.b_langs = ' . json_encode( Constants::$engines['b']['langs'] ) . ';' .
+					't_be.g_langs = ' . json_encode( Constants::$engines['g']['langs'] ) . ';' .
+					't_be.y_langs = ' . json_encode( Constants::$engines['y']['langs'] ) . ';'
 			);
 			wp_localize_script( "transposh_backend", "t_be", $script_params );
 			// MAKESURE 3.3
@@ -166,10 +168,10 @@ class transposh_postpublish {
 				// as we don't normally want to auto-translate the default language -FIX THIS to include only correct stuff, how?
 				if ( ! $this->transposh->options->is_default_language( $lang ) || $this->transposh->options->enable_default_translate ) {
 					// There is no point in returning phrases, languages pairs that cannot be translated
-					if ( in_array( $lang, transposh_consts::$engines['b']['langs'] ) ||
-					     in_array( $lang, transposh_consts::$engines['g']['langs'] ) ||
-					     in_array( $lang, transposh_consts::$engines['y']['langs'] ) ||
-					     in_array( $lang, transposh_consts::$engines['a']['langs'] ) ) {
+					if ( in_array( $lang, Constants::$engines['b']['langs'] ) ||
+					     in_array( $lang, Constants::$engines['g']['langs'] ) ||
+					     in_array( $lang, Constants::$engines['y']['langs'] ) ||
+					     in_array( $lang, Constants::$engines['a']['langs'] ) ) {
 						list( $source, $translation ) = $this->transposh->database->fetch_translation( $key, $lang );
 						if ( ! $translation ) {
 							// p stands for phrases, l stands for languages, t is token

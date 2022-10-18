@@ -1,5 +1,7 @@
 <?php
 
+use BetterTransposh\Core\Constants;
+
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
@@ -109,7 +111,7 @@ class transposh_editor_table extends WP_List_Table {
 		}
 		$actions = [ 'filter' => $filter ];
 
-		return sprintf( '%1$s %2$s', transposh_consts::get_language_name( $item['lang'] ), $this->row_actions( $actions ) );
+		return sprintf( '%1$s %2$s', Constants::get_language_name( $item['lang'] ), $this->row_actions( $actions ) );
 	}
 
 	function column_original( $item ) {
@@ -119,7 +121,7 @@ class transposh_editor_table extends WP_List_Table {
 	}
 
 	function column_translated( $item ) {
-		if ( ( in_array( $item['lang'], transposh_consts::$rtl_languages ) ) ) {
+		if ( ( in_array( $item['lang'], Constants::$rtl_languages ) ) ) {
 			return sprintf( '<span dir="rtl" style="float:right">%1$s</span>', $item['translated'] );
 		}
 

@@ -24,14 +24,19 @@
  */
 
 //avoid direct calls to this file where wp core files not present
+use BetterTransposh\Core\Constants;
+
 if (!function_exists('add_action')) {
     header('Status: 403 Forbidden');
     header('HTTP/1.1 403 Forbidden');
     exit();
 }
 
+require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/constants.php';
+require __DIR__ . '/legacy.php';
+
 require_once("core/logging.php");
-require_once("core/constants.php");
 require_once("core/utils.php");
 require_once("core/parser.php");
 require_once("wp/transposh_db.php");
@@ -417,7 +422,7 @@ class transposh_plugin {
             $parse->prefetch_translate_func = array(&$this->database, 'prefetch_translations');
             $parse->url_rewrite_func = array(&$this, 'rewrite_url');
             $parse->split_url_func = array(&$this, 'split_url');
-            $parse->dir_rtl = (in_array($this->target_language, transposh_consts::$rtl_languages));
+            $parse->dir_rtl = (in_array($this->target_language, Constants::$rtl_languages));
             $parse->lang = $this->target_language;
             $parse->default_lang = $this->options->is_default_language($this->target_language);
             $parse->is_edit_mode = $this->edit_mode;
@@ -618,7 +623,7 @@ class transposh_plugin {
         }
 
         // make themes that support rtl - go rtl http://wordpress.tv/2010/05/01/yoav-farhi-right-to-left-themes-sf10
-        if (in_array($this->target_language, transposh_consts::$rtl_languages)) {
+        if (in_array($this->target_language, Constants::$rtl_languages)) {
             global $wp_locale;
             $wp_locale->text_direction = 'rtl';
         }
@@ -872,26 +877,26 @@ class transposh_plugin {
         );
 
         $script_params['engines'] = new stdClass();
-        if (in_array($this->target_language, transposh_consts::$engines['a']['langs'])) {
+        if (in_array($this->target_language, Constants::$engines['a']['langs'])) {
             $script_params['engines']->a = 1;
         }
-        if (in_array($this->target_language, transposh_consts::$engines['b']['langs'])) {
+        if (in_array($this->target_language, Constants::$engines['b']['langs'])) {
             $script_params['engines']->b = 1;
 //            $script_params['engines'][] = 'b';
-            if (isset(transposh_consts::$engines['b']['langconv'][$this->target_language])) {
-                $script_params['blang'] = transposh_consts::$engines['b']['langconv'][$this->target_language];
+            if (isset(Constants::$engines['b']['langconv'][$this->target_language])) {
+                $script_params['blang'] = Constants::$engines['b']['langconv'][$this->target_language];
             }
         }
-        if (in_array($this->target_language, transposh_consts::$engines['g']['langs'])) {
+        if (in_array($this->target_language, Constants::$engines['g']['langs'])) {
             $script_params['engines']->g = 1;
         }
-        if (in_array($this->target_language, transposh_consts::$engines['y']['langs'])) {
+        if (in_array($this->target_language, Constants::$engines['y']['langs'])) {
             $script_params['engines']->y = 1;
         }
-        if (in_array($this->target_language, transposh_consts::$engines['u']['langs'])) {
+        if (in_array($this->target_language, Constants::$engines['u']['langs'])) {
             $script_params['engines']->u = 1;
         }
-        if ($this->options->oht_id && $this->options->oht_key && in_array($this->target_language, transposh_consts::$oht_languages) && current_user_can('manage_options')) {
+        if ($this->options->oht_id && $this->options->oht_key && in_array($this->target_language, Constants::$oht_languages) && current_user_can('manage_options')) {
             $script_params['engines']->o = 1;
         }
         if (!$this->options->enable_autotranslate) {
@@ -1291,7 +1296,7 @@ class transposh_plugin {
             if (strpos(transposh_utils::get_clean_server_var('REQUEST_URI'), 'wp-admin/edit') !== false) {
                 tp_logger('iamhere?' . strpos(transposh_utils::get_clean_server_var('REQUEST_URI'), 'wp-admin/edit'));
                 $plugpath = @parse_url($this->transposh_plugin_url, PHP_URL_PATH);
-                list($langeng, $langorig, $langflag) = explode(',', transposh_consts::$languages[$lang]);
+                list($langeng, $langorig, $langflag) = explode(',', Constants::$languages[$lang]);
                 //$text = transposh_utils::display_flag("$plugpath/img/flags", $langflag, $langorig, false) . ' ' . $text;
                 $text = "[$lang] " . $text;
             } else {
@@ -1338,7 +1343,7 @@ class transposh_plugin {
         }
         tp_logger("($translation, $orig, $domain)", 5);
         // HACK - TODO - FIX
-        if (in_array($domain, transposh_consts::$ignored_po_domains))
+        if (in_array($domain, Constants::$ignored_po_domains))
             return $translation;
         if ($translation != $orig && $translation != "'") { // who thought about this, causing apostrophes to break
             $translation = TP_GTXT_BRK . $translation . TP_GTXT_BRK_CLOSER;
@@ -1358,7 +1363,7 @@ class transposh_plugin {
         if ($this->is_special_page(transposh_utils::get_clean_server_var('REQUEST_URI')) || ($this->options->is_default_language($this->tgl) && !$this->options->enable_default_translate))
             return $translation;
         tp_logger("($translation, $single, $plural, $domain)", 4);
-        if (in_array($domain, transposh_consts::$ignored_po_domains))
+        if (in_array($domain, Constants::$ignored_po_domains))
             return $translation;
         if ($translation != $single && $translation != $plural) {
             $translation = TP_GTXT_BRK . $translation . TP_GTXT_BRK_CLOSER;
@@ -1383,7 +1388,7 @@ class transposh_plugin {
             }
             $lang = $this->options->default_language;
         }
-        $locale = transposh_consts::get_language_locale($lang);
+        $locale = Constants::get_language_locale($lang);
 
         return ($locale) ? $locale : $lang;
     }
@@ -1577,19 +1582,19 @@ class transposh_plugin {
                     if (!$sl) {
                         $sl = 'auto';
                     }
-                    if (!in_array($tl, transposh_consts::$engines['g']['langs'])) // nope...
+                    if (!in_array($tl, Constants::$engines['g']['langs'])) // nope...
                         return;
                     $source = 1;
                     $result = $this->get_google_translation($tl, $sl, $q);
                     break;
                 case 'y': // yandex
-                    if (!in_array($tl, transposh_consts::$engines['y']['langs'])) // nope...
+                    if (!in_array($tl, Constants::$engines['y']['langs'])) // nope...
                         return;
                     $source = 4;
                     $result = $this->get_yandex_translation($tl, $sl, $q);
                     break;
                 case 'u': // baidu
-                    if (!in_array($tl, transposh_consts::$engines['u']['langs'])) // nope...
+                    if (!in_array($tl, Constants::$engines['u']['langs'])) // nope...
                         return;
                     $source = 5;
                     $result = $this->get_baidu_translation($tl, $sl, $q);
@@ -1762,9 +1767,9 @@ class transposh_plugin {
 
     // Proxied Baidu translate suggestions
     function get_baidu_translation($tl, $sl, $q) {
-        $qstr = 'to=' . ((isset(transposh_consts::$engines['u']['langconv'][$tl])) ? transposh_consts::$engines['u']['langconv'][$tl] : $tl);
+        $qstr = 'to=' . ((isset(Constants::$engines['u']['langconv'][$tl])) ? Constants::$engines['u']['langconv'][$tl] : $tl);
         if ($sl) {
-            $qstr .= '&from=' . ((isset(transposh_consts::$engines['u']['langconv'][$tl])) ? transposh_consts::$engines['u']['langconv'][$sl] : $sl);
+            $qstr .= '&from=' . ((isset(Constants::$engines['u']['langconv'][$tl])) ? Constants::$engines['u']['langconv'][$sl] : $sl);
         }
         $qstr .= '&query=';
         if (is_array($q)) {

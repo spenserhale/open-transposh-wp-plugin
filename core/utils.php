@@ -16,7 +16,9 @@
  * Contains utility functions which are shared across the plugin.
  *
  */
-require_once( "constants.php" );
+
+use BetterTransposh\Core\Constants;
+
 require_once( "logging.php" );
 
 /**
@@ -117,7 +119,7 @@ class transposh_utils {
 				$secondslashpos = strlen( $parsedurl['path'] );
 			}
 			$prevlang = substr( $parsedurl['path'], 1, $secondslashpos - 1 );
-			if ( isset( transposh_consts::$languages[ $prevlang ] ) ) {
+			if ( isset( Constants::$languages[ $prevlang ] ) ) {
 				tp_logger( "prevlang: " . $prevlang, 4 );
 				$parsedurl['path'] = substr( $parsedurl['path'], $secondslashpos );
 			}
@@ -191,7 +193,7 @@ class transposh_utils {
 				$secondslashpos = strlen( $parsedurl['path'] );
 			}
 			$prevlang = substr( $parsedurl['path'], 1, $secondslashpos - 1 );
-			if ( isset( transposh_consts::$languages[ $prevlang ] ) ) {
+			if ( isset( Constants::$languages[ $prevlang ] ) ) {
 				tp_logger( "prevlang: " . $prevlang, 4 );
 				$parsedurl['path'] = substr( $parsedurl['path'], $secondslashpos );
 			}
@@ -247,7 +249,7 @@ class transposh_utils {
 			foreach ( $params as $key => $param ) {
 				if ( stripos( $param, LANG_PARAM ) === 0 ) {
 					$langa = explode( "=", $params[ $key ] );
-					if ( isset( transposh_consts::$languages[ $langa[1] ] ) ) {
+					if ( isset( Constants::$languages[ $langa[1] ] ) ) {
 						return ( $langa[1] );
 					}
 				}
@@ -271,7 +273,7 @@ class transposh_utils {
 				$secondslashpos = strlen( $parsedurl['path'] );
 			}
 			$prevlang = substr( $parsedurl['path'], 1, $secondslashpos - 1 );
-			if ( isset( transposh_consts::$languages[ $prevlang ] ) ) {
+			if ( isset( Constants::$languages[ $prevlang ] ) ) {
 				//logger ("prevlang: ".$prevlang,4);
 				//$parsedurl['path'] = substr($parsedurl['path'],$secondslashpos);
 				return $prevlang;
@@ -571,8 +573,8 @@ class transposh_utils {
 		} else {
 			$bestlang = $default_lang;
 		}
-		if ( isset( transposh_consts::$countryToLanguageMapping[ strtolower( $country ) ] ) ) {
-			$lang = transposh_consts::$countryToLanguageMapping[ strtolower( $country ) ];
+		if ( isset( Constants::$countryToLanguageMapping[ strtolower( $country ) ] ) ) {
+			$lang = Constants::$countryToLanguageMapping[ strtolower( $country ) ];
 			if ( strpos( $lang, ',' ) !== false ) {
 				$langs = explode( ",", $lang );
 				foreach ( $langs as $lang ) {

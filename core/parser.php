@@ -12,7 +12,6 @@
  */
 
 require_once( "shd/simple_html_dom.php" );
-require_once( "constants.php" );
 require_once( "logging.php" );
 require_once( "utils.php" );
 

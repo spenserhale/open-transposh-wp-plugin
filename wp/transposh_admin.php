@@ -18,6 +18,8 @@
  * adapted metabox sample code from http://www.code-styling.de/
  */
 
+use BetterTransposh\Core\Constants;
+
 define( 'TR_NONCE', "transposh_nonce" );
 
 // class that reperesent the admin page
@@ -110,7 +112,7 @@ class transposh_plugin_admin {
 				foreach ( $_POST['languages'] as $lang ) {
 					list ( $langcode, $viewable ) = explode( ",", $lang );
 					// clean possible wrong data
-					if ( transposh_consts::get_language_name( $langcode ) === '' ) {
+					if ( Constants::get_language_name( $langcode ) === '' ) {
 						continue;
 					}
 					$sorted_langs[ $langcode ] = $langcode;
@@ -340,10 +342,10 @@ class transposh_plugin_admin {
 				wp_enqueue_script( 'transposh_backend', $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/admin/backendtranslate.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
 				$script_params = array(
 					'l10n_print_after' =>
-						't_be.a_langs = ' . json_encode( transposh_consts::$engines['a']['langs'] ) . ';' .
-						't_be.b_langs = ' . json_encode( transposh_consts::$engines['b']['langs'] ) . ';' .
-						't_be.g_langs = ' . json_encode( transposh_consts::$engines['g']['langs'] ) . ';' .
-						't_be.y_langs = ' . json_encode( transposh_consts::$engines['y']['langs'] ) . ';'
+						't_be.a_langs = ' . json_encode( Constants::$engines['a']['langs'] ) . ';' .
+						't_be.b_langs = ' . json_encode( Constants::$engines['b']['langs'] ) . ';' .
+						't_be.g_langs = ' . json_encode( Constants::$engines['g']['langs'] ) . ';' .
+						't_be.y_langs = ' . json_encode( Constants::$engines['y']['langs'] ) . ';'
 				);
 				wp_localize_script( "transposh_backend", "t_be", $script_params );
 			case 'tp_editor':
@@ -488,7 +490,7 @@ class transposh_plugin_admin {
 		}
 
 		// this is the default language location
-		list ( $langname, $langorigname, $flag ) = explode( ",", transposh_consts::$languages[ $this->transposh->options->default_language ] );
+		list ( $langname, $langorigname, $flag ) = explode( ",", Constants::$languages[ $this->transposh->options->default_language ] );
 		echo '<div id="default_lang" style="overflow:auto;padding-bottom:10px;">';
 		$this->header( __( 'Default Language (drag another language here to make it default)', TRANSPOSH_TEXT_DOMAIN ), 'languages' );
 		echo '<ul id="default_list"><li id="' . $this->transposh->options->default_language . '" class="languages">'
@@ -512,20 +514,20 @@ class transposh_plugin_admin {
 			     // DOC THIS BUGBUG fix!
 			     . '<input type="hidden" name="languages[]" value="' . $langcode . ( $this->transposh->options->is_active_language( $langcode ) ? ",v" : "," ) . '" />'
 			     . '&nbsp;<span class="langname">' . $langorigname . '</span><span class="langname hidden">' . $langname . '</span></div>';
-			foreach ( transposh_consts::$engines as $enginecode => $enginerecord ) {
+			foreach ( Constants::$engines as $enginecode => $enginerecord ) {
 				if ( in_array( $langcode, $enginerecord['langs'] ) ) {
 					echo '<img width="16" height="16" alt="' . $enginecode . '" class="logoicon" title="' . esc_attr( sprintf( __( 'Language supported by %s translate', TRANSPOSH_TEXT_DOMAIN ), $enginerecord['name'] ) ) . '" src="' . $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_IMG . '/' . $enginerecord['icon'] . '"/>';
 				} else {
 					echo '<div class="logoicon" style="margin:9px"></div>';
 				}
 			}
-			if ( in_array( $langcode, transposh_consts::$oht_languages ) ) {
+			if ( in_array( $langcode, Constants::$oht_languages ) ) {
 				echo '<img width="16" height="16" alt="o" class="logoicon" title="' . esc_attr__( 'Language supported by one hour translation', TRANSPOSH_TEXT_DOMAIN ) . '" src="' . $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_IMG . '/ohticon.png"/>';
 			}
-			if ( in_array( $langcode, transposh_consts::$rtl_languages ) ) {
+			if ( in_array( $langcode, Constants::$rtl_languages ) ) {
 				echo '<img width="16" height="16" alt="r" class="logoicon" title="' . esc_attr__( 'Language is written from right to left', TRANSPOSH_TEXT_DOMAIN ) . '" src="' . $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_IMG . '/rtlicon.png"/>';
 			}
-			/* if ($this->does_mo_exist(transposh_consts::get_language_locale($langcode)))
+			/* if ($this->does_mo_exist(BetterTransposh\Core\transposh_consts::get_language_locale($langcode)))
 			  echo 'BLBL<img width="16" height="16" alt="r" class="logoicon" title="' . esc_attr__('Language is written from right to left', TRANSPOSH_TEXT_DOMAIN) . '" src="' . $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_IMG . '/rtlicon.png"/>'; */
 			echo '</li>';
 		}
@@ -767,7 +769,7 @@ class transposh_plugin_admin {
 			$this->checkbox( $this->transposh->options->widget_remove_logo_o, __( 'Remove transposh logo (see <a href="http://transposh.org/logoterms">terms</a>)', TRANSPOSH_TEXT_DOMAIN )
 				, __( 'Transposh logo will not appear on widget', TRANSPOSH_TEXT_DOMAIN ) );
 		} //** FULLSTOP
-		$this->select( $this->transposh->options->widget_theme_o, __( 'Edit interface theme:', TRANSPOSH_TEXT_DOMAIN ), __( 'Edit interface (and progress bar) theme:', TRANSPOSH_TEXT_DOMAIN ), transposh_consts::$jqueryui_themes, false );
+		$this->select( $this->transposh->options->widget_theme_o, __( 'Edit interface theme:', TRANSPOSH_TEXT_DOMAIN ), __( 'Edit interface (and progress bar) theme:', TRANSPOSH_TEXT_DOMAIN ), Constants::$jqueryui_themes, false );
 		$this->sectionstop();
 	}
 
@@ -1068,7 +1070,7 @@ class transposh_plugin_admin {
 		if ( ! $comment_lang ) {
 			$text = __( 'Unset', TRANSPOSH_TEXT_DOMAIN );
 		} else {
-			$text = transposh_consts::get_language_name( $comment_lang ) . " - " . transposh_consts::get_language_orig_name( $comment_lang );
+			$text = Constants::get_language_name( $comment_lang ) . " - " . Constants::get_language_orig_name( $comment_lang );
 		}
 		$actions['language'] = __( 'Language', TRANSPOSH_TEXT_DOMAIN ) . "(<a data-cid=\"{$comment->comment_ID}\" data-lang=\"{$comment_lang}\" href=\"\" onclick=\"return false\">$text</a>)";
 
@@ -1161,7 +1163,7 @@ class transposh_plugin_admin {
 //        
 //        set_time_limit(600);
 //        foreach (explode(',', $this->transposh->options->viewable_languages) as $lang) {
-//            $locale = transposh_consts::get_language_locale($lang);
+//            $locale = BetterTransposh\Core\transposh_consts::get_language_locale($lang);
 //            $getme = false;
 //            foreach ( $translations as $translation ) {
 ///*		if ( $translation['language'] === $download ) {
