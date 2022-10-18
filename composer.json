@@ -1,0 +1,21 @@
+{
+    "name": "spenserhale/better-transposh",
+    "description": "Translation filter for WordPress",
+    "type": "wordpress-plugin",
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.7",
+        "wp-coding-standards/wpcs": "^2.3",
+        "wp-phpunit/wp-phpunit": "^6.0",
+        "yoast/phpunit-polyfills": "^1.0"
+    },
+    "license": "GPL",
+    "autoload": {
+        "psr-4": {
+            "BetterTransposh\\": "src/",
+            "Tests": "tests/"
+        }
+    },
+    "scripts": {
+        "phpunit": "vendor/bin/phpunit"
+    }
+}
