@@ -498,4 +498,3 @@ class transposh_plugin_widget extends WP_Widget {
 
 }
 
-?>

@@ -54,4 +54,4 @@ class tpw_list_with_flags extends transposh_base_widget {
 
 }
 
-?>
+

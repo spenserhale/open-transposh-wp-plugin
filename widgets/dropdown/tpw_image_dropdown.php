@@ -53,4 +53,4 @@ class tpw_image_dropdown extends transposh_base_widget {
 
 }
 
-?>
+

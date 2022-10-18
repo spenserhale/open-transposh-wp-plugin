@@ -48,4 +48,4 @@ class tpw_select2 extends transposh_base_widget {
 
 }
 
-?>
+

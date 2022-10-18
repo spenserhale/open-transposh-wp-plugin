@@ -255,4 +255,3 @@ class transposh_postpublish {
 
 }
 
-?>

@@ -50,4 +50,4 @@ class tpw_list_with_flags_css extends transposh_base_widget {
 
 }
 
-?>
+
