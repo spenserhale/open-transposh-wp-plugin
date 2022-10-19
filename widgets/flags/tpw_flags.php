@@ -23,12 +23,13 @@
 
 use BetterTransposh\Core\Utilities;
 use BetterTransposh\Plugin;
+use BetterTransposh\Widgets\Base_Widget;
 
 /**
  * This function allows the widget to tell the invoker if it needs to calculate different urls per language, here it is needed
  * @return boolean
  */
-class tpw_flags extends transposh_base_widget {
+class tpw_flags extends Base_Widget {
 
 	/**
 	 * Creates the list of flags

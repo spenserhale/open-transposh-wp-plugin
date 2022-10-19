@@ -1,14 +1,16 @@
 <?php
 
+namespace BetterTransposh;
+
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Utilities;
-use BetterTransposh\Plugin;
+use WP_List_Table;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
-class transposh_editor_table extends WP_List_Table {
+class Editor_Table extends WP_List_Table {
 
 	private $filter = "";
 

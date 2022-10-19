@@ -18,14 +18,15 @@
  * adapted metabox sample code from http://www.code-styling.de/
  */
 
+namespace BetterTransposh;
+
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Utilities;
-use BetterTransposh\Plugin;
 
-define( 'TR_NONCE', "transposh_nonce" );
 
 // class that reperesent the admin page
-class transposh_plugin_admin {
+class Plugin_Admin {
+	const TR_NONCE = 'transposh_nonce';
 
 	/** @var Plugin $transposh father class */
 	private $transposh;
@@ -34,7 +35,7 @@ class transposh_plugin_admin {
 	private $pages = array();
 	private $page = '';
 
-	/** @var transposh_editor_table $editor_table the wp table */
+	/** @var Editor_Table $editor_table the wp table */
 	private $editor_table;
 
 	// TODO - memory cache clear button
@@ -408,8 +409,8 @@ class transposh_plugin_admin {
 			// add_meta_box('transposh-contentbox-community', __('Transposh community features', TRANSPOSH_TEXT_DOMAIN), array(&$this, 'on_contentbox_community_content'), '', 'normal', 'core');
 		}
 		if ( $this->page == 'tp_editor' ) {
-			require_once( "transposh_editor.php" );
-			$this->editor_table = new transposh_editor_table();
+			require_once( "Editor_Table.php" );
+			$this->editor_table = new Editor_Table();
 			$this->editor_table->add_screen_options();
 			$this->editor_table->perform_actions();
 		}
@@ -433,7 +434,7 @@ class transposh_plugin_admin {
 			echo '<form action="admin-post.php" method="post">';
 			echo '<input type="hidden" name="action" value="save_transposh"/>';
 			echo '<input type="hidden" name="page" value="' . $this->page . '"/>';
-			wp_nonce_field( - 1, TR_NONCE );
+			wp_nonce_field( - 1, self::TR_NONCE );
 		}
 
 		// the page content
@@ -455,7 +456,7 @@ class transposh_plugin_admin {
 	// not sure if this is the best place for this function, but heck
 	function on_load_comments_page() {
 		wp_enqueue_script( 'transposhcomments', $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/admin/commentslang.js', array( 'jquery' ), TRANSPOSH_PLUGIN_VER );
-		wp_nonce_field( - 1, TR_NONCE );
+		wp_nonce_field( - 1, self::TR_NONCE );
 	}
 
 	//executed to show the plugins complete admin page
@@ -813,7 +814,7 @@ class transposh_plugin_admin {
 
 	//
 	function tp_utils() {
-		wp_nonce_field( - 1, TR_NONCE );
+		wp_nonce_field( - 1, self::TR_NONCE );
 		echo '<div id="backup_result"></div>';
 		echo '<div style="margin:10px 0"><a id="transposh-backup" href="#" class="button">' . __( 'Do Backup Now', TRANSPOSH_TEXT_DOMAIN ) . '</a></div>';
 
@@ -920,7 +921,7 @@ class transposh_plugin_admin {
 			wp_die( __( 'Problems?', TRANSPOSH_TEXT_DOMAIN ) );
 		}
 		// cross check the given referer
-		check_admin_referer( - 1, TR_NONCE );
+		check_admin_referer( - 1, self::TR_NONCE );
 
 		// process here your on $_POST validation and / or option saving
 		$this->update_admin_options();
@@ -980,7 +981,7 @@ class transposh_plugin_admin {
 	/**
 	 * Display a checkbox for boolean value
 	 *
-	 * @param transposh_option $tpo A transposh option boolean object
+	 * @param Option $tpo A transposh option boolean object
 	 * @param string $head
 	 * @param string $text
 	 */
@@ -992,7 +993,7 @@ class transposh_plugin_admin {
 	/**
 	 * Display a select
 	 *
-	 * @param transposh_option $tpo
+	 * @param Option $tpo
 	 * @param string $label
 	 * @param array $options
 	 * @param boolean $use_key

@@ -15,14 +15,15 @@
  * Provides the side widget in the page/edit pages which will do translations
  */
 
+namespace BetterTransposh;
+
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Parser;
-use BetterTransposh\Plugin;
 
 /**
  * class that makes changed to the edit page and post page, adding our change to the side ba
  */
-class transposh_postpublish {
+class Post_Publish {
 
 	/** @var Plugin Container class */
 	private $transposh;
@@ -56,7 +57,7 @@ class transposh_postpublish {
 			}
 			tp_logger( $post_type, 5 );
 			if ( $this->transposh->options->enable_autoposttranslate ) {
-				add_meta_box( 'transposh_postpublish', __( 'Transposh', TRANSPOSH_TEXT_DOMAIN ), array(
+				add_meta_box( 'BetterTransposh\Post_Publish', __( 'Transposh', TRANSPOSH_TEXT_DOMAIN ), array(
 					&$this,
 					"transposh_postpublish_box"
 				), $post_type, 'side', 'core' );

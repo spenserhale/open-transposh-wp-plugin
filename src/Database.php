@@ -16,24 +16,16 @@
  * This implementation for use with mysql within wordpress
  *
  */
-//
-//Constants
-//
-//Table name in database for storing translations
+
+namespace BetterTransposh;
+
 use BetterTransposh\Core\Utilities;
-use BetterTransposh\Plugin;
 
-define( 'TRANSLATIONS_TABLE', 'translations' );
-define( 'TRANSLATIONS_LOG', 'translations_log' );
-
-//Database version
-define( 'DB_VERSION', '1.06' );
-
-//Constant used as key in options database
-define( 'TRANSPOSH_DB_VERSION', "transposh_db_version" );
-define( 'TRANSPOSH_OPTIONS_DBSETUP', 'transposh_inside_dbupgrade' );
-
-class transposh_database {
+/**
+ * Table name in database for storing translations
+ */
+class Database {
+	const TRANSPOSH_OPTIONS_DBSETUP = 'transposh_inside_dbupgrade';
 
 	/** @var Plugin father class */
 	private $transposh;
@@ -845,15 +837,15 @@ class transposh_database {
 		$installed_ver = get_option( TRANSPOSH_DB_VERSION );
 
 		if ( $installed_ver != DB_VERSION || $force ) {
-			$timestamp = get_option( TRANSPOSH_OPTIONS_DBSETUP, 0 );
+			$timestamp = get_option( self::TRANSPOSH_OPTIONS_DBSETUP, 0 );
 			if ( time() - 7200 > $timestamp ) { //two hours are more than enough
-				delete_option( TRANSPOSH_OPTIONS_DBSETUP );
+				delete_option( self::TRANSPOSH_OPTIONS_DBSETUP );
 			} else {
 				tp_logger( "we don't want to upgrade transposh tables more than once" );
 
 				return;
 			}
-			update_option( TRANSPOSH_OPTIONS_DBSETUP, time() );
+			update_option( self::TRANSPOSH_OPTIONS_DBSETUP, time() );
 
 			tp_logger( "Attempting to create table {$this->translation_table}", 1 );
 			// notice - keep every field on a new line or dbdelta fails
@@ -907,7 +899,7 @@ class transposh_database {
 			$this->db_maint();
 			tp_logger( "postmaint" );
 			update_option( TRANSPOSH_DB_VERSION, DB_VERSION );
-			delete_option( TRANSPOSH_OPTIONS_DBSETUP );
+			delete_option( self::TRANSPOSH_OPTIONS_DBSETUP );
 		}
 		tp_logger( "Exit" );
 	}

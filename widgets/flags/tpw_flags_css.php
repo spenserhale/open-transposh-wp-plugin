@@ -22,8 +22,9 @@
  */
 
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Widgets\Base_Widget;
 
-class tpw_flags_css extends transposh_base_widget {
+class tpw_flags_css extends Base_Widget {
 
 	/**
 	 * Creates the list of flags (with css)

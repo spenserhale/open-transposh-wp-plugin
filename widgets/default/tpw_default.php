@@ -29,12 +29,14 @@
  * This widget is the default langauge list widget, the one which provides a drop down select box which allows to choose a new target language
  */
 
+use BetterTransposh\Widgets\Base_Widget;
+
 /**
  * This function does the actual HTML for the widget
  *
  * @param array $args - http://trac.transposh.org/wiki/WidgetWritingGuide#functiontp_widgets_doargs
  */
-class tpw_default extends transposh_base_widget {
+class tpw_default extends Base_Widget {
 
 	static function tp_widget_do( $args ) {
 		echo '<span class="' . NO_TRANSLATE_CLASS . '">'; // wrapping in no_translate to avoid translation of this list

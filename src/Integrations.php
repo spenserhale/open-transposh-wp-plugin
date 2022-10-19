@@ -15,11 +15,12 @@
  * This file handles functions relevant to specific third party plugins
  */
 
+namespace BetterTransposh;
+
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Utilities;
-use BetterTransposh\Plugin;
 
-class transposh_3rdparty {
+class Integrations {
 
 	/** @var Plugin Container class */
 	private $transposh;

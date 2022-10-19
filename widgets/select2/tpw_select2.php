@@ -21,7 +21,9 @@
  * Date: %DATE%
  */
 
-class tpw_select2 extends transposh_base_widget {
+use BetterTransposh\Widgets\Base_Widget;
+
+class tpw_select2 extends Base_Widget {
 
 	static function tp_widget_js( $file, $dir, $url ) {
 		wp_enqueue_script( "select2", "$url/widgets/select2/select2.min.js", array( 'jquery' ), TRANSPOSH_PLUGIN_VER );

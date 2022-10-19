@@ -22,8 +22,9 @@
  */
 
 use BetterTransposh\Plugin;
+use BetterTransposh\Widgets\Base_Widget;
 
-class tpw_image_dropdown extends transposh_base_widget {
+class tpw_image_dropdown extends Base_Widget {
 
 	/**
 	 * This function makes sure that the jquery dependency will be met

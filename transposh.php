@@ -48,14 +48,4 @@ require __DIR__ . '/functions.php';
 // We create a global singelton instance
 $GLOBALS['tp_logger'] = tp_logger::getInstance( true );
 
-require_once("wp/transposh_db.php");
-require_once("wp/transposh_widget.php");
-require_once("wp/transposh_admin.php");
-require_once("wp/transposh_options.php");
-require_once("wp/transposh_postpublish.php");
-require_once("wp/transposh_backup.php");
-require_once("wp/transposh_3rdparty.php");
-require_once("wp/transposh_mail.php");
-//require_once("wp/transposh_wpmenu.php");
-
 $my_transposh_plugin = new BetterTransposh\Plugin();

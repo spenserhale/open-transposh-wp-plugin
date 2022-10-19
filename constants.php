@@ -68,3 +68,23 @@ const TRANSPOSH_DIR_IMG     = 'img';
 const TRANSPOSH_DIR_JS      = 'js';
 const TRANSPOSH_DIR_WIDGETS = 'widgets';
 const TRANSPOSH_DIR_UPLOAD  = 'transposh'; //1.0.1
+
+const TRANSPOSH_WIDGET_PREFIX = 'tpw_';
+const TR_NONCE                = "transposh_nonce";
+
+const TRANSLATIONS_TABLE = 'translations';
+const TRANSLATIONS_LOG   = 'translations_log';
+
+//Database version
+const DB_VERSION = '1.06';
+
+//Constant used as key in options database
+const TRANSPOSH_DB_VERSION = "transposh_db_version";
+const TRANSPOSH_OPTIONS_DBSETUP = 'transposh_inside_dbupgrade';
+
+const TP_FROM_POST = 'tp_post_1x';
+// types of options
+const TP_OPT_BOOLEAN = 0;
+const TP_OPT_STRING  = 1;
+const TP_OPT_IP      = 2;
+const TP_OPT_OTHER   = 3;

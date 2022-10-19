@@ -5,15 +5,8 @@ namespace BetterTransposh;
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Parser;
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Widgets\Plugin_Widget;
 use stdClass;
-use transposh_3rdparty;
-use transposh_backup;
-use transposh_database;
-use transposh_mail;
-use transposh_plugin_admin;
-use transposh_plugin_options;
-use transposh_plugin_widget;
-use transposh_postpublish;
 use WP;
 use WP_Error;
 use WP_Query;
@@ -24,22 +17,22 @@ use WP_Query;
 class Plugin {
 	// List of contained objects
 
-	/** @var transposh_plugin_options An options object */
+	/** @var Plugin_Options An options object */
 	public $options;
 
-	/** @var transposh_plugin_admin Admin page */
+	/** @var Plugin_Admin Admin page */
 	private $admin;
 
-	/** @var transposh_plugin_widget Widget control */
+	/** @var \BetterTransposh\Widgets\Plugin_Widget Widget control */
 	public $widget;
 
-	/** @var transposh_database The database class */
+	/** @var Database The database class */
 	public $database;
 
-	/** @var transposh_postpublish Happens after editing */
+	/** @var Post_Publish Happens after editing */
 	public $postpublish;
 
-	/** @var transposh_3rdparty Happens after editing */
+	/** @var Integrations Happens after editing */
 	private $third_party;
 	// list of properties
 
@@ -96,13 +89,13 @@ class Plugin {
 	 */
 	function __construct() {
 		// create and initialize sub-objects
-		$this->options     = new transposh_plugin_options();
-		$this->database    = new transposh_database( $this );
-		$this->admin       = new transposh_plugin_admin( $this );
-		$this->widget      = new transposh_plugin_widget( $this );
-		$this->postpublish = new transposh_postpublish( $this );
-		$this->third_party = new transposh_3rdparty( $this );
-		$this->mail        = new transposh_mail( $this );
+		$this->options     = new Plugin_Options();
+		$this->database    = new Database( $this );
+		$this->admin       = new Plugin_Admin( $this );
+		$this->widget      = new Plugin_Widget( $this );
+		$this->postpublish = new Post_Publish( $this );
+		$this->third_party = new Integrations( $this );
+		$this->mail        = new Mail( $this );
 
 		// initialize logger
 		if ( $this->options->debug_enable ) {
@@ -1195,7 +1188,7 @@ class Plugin {
 	 */
 	function run_backup() {
 		tp_logger( 'backup run..', 2 );
-		$my_transposh_backup = new transposh_backup( $this );
+		$my_transposh_backup = new Backup( $this );
 		$my_transposh_backup->do_backup();
 	}
 
@@ -1239,7 +1232,7 @@ class Plugin {
 	 */
 	function run_restore() {
 		tp_logger( 'restoring..', 2 );
-		$my_transposh_backup = new transposh_backup( $this );
+		$my_transposh_backup = new Backup( $this );
 		$my_transposh_backup->do_restore();
 	}
 

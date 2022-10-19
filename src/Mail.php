@@ -15,10 +15,12 @@
  * This file handles functions relevant to specific third party plugins
  */
 
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Plugin;
+namespace BetterTransposh;
 
-class transposh_mail {
+use BetterTransposh\Core\Utilities;
+use WP_User;
+
+class Mail {
 
 	/** @var Plugin Container class */
 	private $transposh;

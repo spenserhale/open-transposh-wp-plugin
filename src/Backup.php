@@ -16,9 +16,9 @@
  */
 
 //class that reperesent the admin page
-use BetterTransposh\Plugin;
+namespace BetterTransposh;
 
-class transposh_backup {
+class Backup {
 
 	/** @var Plugin $transposh father class */
 	private $transposh;

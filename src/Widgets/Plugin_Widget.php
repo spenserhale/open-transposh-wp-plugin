@@ -1,76 +1,17 @@
 <?php
 
-/*
- * Transposh v%VERSION%
- * http://transposh.org/
- *
- * Copyright %YEAR%, Team Transposh
- * Licensed under the GPL Version 2 or higher.
- * http://transposh.org/license
- *
- * Date: %DATE%
- */
+namespace BetterTransposh\Widgets;
 
-/*
+use BetterTransposh\Core\Utilities;
+use BetterTransposh\Plugin;
+use WP_Widget;
+
+/**
  * Provides the sidebar widget instance for selecting a language and switching between edit/view
  * mode.
  */
-
-//Define subwidget files prefix
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Plugin;
-
-define( 'TRANSPOSH_WIDGET_PREFIX', 'tpw_' );
-
-/**
- * Class for subwidgets to inherit from
- */
-class transposh_base_widget {
-
-	/**
-	 * Function that performs the actual subwidget rendering
-	 */
-	static function tp_widget_do( $args ) {
-		echo "you should override this function in your widget";
-	}
-
-	/**
-	 * Attempts inclusion of css needed for the subwidget
-	 *
-	 * @param string $file
-	 * @param string $plugin_dir
-	 * @param string $plugin_url
-	 */
-	static function tp_widget_css( $file, $plugin_dir, $plugin_url ) {
-		tp_logger( 'looking for css:' . $file, 4 );
-		$basefile   = substr( $file, 0, - 4 );
-		$widget_css = TRANSPOSH_DIR_WIDGETS . '/' . $basefile . ".css";
-		if ( file_exists( $plugin_dir . $widget_css ) ) {
-			wp_enqueue_style( str_replace( '/', '_', $basefile ), $plugin_url . '/' . $widget_css, '', TRANSPOSH_PLUGIN_VER );
-		}
-	}
-
-	/**
-	 * Attempts inclusion of javascript needed for the subwidget
-	 *
-	 * @param string $file
-	 * @param string $plugin_dir
-	 * @param string $plugin_url
-	 */
-	static function tp_widget_js( $file, $plugin_dir, $plugin_url ) {
-		tp_logger( 'looking for js:' . $file, 4 );
-		$basefile  = substr( $file, 0, - 4 );
-		$widget_js = TRANSPOSH_DIR_WIDGETS . '/' . $basefile . ".js";
-		if ( file_exists( $plugin_dir . $widget_js ) ) {
-			wp_enqueue_script( 'transposh_widget', $plugin_url . '/' . $widget_js, '', TRANSPOSH_PLUGIN_VER );
-		}
-	}
-
-}
-
-// END class
-//class that reperesent the complete widget
-class transposh_plugin_widget extends WP_Widget {
+class Plugin_Widget extends WP_Widget {
+	const TRANSPOSH_WIDGET_PREFIX = 'tpw_';
 
 	/** @var Plugin Container class */
 	private $transposh;
@@ -94,7 +35,7 @@ class transposh_plugin_widget extends WP_Widget {
 		parent::__construct( 'transposh', __( 'Transposh' ), $widget_ops, $control_ops );
 
 		add_action( 'widgets_init', static function () {
-			register_widget( "transposh_plugin_widget" );
+			register_widget( Plugin_Widget::class );
 		} );
 		// We only need to add those actions once, makes life simpler
 		if ( is_active_widget( false, false, $this->id_base ) && self::$first_init ) {
@@ -459,13 +400,13 @@ class transposh_plugin_widget extends WP_Widget {
 							if ( substr( $subfile, 0, 1 ) == '.' ) {
 								continue;
 							}
-							if ( substr( $subfile, 0, 4 ) == TRANSPOSH_WIDGET_PREFIX && substr( $subfile, - 4 ) == '.php' ) {
+							if ( substr( $subfile, 0, 4 ) == self::TRANSPOSH_WIDGET_PREFIX && substr( $subfile, - 4 ) == '.php' ) {
 								$widget_files[] = "$file/$subfile";
 							}
 						}
 					}
 				}
-				if ( substr( $file, 0, 4 ) == TRANSPOSH_WIDGET_PREFIX && substr( $file, - 4 ) == '.php' ) {
+				if ( substr( $file, 0, 4 ) == self::TRANSPOSH_WIDGET_PREFIX && substr( $file, - 4 ) == '.php' ) {
 					$widget_files[] = $file;
 				}
 			}
