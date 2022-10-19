@@ -17,13 +17,14 @@
 
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Parser;
+use BetterTransposh\Plugin;
 
 /**
  * class that makes changed to the edit page and post page, adding our change to the side ba
  */
 class transposh_postpublish {
 
-	/** @var transposh_plugin Container class */
+	/** @var Plugin Container class */
 	private $transposh;
 
 	/** @var boolean Did we just edited/saved? */
@@ -33,7 +34,7 @@ class transposh_postpublish {
 	 *
 	 * Construct our class
 	 *
-	 * @param transposh_plugin $transposh
+	 * @param Plugin $transposh
 	 */
 	function __construct( &$transposh ) {
 		$this->transposh = &$transposh;

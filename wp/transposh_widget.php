@@ -18,6 +18,7 @@
 
 //Define subwidget files prefix
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Plugin;
 
 define( 'TRANSPOSH_WIDGET_PREFIX', 'tpw_' );
 
@@ -71,7 +72,7 @@ class transposh_base_widget {
 //class that reperesent the complete widget
 class transposh_plugin_widget extends WP_Widget {
 
-	/** @var transposh_plugin Container class */
+	/** @var Plugin Container class */
 	private $transposh;
 
 	/** @staticvar boolean Contains the fact that this is our first run */

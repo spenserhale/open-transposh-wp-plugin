@@ -20,13 +20,14 @@
 
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Plugin;
 
 define( 'TR_NONCE', "transposh_nonce" );
 
 // class that reperesent the admin page
 class transposh_plugin_admin {
 
-	/** @var transposh_plugin $transposh father class */
+	/** @var Plugin $transposh father class */
 	private $transposh;
 	private $localeright = 'right';
 	private $localeleft = 'left';

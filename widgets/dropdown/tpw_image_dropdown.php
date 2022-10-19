@@ -21,11 +21,13 @@
  * Date: %DATE%
  */
 
+use BetterTransposh\Plugin;
+
 class tpw_image_dropdown extends transposh_base_widget {
 
 	/**
 	 * This function makes sure that the jquery dependency will be met
-	 * @global transposh_plugin $my_transposh_plugin
+	 * @global Plugin $my_transposh_plugin
 	 */
 	static function tp_widget_js( $file, $dir, $url ) {
 		wp_enqueue_script( "transposh_widget", "$url/widgets/dropdown/tpw_image_dropdown.js", array( 'jquery' ), TRANSPOSH_PLUGIN_VER );

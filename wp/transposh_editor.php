@@ -2,6 +2,7 @@
 
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Plugin;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
@@ -245,7 +246,7 @@ class transposh_editor_table extends WP_List_Table {
 
 	/**
 	 *
-	 * @global transposh_plugin $my_transposh_plugin
+	 * @global Plugin $my_transposh_plugin
 	 */
 	function perform_actions() {
 		global $my_transposh_plugin;

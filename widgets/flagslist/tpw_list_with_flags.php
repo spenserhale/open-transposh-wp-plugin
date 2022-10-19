@@ -22,12 +22,13 @@
  */
 
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Plugin;
 
 class tpw_list_with_flags extends transposh_base_widget {
 
 	/**
 	 * Instructs usage of a different .css file
-	 * @global transposh_plugin $my_transposh_plugin
+	 * @global Plugin $my_transposh_plugin
 	 */
 	static function tp_widget_css( $file, $dir, $url ) {
 		wp_enqueue_style( "flags_tpw_flags", "$url/widgets/flags/tpw_flags.css", array(), TRANSPOSH_PLUGIN_VER );
@@ -38,7 +39,7 @@ class tpw_list_with_flags extends transposh_base_widget {
 	 *
 	 * @param array $args - http://trac.transposh.org/wiki/WidgetWritingGuide#functiontp_widgets_doargs
 	 *
-	 * @global transposh_plugin $my_transposh_plugin
+	 * @global Plugin $my_transposh_plugin
 	 */
 	static function tp_widget_do( $args ) {
 		global $my_transposh_plugin;

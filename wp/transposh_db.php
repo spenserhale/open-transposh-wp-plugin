@@ -21,6 +21,7 @@
 //
 //Table name in database for storing translations
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Plugin;
 
 define( 'TRANSLATIONS_TABLE', 'translations' );
 define( 'TRANSLATIONS_LOG', 'translations_log' );
@@ -34,7 +35,7 @@ define( 'TRANSPOSH_OPTIONS_DBSETUP', 'transposh_inside_dbupgrade' );
 
 class transposh_database {
 
-	/** @var transposh_plugin father class */
+	/** @var Plugin father class */
 	private $transposh;
 
 	/** @var array holds prefetched translations */

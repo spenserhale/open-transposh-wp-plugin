@@ -17,16 +17,17 @@
 
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Plugin;
 
 class transposh_3rdparty {
 
-	/** @var transposh_plugin Container class */
+	/** @var Plugin Container class */
 	private $transposh;
 
 	/**
 	 * Construct our class
 	 *
-	 * @param transposh_plugin $transposh
+	 * @param Plugin $transposh
 	 */
 	function __construct( &$transposh ) {
 		$this->transposh = &$transposh;

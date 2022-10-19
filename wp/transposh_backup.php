@@ -16,9 +16,11 @@
  */
 
 //class that reperesent the admin page
+use BetterTransposh\Plugin;
+
 class transposh_backup {
 
-	/** @var transposh_plugin $transposh father class */
+	/** @var Plugin $transposh father class */
 	private $transposh;
 
 //constructor of class, PHP4 compatible construction for backward compatibility

@@ -22,6 +22,7 @@
  */
 
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Plugin;
 
 /**
  * This function allows the widget to tell the invoker if it needs to calculate different urls per language, here it is needed
@@ -34,7 +35,7 @@ class tpw_flags extends transposh_base_widget {
 	 *
 	 * @param array $args - http://trac.transposh.org/wiki/WidgetWritingGuide#functiontp_widgets_doargs
 	 *
-	 * @global transposh_plugin $my_transposh_plugin
+	 * @global Plugin $my_transposh_plugin
 	 */
 	static function tp_widget_do( $args ) {
 		global $my_transposh_plugin;

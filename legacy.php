@@ -16,3 +16,4 @@ class tp_parserstats extends \BetterTransposh\Core\Parser_Stats {}
 
 class tp_parser extends \BetterTransposh\Core\Parser {}
 
+class transposh_plugin extends \BetterTransposh\Plugin {}
