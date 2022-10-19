@@ -21,6 +21,8 @@
  * Date: %DATE%
  */
 
+use BetterTransposh\Core\Utilities;
+
 class tpw_flags_css extends transposh_base_widget {
 
 	/**
@@ -32,7 +34,7 @@ class tpw_flags_css extends transposh_base_widget {
 		echo "<div class=\"" . NO_TRANSLATE_CLASS . " transposh_flags\" >";
 		foreach ( $args as $langrecord ) {
 			echo "<a href=\"{$langrecord['url']}\"" . ( $langrecord['active'] ? ' class="tr_active"' : '' ) . '>' .
-			     transposh_utils::display_flag( "", $langrecord['flag'], $langrecord['langorig'], true ) .
+			     Utilities::display_flag( "", $langrecord['flag'], $langrecord['langorig'], true ) .
 			     "</a>";
 		}
 		echo "</div>";

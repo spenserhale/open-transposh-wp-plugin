@@ -21,6 +21,8 @@
  * Date: %DATE%
  */
 
+use BetterTransposh\Core\Utilities;
+
 /**
  * This function allows the widget to tell the invoker if it needs to calculate different urls per language, here it is needed
  * @return boolean
@@ -42,7 +44,7 @@ class tpw_flags extends transposh_base_widget {
 		echo "<div class=\"" . NO_TRANSLATE_CLASS . " transposh_flags\" >";
 		foreach ( $args as $langrecord ) {
 			echo "<a href=\"{$langrecord['url']}\"" . ( $langrecord['active'] ? ' class="tr_active"' : '' ) . '>' .
-			     transposh_utils::display_flag( "$plugpath/img/flags", $langrecord['flag'], $langrecord['langorig'], false ) .
+			     Utilities::display_flag( "$plugpath/img/flags", $langrecord['flag'], $langrecord['langorig'], false ) .
 			     "</a>";
 		}
 		echo "</div>";

@@ -17,14 +17,12 @@
  *
  */
 
-use BetterTransposh\Core\Constants;
-
-require_once( "logging.php" );
+namespace BetterTransposh\Core;
 
 /**
  * This is a static class to reduce chance of namespace collisions with other plugins
  */
-class transposh_utils {
+class Utilities {
 
 	/**
 	 * Encode URLs based of RFC 3986
@@ -78,7 +76,7 @@ class transposh_utils {
 
 	/**
 	 * Remove from url any language (or editing) params that were added for our use.
-	 * Return the scrubbed url
+	 * Return string the scrubbed url
 	 */
 	public static function cleanup_url( $url, $home_url, $remove_host = false ) {
 
@@ -131,12 +129,12 @@ class transposh_utils {
 			unset( $parsedurl['scheme'] );
 			unset( $parsedurl['host'] );
 		}
-		$url = transposh_utils::glue_url( $parsedurl );
+		$url = Utilities::glue_url( $parsedurl );
 		if ( ! $url ) {
 			return '/';
 		}
 
-		return transposh_utils::urlencode( $url );
+		return Utilities::urlencode( $url );
 	}
 
 	/**
@@ -233,7 +231,7 @@ class transposh_utils {
 		//$url = preg_replace("/&$/", "", $url);
 		//$url = preg_replace("/\?$/", "", $url);
 		//    $url = htmlentities($url, ENT_NOQUOTES);
-		$url = transposh_utils::glue_url( $parsedurl );
+		$url = Utilities::glue_url( $parsedurl );
 		tp_logger( "new url: $url", 5 );
 
 		return $url;
@@ -288,7 +286,7 @@ class transposh_utils {
 	 *
 	 * @param array $parsed url_parse style array
 	 *
-	 * @return combined url
+	 * @return string combined url
 	 */
 	public static function glue_url( $parsed ) {
 		if ( ! is_array( $parsed ) ) {
@@ -444,10 +442,10 @@ class transposh_utils {
 		}
 		// TODO: Consider sanitize_title_with_dashes
 		// TODO : need to handle params....
-		//tp_logger(substr($url,strlen($url)-1));
+		//BetterTransposh\Core\Logger(substr($url,strlen($url)-1));
 		//if (substr($url,strlen($url)-1) == '/') $url2 .= '/';
 		//$url2 = rtrim($url2,'/');
-		// tp_logger("h $home_url hr $href ur $url ur2 $url2");
+		// BetterTransposh\Core\Logger("h $home_url hr $href ur $url ur2 $url2");
 		//$href = $this->home_url.$url2;
 		if ( substr( $href, strlen( $href ) - 1 ) == '/' ) {
 			$url2 .= '/';
@@ -517,7 +515,7 @@ class transposh_utils {
 	public static function prefered_language( $available_languages, $default_lang = "auto", $http_accept_language = "auto" ) {
 		// if $http_accept_language was left out, read it from the HTTP-Header
 		if ( $http_accept_language == "auto" ) {
-			$http_accept_language = transposh_utils::get_clean_server_var( 'HTTP_ACCEPT_LANGUAGE' );
+			$http_accept_language = Utilities::get_clean_server_var( 'HTTP_ACCEPT_LANGUAGE' );
 		}
 
 		// standard  for HTTP_ACCEPT_LANGUAGE is defined under
@@ -594,7 +592,7 @@ class transposh_utils {
 	}
 
 	public static function is_bot() {
-		return preg_match( "#(bot|yandex|validator|google|jeeves|spider|crawler|slurp)#si", transposh_utils::get_clean_server_var( 'HTTP_USER_AGENT' ) );
+		return preg_match( "#(bot|yandex|validator|google|jeeves|spider|crawler|slurp)#si", Utilities::get_clean_server_var( 'HTTP_USER_AGENT' ) );
 	}
 
 	public static function allow_cors() {
@@ -607,9 +605,9 @@ class transposh_utils {
 	/**
 	 * Cleans stray locale markings
 	 *
-	 * @param type $input
+	 * @param mixed $input
 	 *
-	 * @return type
+	 * @return mixed
 	 */
 	public static function clean_breakers( $input ) {
 		return str_replace( array( TP_GTXT_BRK, TP_GTXT_IBRK, TP_GTXT_BRK_CLOSER, TP_GTXT_IBRK_CLOSER ), '', $input );

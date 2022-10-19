@@ -20,6 +20,8 @@
 //Constants
 //
 //Table name in database for storing translations
+use BetterTransposh\Core\Utilities;
+
 define( 'TRANSLATIONS_TABLE', 'translations' );
 define( 'TRANSLATIONS_LOG', 'translations_log' );
 
@@ -71,7 +73,7 @@ class transposh_database {
 		}
 		// I have space in keys issues...
 		/* elseif (class_exists('Memcached')) {
-		  tp_logger('I am using pecl-Memcached!', 3);
+		  BetterTransposh\Core\Logger('I am using pecl-Memcached!', 3);
 		  $this->memcache_working = true;
 		  $this->memcache = new Memcached();
 		  //if (!count($this->memcache->getServerList())) {
@@ -79,7 +81,7 @@ class transposh_database {
 		  // }
 		  //@$this->memcache->connect(TP_MEMCACHED_SRV, TP_MEMCACHED_PORT) or $this->memcache_working = false;
 		  } */
-		//tp_logger($this->memcache_working); // TODO!! make sure it does something
+		//BetterTransposh\Core\Logger($this->memcache_working); // TODO!! make sure it does something
 	}
 
 	/**
@@ -392,7 +394,7 @@ class transposh_database {
 		}
 		if ( ! $by && ! ( $all_editable &&
 		                  ( $this->transposh->is_translator() || ( $source > 0 && $this->transposh->options->enable_autotranslate ) ) ) ) {
-			tp_logger( "Unauthorized translation attempt " . transposh_utils::get_clean_server_var( 'REMOTE_ADDR' ), 1 );
+			tp_logger( "Unauthorized translation attempt " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ), 1 );
 			header( "HTTP/1.0 401 Unauthorized translation" );
 			exit;
 		}
@@ -406,7 +408,7 @@ class transposh_database {
 			$loguser = get_current_user_id();
 		}
 		if ( ! $loguser ) {
-			$loguser = transposh_utils::get_clean_server_var( 'REMOTE_ADDR' );
+			$loguser = Utilities::get_clean_server_var( 'REMOTE_ADDR' );
 		}
 
 		// reset values (for good code style)
@@ -418,7 +420,7 @@ class transposh_database {
 		// We are now processing all posted items
 		for ( $i = 0; $i < $items; $i ++ ) {
 			if ( isset( $_POST["tk$i"] ) ) {
-//                $original = transposh_utils::base64_url_decode($_POST["tk$i"]);
+//                $original = BetterTransposh\Core\transposh_utils::base64_url_decode($_POST["tk$i"]);
 				$orig = stripslashes( $_POST["tk$i"] );
 				// The original content is encoded as base64 before it is sent (i.e. token), after we
 				// decode it should just the same after it was parsed.
@@ -535,7 +537,7 @@ class transposh_database {
 	function get_translation_history( $token, $lang ) {
 
 		$ref = getenv( 'HTTP_REFERER' );
-		//$original = transposh_utils::base64_url_decode($token);
+		//$original = BetterTransposh\Core\transposh_utils::base64_url_decode($token);
 		tp_logger( "Inside history for ($token)", 4 );
 
 		// check params
@@ -550,7 +552,7 @@ class transposh_database {
 		// Check permissions, first the lanugage must be on the edit list. Then either the user
 		// is a translator or automatic translation if it is enabled.
 		if ( ! ( $this->transposh->options->is_active_language( $lang ) && $this->transposh->is_translator() ) ) {
-			tp_logger( "Unauthorized history request " . transposh_utils::get_clean_server_var( 'REMOTE_ADDR' ), 1 );
+			tp_logger( "Unauthorized history request " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ), 1 );
 			header( 'HTTP/1.0 401 Unauthorized history' );
 			exit;
 		}
@@ -577,7 +579,7 @@ class transposh_database {
 
 		$rows = $GLOBALS['wpdb']->get_results( $query );
 		for ( $i = 0; $i < count( $rows ); $i ++ ) {
-			if ( ( $rows[ $i ]->translated_by == transposh_utils::get_clean_server_var( 'REMOTE_ADDR' ) && $rows[ $i ]->source == '0' ) || ( is_user_logged_in() && current_user_can( TRANSLATOR ) ) || current_user_can( 'manage_options' ) ) {
+			if ( ( $rows[ $i ]->translated_by == Utilities::get_clean_server_var( 'REMOTE_ADDR' ) && $rows[ $i ]->source == '0' ) || ( is_user_logged_in() && current_user_can( TRANSLATOR ) ) || current_user_can( 'manage_options' ) ) {
 				$rows[ $i ]->can_delete = true;
 			}
 		}
@@ -596,7 +598,7 @@ class transposh_database {
 	 */
 	//TODO: post this action to backup
 	function del_translation_history( $token, $langp, $timestampp ) {
-		// $original = transposh_utils::base64_url_decode($token);
+		// $original = BetterTransposh\Core\transposh_utils::base64_url_decode($token);
 		$original  = esc_sql( html_entity_decode( $token, ENT_NOQUOTES, 'UTF-8' ) );
 		$lang      = esc_sql( $langp );
 		$timestamp = esc_sql( $timestampp );
@@ -628,7 +630,7 @@ class transposh_database {
 
 		tp_logger( $query, 3 );
 		// We only delete if we found something to delete and it is allowed to delete it (user either did that - by ip, has the translator role or is an admin)
-		if ( ( $inmaintable || $inlogtable ) && ( ( $rows[0]->translated_by == transposh_utils::get_clean_server_var( 'REMOTE_ADDR' ) && $rows[0]->source == '0' ) || ( is_user_logged_in() && current_user_can( TRANSLATOR ) ) || current_user_can( 'manage_options' ) ) ) {
+		if ( ( $inmaintable || $inlogtable ) && ( ( $rows[0]->translated_by == Utilities::get_clean_server_var( 'REMOTE_ADDR' ) && $rows[0]->source == '0' ) || ( is_user_logged_in() && current_user_can( TRANSLATOR ) ) || current_user_can( 'manage_options' ) ) ) {
 			// delete faulty record, if in log
 			if ( $inlogtable ) {
 				$query = "DELETE " .
@@ -680,7 +682,7 @@ class transposh_database {
 	function get_translation_alt( $token ) {
 
 		//$ref = getenv('HTTP_REFERER');
-		//  $original = transposh_utils::base64_url_decode($token);
+		//  $original = BetterTransposh\Core\transposh_utils::base64_url_decode($token);
 		$original = $token;
 		tp_logger( "Inside alt for $original ($token)", 4 );
 
@@ -690,7 +692,7 @@ class transposh_database {
 
 		// Check permissions
 		if ( ! ( $this->transposh->is_translator() ) ) {
-			tp_logger( "Unauthorized alt request " . transposh_utils::get_clean_server_var( 'REMOTE_ADDR' ), 1 );
+			tp_logger( "Unauthorized alt request " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ), 1 );
 			header( 'HTTP/1.0 401 Unauthorized alt request' );
 			exit;
 		}

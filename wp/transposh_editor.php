@@ -1,6 +1,7 @@
 <?php
 
 use BetterTransposh\Core\Constants;
+use BetterTransposh\Core\Utilities;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
@@ -130,7 +131,7 @@ class transposh_editor_table extends WP_List_Table {
 
 	function column_translated_by( $item ) {
 		// check if its a user and try to grab his login
-		$by     = transposh_utils::wordpress_user_by_by( $item['translated_by'] );
+		$by     = Utilities::wordpress_user_by_by( $item['translated_by'] );
 		$filter = "";
 		if ( filter_input( INPUT_GET, 'ftb', FILTER_DEFAULT, FILTER_NULL_ON_FAILURE ) ) {
 			$filter = sprintf( '<a href="?page=%s&action=%s%s">' . __( 'Remove filter' ) . '</a>', filter_input( INPUT_GET, "page" ), 'filter-by', $this->get_column_filter( 'ftb' ) );
@@ -217,7 +218,7 @@ class transposh_editor_table extends WP_List_Table {
 		echo '</pre><div class="wrap"><h2>' . __( 'Translations', TRANSPOSH_TEXT_DOMAIN ) . '</h2>';
 		$this->prepare_items();
 		if ( $this->filter ) {
-			$current_url = set_url_scheme( 'http://' . transposh_utils::get_clean_server_var( 'HTTP_HOST' ) . transposh_utils::get_clean_server_var( 'REQUEST_URI' ) );
+			$current_url = set_url_scheme( 'http://' . Utilities::get_clean_server_var( 'HTTP_HOST' ) . Utilities::get_clean_server_var( 'REQUEST_URI' ) );
 			echo( sprintf( "<a href='%s'>%s</a></br>", esc_url( remove_query_arg( [
 				'action',
 				'ftb',

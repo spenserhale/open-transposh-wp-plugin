@@ -11,88 +11,14 @@
  * Date: %DATE%
  */
 
-require_once( "shd/simple_html_dom.php" );
-require_once( "logging.php" );
-require_once( "utils.php" );
-
-/**
- * parserstats class - holds parser statistics
- */
-class tp_parserstats {
-
-	/** @var int Holds the total phrases the parser encountered */
-	public $total_phrases;
-
-	/** @var int Holds the number of phrases that had translation */
-	public $translated_phrases;
-
-	/** @var int Holds the number of phrases that had human translation */
-	public $human_translated_phrases;
-
-	/** @var int Holds the number of phrases that are hidden - yet still somewhat viewable (such as the title attribure) */
-	public $hidden_phrases;
-
-	/** @var int Holds the number of phrases that are hidden and translated */
-	public $hidden_translated_phrases;
-
-	/** @var int Holds the amounts of hidden spans created for translation */
-	public $hidden_translateable_phrases;
-
-	/** @var int Holds the number of phrases that are hidden and probably won't be viewed - such as meta keys */
-	public $meta_phrases;
-
-	/** @var int Holds the number of translated phrases that are hidden and probably won't be viewed - such as meta keys */
-	public $meta_translated_phrases;
-
-	/** @var float Holds the time translation took */
-	public $time;
-
-	/** @var int Holds the time translation started */
-	private $start_time;
-
-	/**
-	 * This function is when the object is initialized, which is a good time to start ticking.
-	 */
-	function __construct() {
-		$this->start_time = microtime( true );
-	}
-
-	/**
-	 * Calculated values - computer translated phrases
-	 * @return int How many phrases were auto-translated
-	 */
-	function get_computer_translated_phrases() {
-		return $this->translated_phrases - $this->human_translated_phrases;
-	}
-
-	/**
-	 * Calculated values - missing phrases
-	 * @return int How many phrases are missing
-	 */
-	function get_missing_phrases() {
-		return $this->total_phrases - $this->translated_phrases;
-	}
-
-	/**
-	 * Start the timer
-	 */
-	function start_timing() {
-		$this->start_time = microtime( true );
-	}
-
-	/**
-	 * Stop timing, store time for reference
-	 */
-	function stop_timing() {
-		$this->time = number_format( microtime( true ) - $this->start_time, 3 );
-	}
-
-}
+namespace BetterTransposh\Core;
+use BetterTransposh\Libraries\SimpleHtmlDom\Node;
+use BetterTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom;
 
 /**
  * Parser class - allows phrase marking and translation with callback functions
  */
-class tp_parser {
+class Parser {
 
 	private $punct_breaks = true;
 	private $num_breaks = true;
@@ -117,10 +43,10 @@ class tp_parser {
 	/** @var int stores the number of the last used span_id */
 	private $span_id = 0;
 
-	/** @var simple_html_dom_node_transposh Contains the current node */
+	/** @var Node Contains the current node */
 	private $currentnode;
 
-	/** @var simple_html_dom_transposh Contains the document dom model */
+	/** @var \BetterTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom Contains the document dom model */
 	private $html;
 	// the document
 	public $dir_rtl;
@@ -156,7 +82,7 @@ class tp_parser {
 		'guid'           => 1
 	);
 
-	/** @var parserstats Contains parsing statistics */
+	/** @var Parser_Stats Contains parsing statistics */
 	private $stats;
 
 	/** @var boolean Are we inside a translated gettext */
@@ -395,7 +321,7 @@ class tp_parser {
 		$phrase      = trim( substr( $string, $start, $end - $start ) );
 		$phrasefixed = trim( str_replace( '&nbsp;', ' ', $phrase ) );
 //        $logstr = str_replace(array(chr(1),chr(2),chr(3),chr(4)), array('[1]','[2]','[3]','[4]'), $string);
-//        tp_logger ("p:$phrasefixed, s:$logstr, st:$start, en:$end, gt:{$this->in_get_text}, gti:{$this->in_get_text_inner}");
+//        BetterTransposh\Core\Logger ("p:$phrasefixed, s:$logstr, st:$start, en:$end, gt:{$this->in_get_text}, gti:{$this->in_get_text_inner}");
 		if ( $this->in_get_text > $this->in_get_text_inner ) {
 			tp_logger( 'not tagging ' . $phrase . ' assumed gettext translated', 4 );
 
@@ -403,7 +329,7 @@ class tp_parser {
 		}
 		if ( $phrase ) {
 			tp_logger( 'tagged phrase: ' . $phrase, 4 );
-			$node                                   = new simple_html_dom_node_transposh( $this->html );
+			$node                                   = new Node( $this->html );
 			$node->tag                              = 'phrase';
 			$node->parent                           = $this->currentnode;
 			$this->currentnode->nodes[]             = $node;
@@ -469,7 +395,7 @@ class tp_parser {
 			} elseif ( $string[ $pos ] == TP_GTXT_BRK || $string[ $pos ] == TP_GTXT_BRK_CLOSER ) {
 //                $logstr = str_replace(array(chr(1),chr(2),chr(3),chr(4)), array('[1]','[2]','[3]','[4]'), $string);
 //                $closers = ($string[$pos] == TP_GTXT_BRK) ? '': 'closer';
-//                tp_logger(" $closers TEXT breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text, 3);
+//                BetterTransposh\Core\Logger(" $closers TEXT breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text, 3);
 				$this->tag_phrase( $string, $start, $pos );
 				( $string[ $pos ] == TP_GTXT_BRK ) ? $this->in_get_text += 1 : $this->in_get_text -= 1;
 				$pos ++;
@@ -480,8 +406,8 @@ class tp_parser {
 			} elseif ( $string[ $pos ] == TP_GTXT_IBRK || $string[ $pos ] == TP_GTXT_IBRK_CLOSER ) {
 //                $logstr = str_replace(array(chr(1),chr(2),chr(3),chr(4)), array('[1]','[2]','[3]','[4]'), $string);
 //                $closers = ($string[$pos] == TP_GTXT_IBRK) ? '': 'closer';
-//                tp_logger("   $closers INNER text breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text_inner, 3);
-				//tp_logger("inner text breaker $start $pos $string " . (($this->in_get_text_inner) ? 'true' : 'false'), 5);
+//                BetterTransposh\Core\Logger("   $closers INNER text breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text_inner, 3);
+				//BetterTransposh\Core\Logger("inner text breaker $start $pos $string " . (($this->in_get_text_inner) ? 'true' : 'false'), 5);
 				$this->tag_phrase( $string, $start, $pos );
 				if ( $this->in_get_text ) {
 					( $string[ $pos ] == TP_GTXT_IBRK ) ? $this->in_get_text_inner += 1 : $this->in_get_text_inner -= 1;
@@ -540,7 +466,7 @@ class tp_parser {
 	 * This recursive function works on the $html dom and adds phrase nodes to translate as needed
 	 * it currently also rewrites urls, and should consider if this is smart
 	 *
-	 * @param simple_html_dom_node_transposh $node
+	 * @param Node $node
 	 */
 	function translate_tagging( $node, $level = 0 ) {
 		$this->currentnode = $node;
@@ -641,7 +567,7 @@ class tp_parser {
 			$this->parsetext( $node->alt );
 		}
 		if ( $node->{'data-quickview'} ) {
-			//    tp_logger("in DQV " . $node->{'data-quickview'}, 2);
+			//    BetterTransposh\Core\Logger("in DQV " . $node->{'data-quickview'}, 2);
 			$this->parsetext( $node->{'data-quickview'} );
 		}
 
@@ -678,7 +604,7 @@ class tp_parser {
 		// get back exactlly the same string without having the client decode/encode it in anyway.
 		$this->edit_span_created = true;
 		$span                    = '<span class ="' . SPAN_PREFIX . '" id="' . SPAN_PREFIX . $this->span_id . '" data-source="' . $source . '"';
-		//$span = '<span class ="' . SPAN_PREFIX . '" id="' . SPAN_PREFIX . $this->span_id . '" data-token="' . transposh_utils::base64_url_encode($original_text) . '" data-source="' . $source . '"';
+		//$span = '<span class ="' . SPAN_PREFIX . '" id="' . SPAN_PREFIX . $this->span_id . '" data-token="' . BetterTransposh\Core\transposh_utils::base64_url_encode($original_text) . '" data-source="' . $source . '"';
 		// if we have a source language
 		if ( $src_lang ) {
 			$span .= ' data-srclang="' . $src_lang . '"';
@@ -739,9 +665,9 @@ class tp_parser {
 	/**
 	 * Allow changing of parsing rules, yeah, I caved
 	 *
-	 * @param type $puncts
-	 * @param type $numbers
-	 * @param type $entities
+	 * @param $puncts
+	 * @param $numbers
+	 * @param $entities
 	 */
 	function change_parsing_rules( $puncts, $numbers, $entities ) {
 		$this->punct_breaks = $puncts;
@@ -758,7 +684,7 @@ class tp_parser {
 	 */
 	function fix_html( $string ) {
 		// ready our stats
-		$this->stats = new tp_parserstats();
+		$this->stats = new \BetterTransposh\Core\Parser_Stats();
 		// handler for possible json (buddypress)
 		if ( $this->might_json ) {
 			if ( $string[0] == '{' ) {
@@ -789,7 +715,7 @@ class tp_parser {
 
 		// create our dom
 		$string     = str_replace( chr( 0xC2 ) . chr( 0xA0 ), ' ', $string ); // annoying NBSPs?
-		$this->html = str_get_html_transposh( $string, false ); // false for RSS?
+		$this->html = $this->str_get_html_transposh( $string, false ); // false for RSS?
 		if ( ! is_object( $this->html ) ) {
 			return $string;
 		}
@@ -1018,7 +944,7 @@ class tp_parser {
 							if ( ( $this->is_edit_mode || ( $this->is_auto_translate && $translated_text == null ) ) && $ep->inbody ) {
 								// prevent duplicate translation (title = text)
 								if ( strpos( $e->innertext, $ep->phrase /* Transposh_utils::base64_url_encode($ep->phrase) */ ) === false ) {
-//                                if (strpos($e->innertext, transposh_utils::base64_url_encode($ep->phrase)) === false) {
+//                                if (strpos($e->innertext, BetterTransposh\Core\transposh_utils::base64_url_encode($ep->phrase)) === false) {
 									//no need to translate span the same hidden phrase more than once
 									if ( ! in_array( $ep->phrase, $hidden_phrases ) ) {
 										$this->stats->hidden_translateable_phrases ++;
@@ -1147,7 +1073,7 @@ class tp_parser {
 	function get_phrases_list( $string ) {
 		$result = array();
 		// create our dom
-		$this->html = str_get_html_transposh( '<span lang="xx">' . $string . '</span>' );
+		$this->html = $this->str_get_html_transposh( '<span lang="xx">' . $string . '</span>' );
 		// mark translateable elements
 		$this->translate_tagging( $this->html->root );
 		foreach ( $this->html->nodes as $ep ) {
@@ -1157,6 +1083,13 @@ class tp_parser {
 		}
 
 		return $result;
+	}
+
+	private function str_get_html_transposh($str, $lowercase = true) {
+		$dom = new \BetterTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom;
+		$dom->load( $str, $lowercase );
+
+		return $dom;
 	}
 
 }

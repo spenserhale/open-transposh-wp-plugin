@@ -2,14 +2,9 @@
 
 namespace Tests\Core;
 
-use tp_logger;
-use tp_parser;
+use BetterTransposh\Core\Logger;
+use BetterTransposh\Core\Parser;
 use WP_UnitTestCase;
-
-//require_once 'PHPUnit/Framework.php';
-
-require_once dirname( __FILE__ ) . '/../../core/parser.php';
-require_once dirname( __FILE__ ) . '/../../core/logging.php';
 
 /**
  * Test class for parser.
@@ -18,7 +13,7 @@ require_once dirname( __FILE__ ) . '/../../core/logging.php';
 class Parser_Tests extends WP_UnitTestCase {
 
 	/**
-	 * @var    tp_parser
+	 * @var    Parser
 	 * @access protected
 	 */
 	protected $object;
@@ -30,13 +25,13 @@ class Parser_Tests extends WP_UnitTestCase {
 	 * @access protected
 	 */
 	protected function setUp(): void {
-		$GLOBALS['logger']              = tp_logger::getInstance( true );
+		$GLOBALS['logger']              = Logger::getInstance( true );
 		$GLOBALS['logger']->show_caller = true;
 		$GLOBALS['logger']->set_debug_level( 5 );
 		$GLOBALS['logger']->eolprint = true;
 		$GLOBALS['logger']->printout = true;
 		$GLOBALS['logger']->set_log_file( "/tmp/phpunit.log" );
-		$this->object = new tp_parser;
+		$this->object = new Parser;
 	}
 
 	/**

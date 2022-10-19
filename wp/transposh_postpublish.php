@@ -16,6 +16,7 @@
  */
 
 use BetterTransposh\Core\Constants;
+use BetterTransposh\Core\Parser;
 
 /**
  * class that makes changed to the edit page and post page, adding our change to the side ba
@@ -132,7 +133,7 @@ class transposh_postpublish {
 
 			//TODO - get comments text
 
-			$parser   = new tp_parser();
+			$parser   = new Parser();
 			$phrases  = $parser->get_phrases_list( $content );
 			$phrases2 = $parser->get_phrases_list( $title );
 			$phrases3 = $parser->get_phrases_list( $the_content_feed );
@@ -188,7 +189,7 @@ class transposh_postpublish {
 			}
 			// only if a languages list was created we'll need to translate this
 			if ( @is_array( $json['p'][ $key ]['l'] ) ) {
-				//$json['p'][$key]['t'] = $key;//transposh_utils::base64_url_encode($key);
+				//$json['p'][$key]['t'] = $key;//BetterTransposh\Core\transposh_utils::base64_url_encode($key);
 				@$json['length'] ++;
 			}
 		}

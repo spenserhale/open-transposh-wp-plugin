@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+namespace BetterTransposh\Libraries;
+
 /**
  * Server Side Chrome PHP debugger class
  *
@@ -22,7 +24,7 @@
  * @author Craig Campbell <iamcraigcampbell@gmail.com>
  */
 // avoid conflicts by adding _tp to class name
-class ChromePhp_tp {
+class ChromePhp {
 	/**
 	 * @var string
 	 */

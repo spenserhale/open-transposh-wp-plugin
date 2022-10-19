@@ -16,6 +16,7 @@
  */
 
 use BetterTransposh\Core\Constants;
+use BetterTransposh\Core\Utilities;
 
 class transposh_3rdparty {
 
@@ -77,7 +78,7 @@ class transposh_3rdparty {
 	function super_cache_invalidate() {
 		//Now, we are actually using the referrer and not the request, with some precautions
 		// check server['']
-		$GLOBALS['wp_cache_request_uri'] = substr( transposh_utils::get_clean_server_var( 'HTTP_REFERER' ), stripos( transposh_utils::get_clean_server_var( 'HTTP_REFERER' ), transposh_utils::get_clean_server_var( 'HTTP_HOST' ) ) + strlen( transposh_utils::get_clean_server_var( 'HTTP_HOST' ) ) );
+		$GLOBALS['wp_cache_request_uri'] = substr( Utilities::get_clean_server_var( 'HTTP_REFERER' ), stripos( Utilities::get_clean_server_var( 'HTTP_REFERER' ), Utilities::get_clean_server_var( 'HTTP_HOST' ) ) + strlen( Utilities::get_clean_server_var( 'HTTP_HOST' ) ) );
 		$GLOBALS['wp_cache_request_uri'] = preg_replace( '/[ <>\'\"\r\n\t\(\)]/', '', str_replace( '/index.php', '/', str_replace( '..', '', preg_replace( "/(\?.*)?$/", '', $GLOBALS['wp_cache_request_uri'] ) ) ) );
 		// get some supercache variables
 		extract( wp_super_cache_init() );
@@ -114,8 +115,8 @@ class transposh_3rdparty {
 	}
 
 	function w3tc_invalidate() {
-		tp_logger( "W3TC invalidate:" . transposh_utils::get_clean_server_var( 'HTTP_REFERER' ) );
-		$id = url_to_postid( transposh_utils::get_clean_server_var( 'HTTP_REFERER' ) );
+		tp_logger( "W3TC invalidate:" . Utilities::get_clean_server_var( 'HTTP_REFERER' ) );
+		$id = url_to_postid( Utilities::get_clean_server_var( 'HTTP_REFERER' ) );
 		if ( is_numeric( $id ) ) {
 			tp_logger( "W3TC invalidate post id: $id" );
 			w3tc_pgcache_flush_post( $id );
@@ -132,11 +133,11 @@ class transposh_3rdparty {
 	 * @return string The url that buddypress should see
 	 */
 	function bp_uri_filter( $uri ) {
-		$lang = transposh_utils::get_language_from_url( $uri, $this->transposh->home_url );
+		$lang = Utilities::get_language_from_url( $uri, $this->transposh->home_url );
 		//TODO - check using get_clean_url
-		$uri = transposh_utils::cleanup_url( $uri, $this->transposh->home_url );
+		$uri = Utilities::cleanup_url( $uri, $this->transposh->home_url );
 		if ( $this->transposh->options->enable_url_translate ) {
-			$uri = transposh_utils::get_original_url( $uri, '', $lang, array(
+			$uri = Utilities::get_original_url( $uri, '', $lang, array(
 				$this->transposh->database,
 				'fetch_original'
 			) );
@@ -151,8 +152,8 @@ class transposh_3rdparty {
 	 * @param type $url
 	 */
 	function bbp_get_search_results_url( $url ) {
-		$lang = transposh_utils::get_language_from_url( transposh_utils::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
-		$href = transposh_utils::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, false );
+		$lang = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
+		$href = Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, false );
 
 		return $href;
 	}
@@ -167,8 +168,8 @@ class transposh_3rdparty {
 		if ( $params->type == 'new_translation' ) {
 			return;
 		}
-		if ( transposh_utils::get_language_from_url( transposh_utils::get_clean_server_var( 'HTTP_REFERER' ), $this->transposh->home_url ) ) {
-			bp_activity_update_meta( $params->id, 'tp_language', transposh_utils::get_language_from_url( transposh_utils::get_clean_server_var( 'HTTP_REFERER' ), $this->transposh->home_url ) );
+		if ( Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->transposh->home_url ) ) {
+			bp_activity_update_meta( $params->id, 'tp_language', Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->transposh->home_url ) );
 		}
 	}
 
@@ -263,12 +264,12 @@ class transposh_3rdparty {
 				if ( ! $this->transposh->options->is_default_language( $lang ) ) {
 					$newloc = $orig_url;
 					if ( $this->transposh->options->enable_url_translate ) {
-						$newloc = transposh_utils::translate_url( $newloc, $this->transposh->home_url, $lang, array(
+						$newloc = Utilities::translate_url( $newloc, $this->transposh->home_url, $lang, array(
 							&$this->transposh->database,
 							'fetch_translation'
 						) );
 					}
-					$newloc = transposh_utils::rewrite_url_lang_param( $newloc, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, false );
+					$newloc = Utilities::rewrite_url_lang_param( $newloc, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, false );
 					$sm_page->SetUrl( $newloc );
 					$generatorObject->AddElement( $sm_page );
 				}
@@ -292,12 +293,12 @@ class transposh_3rdparty {
 				if ( ! $this->transposh->options->is_default_language( $lang ) ) {
 					$newloc = $orig_url;
 					if ( $this->transposh->options->enable_url_translate ) {
-						$newloc = transposh_utils::translate_url( $newloc, $this->transposh->home_url, $lang, array(
+						$newloc = Utilities::translate_url( $newloc, $this->transposh->home_url, $lang, array(
 							&$this->transposh->database,
 							'fetch_translation'
 						) );
 					}
-					$newloc = transposh_utils::rewrite_url_lang_param( $newloc, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, false );
+					$newloc = Utilities::rewrite_url_lang_param( $newloc, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, false );
 					$sm_page->set_url( $newloc );
 					$generatorObject->add_element( $sm_page );
 				}
@@ -354,12 +355,12 @@ class transposh_3rdparty {
 			if ( ! $this->transposh->options->is_default_language( $lang ) ) {
 				$newloc = $orig_url;
 				if ( $this->transposh->options->enable_url_translate ) {
-					$newloc = transposh_utils::translate_url( $newloc, $this->transposh->home_url, $lang, array(
+					$newloc = Utilities::translate_url( $newloc, $this->transposh->home_url, $lang, array(
 						&$this->transposh->database,
 						'fetch_translation'
 					) );
 				}
-				$newloc           = transposh_utils::rewrite_url_lang_param( $newloc, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, false );
+				$newloc           = Utilities::rewrite_url_lang_param( $newloc, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, false );
 				$yoast_url['loc'] = $newloc;
 				$urls[]           = $yoast_url;
 			}
@@ -369,10 +370,10 @@ class transposh_3rdparty {
 	}
 
 	function woo_uri_filter( $url ) {
-		$lang = transposh_utils::get_language_from_url( transposh_utils::get_clean_server_var( 'HTTP_REFERER' ), $this->transposh->home_url );
-		tp_logger( 'altering woo url to:' . transposh_utils::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, $this->transposh->edit_mode ) );
+		$lang = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->transposh->home_url );
+		tp_logger( 'altering woo url to:' . Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, $this->transposh->edit_mode ) );
 
-		return transposh_utils::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, $this->transposh->edit_mode );
+		return Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, $this->transposh->edit_mode );
 	}
 
 	/*
@@ -396,7 +397,7 @@ class transposh_3rdparty {
 		}
 		tp_logger( $url, 1 );
 
-		return transposh_utils::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->options->enable_permalinks, $this->transposh->target_language, $this->transposh->edit_mode );
+		return Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->options->enable_permalinks, $this->transposh->target_language, $this->transposh->edit_mode );
 	}
 
 	function fix_wpbdp_links( $url ) {
@@ -407,7 +408,7 @@ class transposh_3rdparty {
 		}
 		tp_logger( $url, 1 );
 
-		return transposh_utils::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->options->enable_permalinks, $this->transposh->target_language, $this->transposh->edit_mode );
+		return Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->options->enable_permalinks, $this->transposh->target_language, $this->transposh->edit_mode );
 	}
 
 	function fix_wpbdp_links_base( $url ) {
@@ -416,7 +417,7 @@ class transposh_3rdparty {
 		}
 		tp_logger( $url, 1 );
 
-		return transposh_utils::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->options->enable_permalinks, $this->transposh->target_language, $this->transposh->edit_mode );
+		return Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->options->enable_permalinks, $this->transposh->target_language, $this->transposh->edit_mode );
 	}
 
 }

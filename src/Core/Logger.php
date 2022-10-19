@@ -1,25 +1,10 @@
 <?php
 
-/*
- * Transposh v%VERSION%
- * http://transposh.org/
- *
- * Copyright %YEAR%, Team Transposh
- * Licensed under the GPL Version 2 or higher.
- * http://transposh.org/license
- *
- * Date: %DATE%
- */
+namespace BetterTransposh\Core;
 
-/*
- * Logging utility class
- */
+use BetterTransposh\Libraries\ChromePhp;
 
-// Report all PHP errors
-//error_reporting(E_ALL);
-require_once( 'chromelogger.php' );
-
-class tp_logger {
+class Logger {
 
 	/** @var string Name of file to log into */
 	private $logfile;
@@ -36,14 +21,14 @@ class tp_logger {
 	/** @var boolean shell we show which function called the logger */
 	public $show_caller = true;
 
-	/** @var used for remote firephp debugging */
+	/** @var mixed used for remote firephp debugging */
 	private $remoteip;
 
 	private $global_log = 0;
 
 	private $logstr = "";
 
-	/** @var logger Singelton instance of our logger */
+	/** @var self Singelton instance of our logger */
 	protected static $instance = null;
 
 	function __construct() {
@@ -68,7 +53,7 @@ class tp_logger {
 			if ( $this->show_caller ) {
 				$trace = debug_backtrace();
 				if ( $do_backtrace ) {
-					ChromePhp_tp::log( $trace[3] );
+					ChromePhp::log( $trace[3] );
 				}
 				if ( isset( $trace[ 2 + $nest ]['class'] ) ) {
 					$log_prefix = str_pad( "{$trace[2 + $nest]['class']}::{$trace[2 + $nest]['function']} {$trace[1 + $nest]['line']}", 55 + $nest, '_' );
@@ -103,18 +88,18 @@ class tp_logger {
 				echo "$log_prefix:$msg";
 				echo ( $this->eolprint ) ? "\n" : "<br/>";
 			} else {
-				if ( ! transposh_utils::get_clean_server_var( 'REMOTE_ADDR' ) || $this->remoteip != transposh_utils::get_clean_server_var( 'REMOTE_ADDR' ) ) {
+				if ( ! Utilities::get_clean_server_var( 'REMOTE_ADDR' ) || $this->remoteip != Utilities::get_clean_server_var( 'REMOTE_ADDR' ) ) {
 					return;
 				}
 				if ( ( is_array( $msg ) || is_object( $msg ) ) && $this->show_caller ) {
-					ChromePhp_tp::groupCollapsed( "$log_prefix: object/array" );
-					ChromePhp_tp::log( $msg );
-					ChromePhp_tp::groupEnd();
+					ChromePhp::groupCollapsed( "$log_prefix: object/array" );
+					ChromePhp::log( $msg );
+					ChromePhp::groupEnd();
 				} else {
 					if ( is_array( $msg ) || is_object( $msg ) ) {
-						ChromePhp_tp::log( $msg );
+						ChromePhp::log( $msg );
 					} else {
-						ChromePhp_tp::log( "$log_prefix:$msg" );
+						ChromePhp::log( "$log_prefix:$msg" );
 					}
 				}
 			}
@@ -126,7 +111,7 @@ class tp_logger {
 	 *
 	 * @param boolean $AutoCreate
 	 *
-	 * @return logger
+	 * @return self
 	 */
 	public static function getInstance( $AutoCreate = false ) {
 		if ( $AutoCreate === true && ! self::$instance ) {
@@ -138,7 +123,7 @@ class tp_logger {
 
 	/**
 	 * Creates logger object and stores it for singleton access
-	 * @return logger
+	 * @return self
 	 */
 	public static function init() {
 		return self::$instance = new self();
@@ -168,23 +153,3 @@ class tp_logger {
 	}
 
 }
-
-// We create a global singelton instance
-$GLOBALS['tp_logger'] = tp_logger::getInstance( true );
-
-/**
- * This function provides easier access to logging using the singleton object
- *
- * @param mixed $msg
- * @param int $severity
- */
-/* function tp_logger($msg, $severity = 3, $do_backtrace = false) {
-  $GLOBALS['tp_logger']->do_log($msg, $severity, $do_backtrace);
-  } */
-
-/*
- *  sample of how to modify logging parameters from anywhere
- * 
-  $GLOBALS['tp_logger'] = tp_logger::getInstance(true);
-  $GLOBALS['tp_logger']->show_caller = true;
- */

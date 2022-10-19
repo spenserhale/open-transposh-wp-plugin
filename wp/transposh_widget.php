@@ -17,6 +17,8 @@
  */
 
 //Define subwidget files prefix
+use BetterTransposh\Core\Utilities;
+
 define( 'TRANSPOSH_WIDGET_PREFIX', 'tpw_' );
 
 /**
@@ -275,7 +277,7 @@ class transposh_plugin_widget extends WP_Widget {
 		$widget_args = array();
 		$page_url    = '';
 		if ( is_404() ) {
-			$clean_page_url = transposh_utils::cleanup_url( $this->transposh->home_url, $this->transposh->home_url, true );
+			$clean_page_url = Utilities::cleanup_url( $this->transposh->home_url, $this->transposh->home_url, true );
 		}
 		// loop on the languages
 		foreach ( $this->transposh->options->get_sorted_langs() as $code => $langrecord ) {
@@ -286,7 +288,7 @@ class transposh_plugin_widget extends WP_Widget {
 			     ( $this->transposh->options->is_default_language( $code ) ) ) {
 				// now we alway do this... maybe cache this to APC/Memcache
 				if ( $this->transposh->options->enable_url_translate && ! $this->transposh->options->is_default_language( $code ) ) {
-					$page_url = transposh_utils::translate_url( $clean_page_url, '', $code, array(
+					$page_url = Utilities::translate_url( $clean_page_url, '', $code, array(
 						&$this->transposh->database,
 						'fetch_translation'
 					) );
@@ -294,7 +296,7 @@ class transposh_plugin_widget extends WP_Widget {
 					$page_url = $clean_page_url;
 				}
 				// clean $code in default lanaguge
-				$page_url      = transposh_utils::rewrite_url_lang_param( $page_url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $this->transposh->options->is_default_language( $code ) ? '' : $code, $this->transposh->edit_mode );
+				$page_url      = Utilities::rewrite_url_lang_param( $page_url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $this->transposh->options->is_default_language( $code ) ? '' : $code, $this->transposh->edit_mode );
 				$widget_args[] = array(
 					'lang'     => $langname,
 					'langorig' => $language,
@@ -379,7 +381,7 @@ class transposh_plugin_widget extends WP_Widget {
 			}
 			// add the edit checkbox only for translators for languages marked as editable
 			if ( $this->transposh->is_editing_permitted() ) {
-				$ref = transposh_utils::rewrite_url_lang_param( transposh_utils::get_clean_server_var( 'REQUEST_URI' ), $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, ( $this->transposh->options->is_default_language( $this->transposh->target_language ) ? "" : $this->transposh->target_language ), ! $this->transposh->edit_mode );
+				$ref = Utilities::rewrite_url_lang_param( Utilities::get_clean_server_var( 'REQUEST_URI' ), $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, ( $this->transposh->options->is_default_language( $this->transposh->target_language ) ? "" : $this->transposh->target_language ), ! $this->transposh->edit_mode );
 				echo '<input type="checkbox" name="' . EDIT_PARAM . '" value="1" ' .
 				     ( $this->transposh->edit_mode ? 'checked="checked" ' : '' ) .
 				     ' onclick="document.location.href=\'' . $ref . '\';"/>&nbsp;Edit Translation';

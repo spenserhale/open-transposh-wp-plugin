@@ -15,6 +15,8 @@
  * This file handles functions relevant to specific third party plugins
  */
 
+use BetterTransposh\Core\Utilities;
+
 class transposh_mail {
 
 	/** @var transposh_plugin Container class */
@@ -78,7 +80,7 @@ class transposh_mail {
 			$buffered_mail .= __( 'Original string', TRANSPOSH_TEXT_DOMAIN ) . ": $original\n<br/>"
 			                  . __( 'Translation', TRANSPOSH_TEXT_DOMAIN ) . ": $translation\n<br/>"
 			                  . __( 'Language', TRANSPOSH_TEXT_DOMAIN ) . ": $lang\n<br/>"
-			                  . __( 'Translated by', TRANSPOSH_TEXT_DOMAIN ) . ": " . transposh_utils::wordpress_user_by_by( $translated_by ) . "\n<br/>"
+			                  . __( 'Translated by', TRANSPOSH_TEXT_DOMAIN ) . ": " . Utilities::wordpress_user_by_by( $translated_by ) . "\n<br/>"
 			                  . __( 'Translated on', TRANSPOSH_TEXT_DOMAIN ) . ": " . date( "r" ) . "\n\n<br/><br/>";
 
 			set_transient( 'transposh_buffered_mail', $buffered_mail, 1 * HOUR_IN_SECONDS );
@@ -98,7 +100,7 @@ class transposh_mail {
 		           . __( 'Original string', TRANSPOSH_TEXT_DOMAIN ) . ": $original\n<br/>"
 		           . __( 'Translation', TRANSPOSH_TEXT_DOMAIN ) . ": $translation\n<br/>"
 		           . __( 'Language', TRANSPOSH_TEXT_DOMAIN ) . ": $lang\n<br/>"
-		           . __( 'Translated by', TRANSPOSH_TEXT_DOMAIN ) . ": " . transposh_utils::wordpress_user_by_by( $translated_by ) . "\n\n<br/><br/>"
+		           . __( 'Translated by', TRANSPOSH_TEXT_DOMAIN ) . ": " . Utilities::wordpress_user_by_by( $translated_by ) . "\n\n<br/><br/>"
 		           . '<a href="' . admin_url( "admin.php?page=tp_editor" ) . '">'
 		           . __( 'If you believe that those translations are not good, use the translation editor to modify it', TRANSPOSH_TEXT_DOMAIN ) . "</a>\n\n<br/><br/>"
 		           . "<h2>" . __( 'Team Transposh', TRANSPOSH_TEXT_DOMAIN ) . "</h2>\n\n<br/>";
@@ -116,8 +118,8 @@ class transposh_mail {
 
 		$new_mail = array(
 			'to'          => $args['to'],
-			'subject'     => transposh_utils::clean_breakers( $args['subject'] ),
-			'message'     => transposh_utils::clean_breakers( $args['message'] ),
+			'subject'     => Utilities::clean_breakers( $args['subject'] ),
+			'message'     => Utilities::clean_breakers( $args['message'] ),
 			'headers'     => $args['headers'],
 			'attachments' => $args['attachments'],
 		);
@@ -140,7 +142,7 @@ class transposh_mail {
 			           __( 'Date', TRANSPOSH_TEXT_DOMAIN ) . "</th></tr>";
 
 			foreach ( $rowstosend as $row ) {
-				$by     = transposh_utils::wordpress_user_by_by( $row->translated_by );
+				$by     = Utilities::wordpress_user_by_by( $row->translated_by );
 				$date   = date( 'r', $row->timestamp );
 				$orig   = esc_html( $row->original );
 				$tran   = esc_html( $row->translated );

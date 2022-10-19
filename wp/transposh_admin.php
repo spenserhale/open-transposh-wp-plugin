@@ -19,6 +19,7 @@
  */
 
 use BetterTransposh\Core\Constants;
+use BetterTransposh\Core\Utilities;
 
 define( 'TR_NONCE', "transposh_nonce" );
 
@@ -494,7 +495,7 @@ class transposh_plugin_admin {
 		echo '<div id="default_lang" style="overflow:auto;padding-bottom:10px;">';
 		$this->header( __( 'Default Language (drag another language here to make it default)', TRANSPOSH_TEXT_DOMAIN ), 'languages' );
 		echo '<ul id="default_list"><li id="' . $this->transposh->options->default_language . '" class="languages">'
-		     . transposh_utils::display_flag( "{$this->transposh->transposh_plugin_url}/img/flags", $flag, $langorigname, false/* $this->transposh->options->get_widget_css_flags() */ )
+		     . Utilities::display_flag( "{$this->transposh->transposh_plugin_url}/img/flags", $flag, $langorigname, false/* $this->transposh->options->get_widget_css_flags() */ )
 		     . '<input type="hidden" name="languages[]" value="' . $this->transposh->options->default_language . '" />'
 		     . '&nbsp;<span class="langname">' . $langorigname . '</span><span class="langname hidden">' . $langname . '</span></li>';
 		echo '</ul></div>';
@@ -510,7 +511,7 @@ class transposh_plugin_admin {
 			list ( $langname, $langorigname, $flag ) = explode( ",", $langrecord );
 			echo '<li id="' . $langcode . '" class="languages ' . ( $this->transposh->options->is_active_language( $langcode ) || $this->transposh->options->is_default_language( $langcode ) ? "lng_active" : "" )
 			     . '"><div style="float:' . $this->localeleft . '">'
-			     . transposh_utils::display_flag( "{$this->transposh->transposh_plugin_url}/img/flags", $flag, false /* $langorigname,$this->transposh->options->get_widget_css_flags() */ )
+			     . Utilities::display_flag( "{$this->transposh->transposh_plugin_url}/img/flags", $flag, false /* $langorigname,$this->transposh->options->get_widget_css_flags() */ )
 			     // DOC THIS BUGBUG fix!
 			     . '<input type="hidden" name="languages[]" value="' . $langcode . ( $this->transposh->options->is_active_language( $langcode ) ? ",v" : "," ) . '" />'
 			     . '&nbsp;<span class="langname">' . $langorigname . '</span><span class="langname hidden">' . $langname . '</span></div>';
@@ -608,7 +609,7 @@ class transposh_plugin_admin {
 			, __( 'Detect language based on the ACCEPT_LANGUAGES http header', TRANSPOSH_TEXT_DOMAIN )
 			, __( 'This enables auto detection of language used by the user as defined in the ACCEPT_LANGUAGES they send. ' .
 			      'This will redirect the first page accessed in the session to the same page with the detected language.', TRANSPOSH_TEXT_DOMAIN ) );
-		$bestlang = transposh_utils::prefered_language( explode( ',', $this->transposh->options->viewable_languages ), $this->transposh->options->default_language );
+		$bestlang = Utilities::prefered_language( explode( ',', $this->transposh->options->viewable_languages ), $this->transposh->options->default_language );
 		$this->normaltext( __( 'Based on your current ACCEPT_LANGUAGES headers', TRANSPOSH_TEXT_DOMAIN ) . ' - ' . __( 'the language will be redirected to the language', TRANSPOSH_TEXT_DOMAIN ) . ' <b>' . $bestlang . '</b>' );
 
 		if ( function_exists( 'geoip_detect2_get_info_from_ip' ) ) {
@@ -617,7 +618,7 @@ class transposh_plugin_admin {
 				, __( 'This enables auto detection of language based on IP Geo detection. ' .
 				      'This will redirect the first page accessed in the session to the same page with the detected language.', TRANSPOSH_TEXT_DOMAIN ) );
 			$isocode  = geoip_detect2_get_info_from_current_ip()->country->isoCode;
-			$bestlang = transposh_utils::language_from_country( explode( ',', $this->transposh->options->viewable_languages ), $isocode, $this->transposh->options->default_language );
+			$bestlang = Utilities::language_from_country( explode( ',', $this->transposh->options->viewable_languages ), $isocode, $this->transposh->options->default_language );
 			$this->normaltext( __( 'The detection assumes that your current country is', TRANSPOSH_TEXT_DOMAIN ) . ' <b>' . $isocode . '</b>' );
 			$this->normaltext( __( 'Based on that detection and your current language selections', TRANSPOSH_TEXT_DOMAIN ) . ' - ' . __( 'the language will be redirected to the language', TRANSPOSH_TEXT_DOMAIN ) . ' <b>' . $bestlang . '</b>' );
 		} else {
@@ -801,7 +802,7 @@ class transposh_plugin_admin {
 			4 => __( 'Information', TRANSPOSH_TEXT_DOMAIN ),
 			5 => __( 'Debug', TRANSPOSH_TEXT_DOMAIN ),
 		) );
-		$this->textinput( $this->transposh->options->debug_remoteip_o, '', sprintf( __( 'Remote debug IP (Your current IP is %s)', TRANSPOSH_TEXT_DOMAIN ), transposh_utils::get_clean_server_var( 'REMOTE_ADDR' ) ) );
+		$this->textinput( $this->transposh->options->debug_remoteip_o, '', sprintf( __( 'Remote debug IP (Your current IP is %s)', TRANSPOSH_TEXT_DOMAIN ), Utilities::get_clean_server_var( 'REMOTE_ADDR' ) ) );
 		$this->sectionstop();
 	}
 
@@ -1149,13 +1150,13 @@ class transposh_plugin_admin {
 //	foreach ( $transients as $transient => $type ) {
 //            delete_site_transient($transient);
 //        };
-//        tp_logger('site transient removed');
-//        tp_logger(wp_get_translation_updates());*/
+//        BetterTransposh\Core\Logger('site transient removed');
+//        BetterTransposh\Core\Logger(wp_get_translation_updates());*/
 //        $currentlangs = wp_get_installed_translations('core');
 //        
 //        /** Load WordPress Translation Install API */
 //        require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
-//       // tp_logger(wp_can_install_language_pack());
+//       // BetterTransposh\Core\Logger(wp_can_install_language_pack());
 //        $translations = wp_get_available_translations();
 //        
 //        //con
@@ -1171,20 +1172,20 @@ class transposh_plugin_admin {
 //			break;
 //		}*/
 //                if ($translation['language'] == $locale) {
-//                  //   tp_logger($translation);
-//                     tp_logger("$translation[version] $translation[updated]");
+//                  //   BetterTransposh\Core\Logger($translation);
+//                     BetterTransposh\Core\Logger("$translation[version] $translation[updated]");
 //                     $getme = true;
 //                }
 //            }
 //            if ($locale != 'en_US' && $getme) {
-//                tp_logger("fetching $locale");
-//                tp_logger($currentlangs['default'][$locale]);
-//                tp_logger(wp_download_language_pack($locale));
+//                BetterTransposh\Core\Logger("fetching $locale");
+//                BetterTransposh\Core\Logger($currentlangs['default'][$locale]);
+//                BetterTransposh\Core\Logger(wp_download_language_pack($locale));
 //            } else {
-//                tp_logger("NOT fetching $locale");                
+//                BetterTransposh\Core\Logger("NOT fetching $locale");                
 //            }
 //        }
-//        //tp_logger(wp_download_language_pack('he_IL'));
+//        //BetterTransposh\Core\Logger(wp_download_language_pack('he_IL'));
 //        die();
 //    }
 	// Start full translation
