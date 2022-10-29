@@ -1,19 +1,9 @@
 <?php
 
-/*
- * Transposh v%VERSION%
- * http://transposh.org/
- *
- * Copyright %YEAR%, Team Transposh
- * Licensed under the GPL Version 2 or higher.
- * http://transposh.org/license
- *
- * Date: %DATE%
- */
-
 namespace BetterTransposh\Core;
 use BetterTransposh\Libraries\SimpleHtmlDom\Node;
 use BetterTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom;
+use BetterTransposh\Libraries\SimpleHtmlDom\Constants;
 
 /**
  * Parser class - allows phrase marking and translation with callback functions
@@ -333,7 +323,7 @@ class Parser {
 			$node->tag                              = 'phrase';
 			$node->parent                           = $this->currentnode;
 			$this->currentnode->nodes[]             = $node;
-			$node->_[ HDOM_INFO_OUTER ]             = '';
+			$node->_[ Constants::HDOM_INFO_OUTER ]  = '';
 			$node->phrase                           = $phrasefixed;
 			$this->prefetch_phrases[ $phrasefixed ] = true;
 			$node->start                            = $start;
@@ -912,7 +902,7 @@ class Parser {
 				$replace = array();
 				$span    = '';
 				// when we already have a parent outertext we'll have to update it directly
-				if ( isset( $e->parent->_[ HDOM_INFO_OUTER ] ) ) {
+				if ( isset( $e->parent->_[ Constants::HDOM_INFO_OUTER ] ) ) {
 					$saved_outertext = $e->outertext;
 				}
 				tp_logger( "$title-original: $e->$title}", 4 );
@@ -968,7 +958,7 @@ class Parser {
 
 				$e->outertext .= $span;
 				// this is where we update in the outercase issue
-				if ( isset( $e->parent->_[ HDOM_INFO_OUTER ] ) ) {
+				if ( isset( $e->parent->_[ Constants::HDOM_INFO_OUTER ] ) ) {
 					$e->parent->outertext = implode( $e->outertext, explode( $saved_outertext, $e->parent->outertext, 2 ) );
 				}
 			}

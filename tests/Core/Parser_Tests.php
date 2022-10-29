@@ -212,8 +212,8 @@ class Parser_Tests extends WP_UnitTestCase {
 		$parse->is_edit_mode      = false;
 		$parse->is_auto_translate = false;
 		$parse->allow_ad          = true;
-		$testhtml                 = '<html><ins class="adsbygoogle" data-ad-format="auto" data-ad-slot="7652439345" data-ad-client="ca-pub-6081460725126312" style="display:block"></ins></html>';
-		$testoutput               = '<html lang="he" dir="rtl"><ins class="adsbygoogle" data-ad-format="auto" data-ad-slot="7652439345" data-ad-client="ca-pub-6081460725126312" style="display:block"></ins></html>';
+		$testhtml                 = '<html><ins class="adsbygoogle" data-ad-format="auto" data-ad-slot="7652439345" data-ad-client="ca-pub-7523823497771676" style="display:block"></ins></html>';
+		$testoutput               = '<html lang="he" dir="rtl"><ins class="adsbygoogle" data-ad-format="auto" data-ad-slot="7652439345" data-ad-client="ca-pub-7523823497771676" style="display:block"></ins></html>';
 		for ( $i = 0; $i < 100; $i ++ ) {
 			echo $i . "\n";
 			$this->assertEquals( $parse->fix_html( $testhtml ), $testoutput );
