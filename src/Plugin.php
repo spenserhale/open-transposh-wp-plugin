@@ -3,10 +3,16 @@
 namespace BetterTransposh;
 
 use BetterTransposh\Core\Constants;
+use BetterTransposh\Core\Null_Logger;
 use BetterTransposh\Core\Parser;
+use BetterTransposh\Core\Query_Monitor_Logger;
 use BetterTransposh\Core\Utilities;
 use BetterTransposh\Widgets\Plugin_Widget;
+use BetterTransposh\Core\Logger;
+use Psr\Log\NullLogger;
 use stdClass;
+use tp_logger;
+use transposh_plugin;
 use WP;
 use WP_Error;
 use WP_Query;
@@ -84,6 +90,27 @@ class Plugin {
 	/** @var boolean Do I need to check for updates by myself? After wordpress checked his */
 	private $do_update_check = false;
 
+	public static function init() {
+		if ( defined( 'TRANSPOSH_LEGACY_COMPATIBILITY' ) ) {
+			self::init_legacy_compatibility();
+		} else {
+			self::init_modern();
+		}
+	}
+
+	private static function init_modern() {
+		global $better_transposh;
+
+		$better_transposh = new self();
+	}
+
+	private static function init_legacy_compatibility() {
+		global $my_transposh_plugin, $tp_logger;
+
+		$my_transposh_plugin = new transposh_plugin();
+		$tp_logger           = tp_logger::getInstance( true );
+	}
+
 	/**
 	 * class constructor
 	 */
@@ -96,15 +123,7 @@ class Plugin {
 		$this->postpublish = new Post_Publish( $this );
 		$this->third_party = new Integrations( $this );
 		$this->mail        = new Mail( $this );
-
-		// initialize logger
-		if ( $this->options->debug_enable ) {
-			$GLOBALS['BetterTransposh\Core\Logger']              = Logger::getInstance( true );
-			$GLOBALS['BetterTransposh\Core\Logger']->show_caller = true;
-			$GLOBALS['BetterTransposh\Core\Logger']->set_debug_level( $this->options->debug_loglevel );
-			$GLOBALS['BetterTransposh\Core\Logger']->set_log_file( $this->options->debug_logfile );
-			$GLOBALS['BetterTransposh\Core\Logger']->set_remoteip( $this->options->debug_remoteip );
-		}
+		$this->initialize_logger();
 
 		// "global" vars
 		$this->home_url = get_option( 'home' );
@@ -143,7 +162,7 @@ class Plugin {
 		add_action( 'init', array( &$this, 'on_init' ), 0 ); // really high priority
 //        add_action('admin_init', array(&$this, 'on_admin_init')); might use to mark where not to work?
 		add_action( 'parse_request', array( &$this, 'on_parse_request' ), 0 ); // should have high enough priority
-		add_action( 'plugins_loaded', array( &$this, 'plugin_loaded' ) );
+		add_action( 'plugins_loaded', array( &$this, 'plugin_loaded' ), 11 );
 		add_action( 'shutdown', array( &$this, 'on_shutdown' ) );
 		add_action( 'wp_print_styles', array( &$this, 'add_transposh_css' ) );
 		add_action( 'wp_print_scripts', array( &$this, 'add_transposh_js' ) );
@@ -1624,7 +1643,7 @@ class Plugin {
 	// transposh translation proxy ajax wrapper
 
 	function on_ajax_nopriv_tp_tp() {
-		$GLOBALS['BetterTransposh\Core\Logger']->set_global_log( 3 );
+		$GLOBALS['tp_logger']->set_global_log( 3 );
 		// we need curl for this proxy
 		if ( ! function_exists( 'curl_init' ) ) {
 			return;
@@ -1701,11 +1720,11 @@ class Plugin {
 			}
 
 			if ( $result === false ) {
-				echo 'Proxy attempt failed<br>' . $GLOBALS['BetterTransposh\Core\Logger']->get_logstr();
+				echo 'Proxy attempt failed<br>' . $GLOBALS['tp_logger']->get_logstr();
 				die();
 			}
 		}
-		$GLOBALS['BetterTransposh\Core\Logger']->set_global_log( 0 );
+		$GLOBALS['tp_logger']->set_global_log( 0 );
 
 		// encode results 
 		$jsonout = new stdClass();
@@ -2309,6 +2328,27 @@ class Plugin {
 		}
 
 		return $res;
+	}
+
+	/**
+	 * @return void
+	 */
+	private function initialize_logger(): void {
+		if ( $this->options->debug_enable ) {
+			if ( defined( 'QM_VERSION' ) ) {
+				$logger = new Query_Monitor_Logger();
+			} else {
+				$logger              = new Logger();
+				$logger->show_caller = true;
+				$logger->set_debug_level( $this->options->debug_loglevel );
+				$logger->set_log_file( $this->options->debug_logfile );
+				$logger->set_remoteip( $this->options->debug_remoteip );
+			}
+
+			$GLOBALS['tp_logger'] = $logger;
+		} else {
+			$GLOBALS['tp_logger'] = new NullLogger();
+		}
 	}
 
 }

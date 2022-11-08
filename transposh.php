@@ -45,7 +45,4 @@ require __DIR__ . '/constants.php';
 require __DIR__ . '/legacy.php';
 require __DIR__ . '/functions.php';
 
-// We create a global singelton instance
-$GLOBALS['tp_logger'] = tp_logger::getInstance( true );
-
-$my_transposh_plugin = new BetterTransposh\Plugin();
+add_action('plugins_loaded', [BetterTransposh\Plugin::class, 'init']);

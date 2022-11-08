@@ -12,10 +12,13 @@
     "autoload": {
         "psr-4": {
             "BetterTransposh\\": "src/",
-            "Tests": "tests/"
+            "Tests\\": "tests/"
         }
     },
     "scripts": {
         "phpunit": "vendor/bin/phpunit"
+    },
+    "require": {
+        "psr/log": "^3.0"
     }
 }
