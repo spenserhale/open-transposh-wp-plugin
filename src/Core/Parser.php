@@ -1,9 +1,9 @@
 <?php
 
 namespace BetterTransposh\Core;
-use BetterTransposh\Libraries\SimpleHtmlDom\Node;
-use BetterTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom;
+
 use BetterTransposh\Libraries\SimpleHtmlDom\Constants;
+use BetterTransposh\Libraries\SimpleHtmlDom\Node;
 
 /**
  * Parser class - allows phrase marking and translation with callback functions
@@ -1075,7 +1075,7 @@ class Parser {
 		return $result;
 	}
 
-	private function str_get_html_transposh($str, $lowercase = true) {
+	private function str_get_html_transposh( $str, $lowercase = true ) {
 		$dom = new \BetterTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom;
 		$dom->load( $str, $lowercase );
 

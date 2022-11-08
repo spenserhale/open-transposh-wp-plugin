@@ -3,12 +3,11 @@
 namespace BetterTransposh;
 
 use BetterTransposh\Core\Constants;
-use BetterTransposh\Core\Null_Logger;
+use BetterTransposh\Core\Logger;
 use BetterTransposh\Core\Parser;
 use BetterTransposh\Core\Query_Monitor_Logger;
 use BetterTransposh\Core\Utilities;
 use BetterTransposh\Widgets\Plugin_Widget;
-use BetterTransposh\Core\Logger;
 use Psr\Log\NullLogger;
 use stdClass;
 use tp_logger;
