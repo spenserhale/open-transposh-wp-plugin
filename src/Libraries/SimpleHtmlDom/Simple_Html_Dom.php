@@ -433,7 +433,7 @@ class Simple_Html_Dom {
 	}
 
 	// link node's parent
-	protected function link_nodes( &$node, $is_child ) {
+	protected function link_nodes( $node, $is_child ) {
 		$node->parent          = $this->parent;
 		$this->parent->nodes[] = $node;
 		if ( $is_child ) {

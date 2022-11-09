@@ -735,9 +735,7 @@ class Database {
 		         "ORDER BY timestamp ASC $limitterm";
 		tp_logger( "query is $query" );
 
-		$rows = $GLOBALS['wpdb']->get_results( $query );
-
-		return $rows;
+		return $GLOBALS['wpdb']->get_results( $query );
 	}
 
 	/**
@@ -779,9 +777,7 @@ class Database {
 		$query .= "ORDER BY $orderby $order $limitterm";
 		tp_logger( "query is $query" );
 
-		$rows = $GLOBALS['wpdb']->get_results( $query, ARRAY_A );
-
-		return $rows;
+		return $GLOBALS['wpdb']->get_results( $query, ARRAY_A );
 	}
 
 	/**
@@ -818,9 +814,7 @@ class Database {
 		}
 		tp_logger( "query is $query" );
 
-		$count = $GLOBALS['wpdb']->get_var( $query );
-
-		return $count;
+		return $GLOBALS['wpdb']->get_var( $query );
 	}
 
 	/*

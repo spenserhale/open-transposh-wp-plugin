@@ -304,8 +304,6 @@ class Integrations {
 					$generatorObject->add_element( $sm_page );
 				}
 			}
-		} else {
-			return;
 		}
 	}
 
