@@ -290,7 +290,7 @@ class Parser {
 		//·
 		//if (ord($char) == 194 && ord($nextchar) == 183)
 		//    return 2;
-		return ( strpos( ',?()[]{}"!:|;' . TP_GTXT_BRK . TP_GTXT_BRK_CLOSER . TP_GTXT_IBRK . TP_GTXT_IBRK_CLOSER, $char ) !== false ) ? 1 : 0; // TODO: might need to add < and > here
+		return ( str_contains( ',?()[]{}"!:|;' . TP_GTXT_BRK . TP_GTXT_BRK_CLOSER . TP_GTXT_IBRK . TP_GTXT_IBRK_CLOSER, $char ) ) ? 1 : 0; // TODO: might need to add < and > here
 	}
 
 	/**
@@ -350,7 +350,7 @@ class Parser {
 		//	$pos = skip_white_space($string, $pos);
 		// skip CDATA in feed_fix mode
 		if ( $this->feed_fix ) {
-			if ( strpos( $string, '<![CDATA[' ) === 0 ) {
+			if ( str_starts_with( $string, '<![CDATA[' ) ) {
 				$pos    = 9; // CDATA length
 				$string = substr( $string, 0, - 3 ); // chop the last ]]>;
 			}
@@ -631,7 +631,7 @@ class Parser {
 	function do_ad_switch() {
 		if ( isset( $this->html->noise ) && is_array( $this->html->noise ) ) {
 			foreach ( $this->html->noise as $key => $value ) {
-				if ( strpos( $value, 'google_ad_client' ) !== false ) {
+				if ( str_contains( $value, 'google_ad_client' ) ) {
 					$publoc = strpos( $value, 'pub-' );
 					$sufloc = strpos( $value, '"', $publoc );
 					if ( ! $sufloc ) {
@@ -933,7 +933,7 @@ class Parser {
 							}
 							if ( ( $this->is_edit_mode || ( $this->is_auto_translate && $translated_text == null ) ) && $ep->inbody ) {
 								// prevent duplicate translation (title = text)
-								if ( strpos( $e->innertext, $ep->phrase /* Transposh_utils::base64_url_encode($ep->phrase) */ ) === false ) {
+								if ( ! str_contains( $e->innertext, $ep->phrase ) ) {
 //                                if (strpos($e->innertext, BetterTransposh\Core\transposh_utils::base64_url_encode($ep->phrase)) === false) {
 									//no need to translate span the same hidden phrase more than once
 									if ( ! in_array( $ep->phrase, $hidden_phrases ) ) {

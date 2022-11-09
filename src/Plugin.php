@@ -472,7 +472,7 @@ class Plugin {
 		// this is an ajax special case, currently crafted and tested on buddy press, lets hope this won't make hell break loose.
 		// it basically sets language based on referred when accessing wp-load.php (which is the way bp does ajax)
 		tp_logger( substr( Utilities::get_clean_server_var( 'SCRIPT_FILENAME' ), - 11 ), 5 );
-		if ( substr( Utilities::get_clean_server_var( 'SCRIPT_FILENAME' ), - 11 ) == 'wp-load.php' ) {
+		if ( str_ends_with( Utilities::get_clean_server_var( 'SCRIPT_FILENAME' ), 'wp-load.php' ) ) {
 			$this->target_language = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
 			$this->attempt_json    = true;
 		}
@@ -642,7 +642,7 @@ class Plugin {
 		//  and this is not a special page or one that is refered by our site
 		// bots can skip this altogether
 		if ( ( $this->options->enable_detect_redirect || $this->options->widget_allow_set_deflang || $this->options->enable_geoip_redirect ) &&
-		     ! ( $this->is_special_page( Utilities::get_clean_server_var( 'REQUEST_URI' ) ) || ( Utilities::get_clean_server_var( 'HTTP_REFERER' ) != null && strpos( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url ) !== false ) ) &&
+		     ! ( $this->is_special_page( Utilities::get_clean_server_var( 'REQUEST_URI' ) ) || ( Utilities::get_clean_server_var( 'HTTP_REFERER' ) != null && str_contains( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url ) ) ) &&
 		     ! ( Utilities::is_bot() ) ) {
 			// we are starting a session if needed
 			if ( ! session_id() ) {
@@ -1294,7 +1294,7 @@ class Plugin {
 		$comment_lang = get_comment_meta( get_comment_ID(), 'tp_language', true );
 		if ( $comment_lang ) {
 			$text = "<span lang =\"$comment_lang\">" . $text . "</span>";
-			if ( strpos( $text, '<a href="' . $this->home_url ) !== false ) {
+			if ( str_contains( $text, '<a href="' . $this->home_url ) ) {
 				$text = str_replace( '<a href="' . $this->home_url, '<a lang="' . $this->options->default_language . '" href="' . $this->home_url, $text );
 			}
 		}
@@ -1318,7 +1318,7 @@ class Plugin {
 		$lang = get_post_meta( $GLOBALS['id'], 'tp_language', true );
 		if ( $lang ) {
 			$text = "<span lang =\"$lang\">" . $text . "</span>";
-			if ( strpos( $text, '<a href="' . $this->home_url ) !== false ) {
+			if ( str_contains( $text, '<a href="' . $this->home_url ) ) {
 				$text = str_replace( '<a href="' . $this->home_url, '<a lang="' . $this->options->default_language . '" href="' . $this->home_url, $text );
 			}
 		}
@@ -1340,7 +1340,7 @@ class Plugin {
 		}
 		$lang = get_post_meta( $id, 'tp_language', true );
 		if ( $lang ) {
-			if ( strpos( Utilities::get_clean_server_var( 'REQUEST_URI' ), 'wp-admin/edit' ) !== false ) {
+			if ( str_contains( Utilities::get_clean_server_var( 'REQUEST_URI' ), 'wp-admin/edit' ) ) {
 				tp_logger( 'iamhere?' . strpos( Utilities::get_clean_server_var( 'REQUEST_URI' ), 'wp-admin/edit' ) );
 				$plugpath = @parse_url( $this->transposh_plugin_url, PHP_URL_PATH );
 				list( $langeng, $langorig, $langflag ) = explode( ',', Constants::$languages[ $lang ] );
@@ -2246,7 +2246,7 @@ class Plugin {
 	// Catch the wordpress.org update post
 	function filter_wordpress_org_update( $arr, $url ) {
 		tp_logger( $url, 5 );
-		if ( strpos( $url, "api.wordpress.org/plugins/update-check/" ) !== false ) {
+		if ( str_contains( $url, "api.wordpress.org/plugins/update-check/" ) ) {
 			$this->do_update_check = true;
 		}
 

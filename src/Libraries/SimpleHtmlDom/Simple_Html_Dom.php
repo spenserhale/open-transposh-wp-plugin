@@ -284,7 +284,7 @@ class Simple_Html_Dom {
 		}
 
 		// text
-		if ( $pos = strpos( $tag, '<' ) !== false ) {
+		if ( $pos = str_contains( $tag, '<' ) ) {
 			$tag                                  = '<' . substr( $tag, 0, - 1 );
 			$node->_[ Constants::HDOM_INFO_TEXT ] = $tag;
 			$this->link_nodes( $node, false );

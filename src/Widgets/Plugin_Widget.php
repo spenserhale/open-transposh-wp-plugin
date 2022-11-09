@@ -390,23 +390,23 @@ class Plugin_Widget extends WP_Widget {
 		$widget_files = array();
 		if ( $widgets_dir ) {
 			while ( ( $file = readdir( $widgets_dir ) ) !== false ) {
-				if ( substr( $file, 0, 1 ) == '.' ) {
+				if ( str_starts_with( $file, '.' ) ) {
 					continue;
 				}
 				if ( is_dir( $widget_root . '/' . $file ) ) {
 					$widgets_subdir = @ opendir( $widget_root . '/' . $file );
 					if ( $widgets_subdir ) {
 						while ( ( $subfile = readdir( $widgets_subdir ) ) !== false ) {
-							if ( substr( $subfile, 0, 1 ) == '.' ) {
+							if ( str_starts_with( $subfile, '.' ) ) {
 								continue;
 							}
-							if ( substr( $subfile, 0, 4 ) == self::TRANSPOSH_WIDGET_PREFIX && substr( $subfile, - 4 ) == '.php' ) {
+							if ( substr( $subfile, 0, 4 ) == self::TRANSPOSH_WIDGET_PREFIX && str_ends_with( $subfile, '.php' ) ) {
 								$widget_files[] = "$file/$subfile";
 							}
 						}
 					}
 				}
-				if ( substr( $file, 0, 4 ) == self::TRANSPOSH_WIDGET_PREFIX && substr( $file, - 4 ) == '.php' ) {
+				if ( substr( $file, 0, 4 ) == self::TRANSPOSH_WIDGET_PREFIX && str_ends_with( $file, '.php' ) ) {
 					$widget_files[] = $file;
 				}
 			}

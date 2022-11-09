@@ -176,7 +176,7 @@ class Plugin_Options {
 	}
 
 	function __get( $name ) {
-		if ( substr( $name, - 2 ) === "_o" ) {
+		if ( str_ends_with( $name, "_o" ) ) {
 			return $this->vars[ substr( $name, 0, - 2 ) ];
 		}
 
@@ -329,7 +329,7 @@ class Plugin_Options {
 	}
 
 	function get_transposh_admin_hide_warning( $id ) {
-		return strpos( $this->transposh_admin_hide_warnings, $id . ',' ) !== false;
+		return str_contains( $this->transposh_admin_hide_warnings, $id . ',' );
 	}
 
 	function set_transposh_admin_hide_warning( $id ) {
@@ -384,7 +384,7 @@ class Plugin_Options {
 			return true;
 		}
 
-		return ( strpos( $this->viewable_languages . ',', $language . ',' ) !== false );
+		return ( str_contains( $this->viewable_languages . ',', $language . ',' ) );
 	}
 
 }

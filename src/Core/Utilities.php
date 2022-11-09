@@ -180,7 +180,7 @@ class Utilities {
 		if ( isset( $parsedurl['path'] ) ) {
 			tp_logger( "home: $home_path " . $parsedurl['path'], 5 );
 		}
-		if ( $home_path && strpos( $parsedurl['path'], $home_path ) === 0 ) {
+		if ( $home_path && str_starts_with( $parsedurl['path'], $home_path ) ) {
 			tp_logger( "homein!: $home_path", 5 );
 			$parsedurl['path'] = substr( $parsedurl['path'], strlen( $home_path ) );
 			$gluebackhome      = true;
@@ -259,7 +259,7 @@ class Utilities {
 		// remove the language from the url permalink (if in start of path, and is a defined language)
 		$home_path = rtrim( (string) @parse_url( $home_url, PHP_URL_PATH ), "/" );
 //    logger ("home: $home_path ".$parsedurl['path'],5);
-		if ( $home_path && strpos( $parsedurl['path'], $home_path ) === 0 ) {
+		if ( $home_path && str_starts_with( $parsedurl['path'], $home_path ) ) {
 //        logger ("homein!: $home_path",5);
 			$parsedurl['path'] = substr( $parsedurl['path'], strlen( $home_path ) );
 //        $gluebackhome = true;
@@ -299,7 +299,7 @@ class Utilities {
 		$uri .= isset( $parsed['port'] ) ? ':' . $parsed['port'] : '';
 
 		if ( isset( $parsed['path'] ) ) {
-			$uri .= ( substr( $parsed['path'], 0, 1 ) == '/' ) ?
+			$uri .= ( str_starts_with( $parsed['path'], '/' ) ) ?
 				$parsed['path'] : ( ( ! empty( $uri ) ? '/' : '' ) . $parsed['path'] );
 		}
 
@@ -340,11 +340,11 @@ class Utilities {
 		$querypart = '';
 		$fragment  = '';
 		// todo - check query part/fragment... sanitize
-		if ( strpos( $href, '#' ) !== false ) {
+		if ( str_contains( $href, '#' ) ) {
 			list ( $href, $fragment ) = explode( '#', $href );
 			$fragment = '#' . $fragment;
 		}
-		if ( strpos( $href, '?' ) !== false ) {
+		if ( str_contains( $href, '?' ) ) {
 			list ( $href, $querypart ) = explode( '?', $href );
 			$querypart = '?' . $querypart;
 		}
@@ -384,7 +384,7 @@ class Utilities {
 				}
 			}
 		}
-		if ( substr( $href, strlen( $href ) - 1 ) == '/' ) {
+		if ( str_ends_with( $href, '/' ) ) {
 			$url .= '/';
 		}
 
@@ -447,7 +447,7 @@ class Utilities {
 		//$url2 = rtrim($url2,'/');
 		// BetterTransposh\Core\Logger("h $home_url hr $href ur $url ur2 $url2");
 		//$href = $this->home_url.$url2;
-		if ( substr( $href, strlen( $href ) - 1 ) == '/' ) {
+		if ( str_ends_with( $href, '/' ) ) {
 			$url2 .= '/';
 		}
 		$url2 = str_replace( '//', '/', $url2 );
@@ -573,7 +573,7 @@ class Utilities {
 		}
 		if ( isset( Constants::$countryToLanguageMapping[ strtolower( $country ) ] ) ) {
 			$lang = Constants::$countryToLanguageMapping[ strtolower( $country ) ];
-			if ( strpos( $lang, ',' ) !== false ) {
+			if ( str_contains( $lang, ',' ) ) {
 				$langs = explode( ",", $lang );
 				foreach ( $langs as $lang ) {
 					if ( in_array( $lang, $available_languages ) ) {
@@ -621,7 +621,7 @@ class Utilities {
 	 * @return string
 	 */
 	public static function wordpress_user_by_by( $by ) {
-		if ( strpos( $by, '.' ) === false && strpos( $by, ':' ) === false && is_numeric( $by ) ) {
+		if ( ! str_contains( $by, '.' ) && ! str_contains( $by, ':' ) && is_numeric( $by ) ) {
 			$user_info = get_userdata( $by );
 			$by        = $user_info->user_login;
 		}
