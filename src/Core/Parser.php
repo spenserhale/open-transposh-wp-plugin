@@ -4,6 +4,7 @@ namespace BetterTransposh\Core;
 
 use BetterTransposh\Libraries\SimpleHtmlDom\Constants;
 use BetterTransposh\Libraries\SimpleHtmlDom\Node;
+use BetterTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom;
 
 /**
  * Parser class - allows phrase marking and translation with callback functions
@@ -36,7 +37,7 @@ class Parser {
 	/** @var Node Contains the current node */
 	private $currentnode;
 
-	/** @var \BetterTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom Contains the document dom model */
+	/** @var Simple_Html_Dom Contains the document dom model */
 	private $html;
 	// the document
 	public $dir_rtl;
@@ -1066,7 +1067,7 @@ class Parser {
 	}
 
 	private function str_get_html_transposh( $str, $lowercase = true ) {
-		$dom = new \BetterTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom;
+		$dom = new Simple_Html_Dom;
 		$dom->load( $str, $lowercase );
 
 		return $dom;
