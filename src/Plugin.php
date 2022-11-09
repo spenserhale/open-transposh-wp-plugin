@@ -28,7 +28,7 @@ class Plugin {
 	/** @var Plugin_Admin Admin page */
 	private $admin;
 
-	/** @var \BetterTransposh\Widgets\Plugin_Widget Widget control */
+	/** @var Plugin_Widget Widget control */
 	public $widget;
 
 	/** @var Database The database class */

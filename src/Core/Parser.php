@@ -674,7 +674,7 @@ class Parser {
 	 */
 	function fix_html( $string ) {
 		// ready our stats
-		$this->stats = new \BetterTransposh\Core\Parser_Stats();
+		$this->stats = new Parser_Stats();
 		// handler for possible json (buddypress)
 		if ( $this->might_json ) {
 			if ( $string[0] == '{' ) {

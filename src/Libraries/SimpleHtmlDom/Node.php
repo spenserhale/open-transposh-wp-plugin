@@ -4,7 +4,7 @@ namespace BetterTransposh\Libraries\SimpleHtmlDom;
 
 class Node {
 
-	public $nodetype = \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_TYPE_TEXT;
+	public $nodetype = Constants::HDOM_TYPE_TEXT;
 	public $tag = 'text';
 	public $attr = array();
 	public $children = array();
@@ -127,11 +127,11 @@ class Node {
 
 	// get dom node's inner html
 	function innertext() {
-		if ( isset( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_INNER ] ) ) {
-			return $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_INNER ];
+		if ( isset( $this->_[ Constants::HDOM_INFO_INNER ] ) ) {
+			return $this->_[ Constants::HDOM_INFO_INNER ];
 		}
-		if ( isset( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_TEXT ] ) ) {
-			return $this->dom->restore_noise( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_TEXT ] );
+		if ( isset( $this->_[ Constants::HDOM_INFO_TEXT ] ) ) {
+			return $this->dom->restore_noise( $this->_[ Constants::HDOM_INFO_TEXT ] );
 		}
 
 		$ret = '';
@@ -153,19 +153,19 @@ class Node {
 			call_user_func_array( $this->dom->callback, array( $this ) );
 		}
 
-		if ( isset( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_OUTER ] ) ) {
-			return $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_OUTER ];
+		if ( isset( $this->_[ Constants::HDOM_INFO_OUTER ] ) ) {
+			return $this->_[ Constants::HDOM_INFO_OUTER ];
 		}
-		if ( isset( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_TEXT ] ) ) {
-			return $this->dom->restore_noise( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_TEXT ] );
+		if ( isset( $this->_[ Constants::HDOM_INFO_TEXT ] ) ) {
+			return $this->dom->restore_noise( $this->_[ Constants::HDOM_INFO_TEXT ] );
 		}
 
 		// render begin tag
-		$ret = $this->dom->nodes[ $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_BEGIN ] ]->makeup();
+		$ret = $this->dom->nodes[ $this->_[ Constants::HDOM_INFO_BEGIN ] ]->makeup();
 
 		// render inner text
-		if ( isset( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_INNER ] ) ) {
-			$ret .= $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_INNER ];
+		if ( isset( $this->_[ Constants::HDOM_INFO_INNER ] ) ) {
+			$ret .= $this->_[ Constants::HDOM_INFO_INNER ];
 		} else {
 			foreach ( $this->nodes as $n ) {
 				$ret .= $n->outertext();
@@ -173,7 +173,7 @@ class Node {
 		}
 
 		// render end tag
-		if ( isset( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_END ] ) && $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_END ] != 0 ) {
+		if ( isset( $this->_[ Constants::HDOM_INFO_END ] ) && $this->_[ Constants::HDOM_INFO_END ] != 0 ) {
 			$ret .= '</' . $this->tag . '>';
 		}
 
@@ -182,15 +182,15 @@ class Node {
 
 	// get dom node's plain text
 	function text() {
-		if ( isset( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_INNER ] ) ) {
-			return $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_INNER ];
+		if ( isset( $this->_[ Constants::HDOM_INFO_INNER ] ) ) {
+			return $this->_[ Constants::HDOM_INFO_INNER ];
 		}
 		switch ( $this->nodetype ) {
-			case \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_TYPE_TEXT:
-				return $this->dom->restore_noise( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_TEXT ] );
-			case \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_TYPE_COMMENT:
+			case Constants::HDOM_TYPE_TEXT:
+				return $this->dom->restore_noise( $this->_[ Constants::HDOM_INFO_TEXT ] );
+			case Constants::HDOM_TYPE_COMMENT:
 				return '';
-			case \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_TYPE_UNKNOWN:
+			case Constants::HDOM_TYPE_UNKNOWN:
 				return '';
 		}
 		if ( strcasecmp( $this->tag, 'script' ) === 0 ) {
@@ -219,8 +219,8 @@ class Node {
 	// build node's text with tag
 	function makeup() {
 		// text, comment, unknown
-		if ( isset( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_TEXT ] ) ) {
-			return $this->dom->restore_noise( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_TEXT ] );
+		if ( isset( $this->_[ Constants::HDOM_INFO_TEXT ] ) ) {
+			return $this->dom->restore_noise( $this->_[ Constants::HDOM_INFO_TEXT ] );
 		}
 
 		$ret = '<' . $this->tag;
@@ -234,27 +234,27 @@ class Node {
 				continue;
 			}
 
-			$ret .= $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_SPACE ][ $i ][0];
+			$ret .= $this->_[ Constants::HDOM_INFO_SPACE ][ $i ][0];
 			//no value attr: nowrap, checked selected...
 			if ( $val === true ) {
 				$ret .= $key;
 			} else {
-				switch ( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_QUOTE ][ $i ] ) {
-					case \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_QUOTE_DOUBLE:
+				switch ( $this->_[ Constants::HDOM_INFO_QUOTE ][ $i ] ) {
+					case Constants::HDOM_QUOTE_DOUBLE:
 						$quote = '"';
 						break;
-					case \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_QUOTE_SINGLE:
+					case Constants::HDOM_QUOTE_SINGLE:
 						$quote = '\'';
 						break;
 					default:
 						$quote = '';
 				}
-				$ret .= $key . $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_SPACE ][ $i ][1] . '=' . $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_SPACE ][ $i ][2] . $quote . $val . $quote;
+				$ret .= $key . $this->_[ Constants::HDOM_INFO_SPACE ][ $i ][1] . '=' . $this->_[ Constants::HDOM_INFO_SPACE ][ $i ][2] . $quote . $val . $quote;
 			}
 		}
 		$ret = $this->dom->restore_noise( $ret );
 
-		return $ret . $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_ENDSPACE ] . '>';
+		return $ret . $this->_[ Constants::HDOM_INFO_ENDSPACE ] . '>';
 	}
 
 	// find elements by css selector
@@ -270,11 +270,11 @@ class Node {
 			if ( ( $levle = count( $selectors[0] ) ) === 0 ) {
 				return array();
 			}
-			if ( ! isset( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_BEGIN ] ) ) {
+			if ( ! isset( $this->_[ Constants::HDOM_INFO_BEGIN ] ) ) {
 				return array();
 			}
 
-			$head = array( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_BEGIN ] => 1 );
+			$head = array( $this->_[ Constants::HDOM_INFO_BEGIN ] => 1 );
 
 			// handle descendant selectors, no recursive!
 			for ( $l = 0; $l < $levle; ++ $l ) {
@@ -321,7 +321,7 @@ class Node {
 			foreach ( $this->children as $c ) {
 				if ( $tag === '*' || $tag === $c->tag ) {
 					if ( ++ $count == $key ) {
-						$ret[ $c->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_BEGIN ] ] = 1;
+						$ret[ $c->_[ Constants::HDOM_INFO_BEGIN ] ] = 1;
 
 						return;
 					}
@@ -331,17 +331,17 @@ class Node {
 			return;
 		}
 
-		$end = ( ! empty( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_END ] ) ) ? $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_END ] : 0;
+		$end = ( ! empty( $this->_[ Constants::HDOM_INFO_END ] ) ) ? $this->_[ Constants::HDOM_INFO_END ] : 0;
 		if ( $end == 0 ) {
 			$parent = $this->parent;
-			while ( ! isset( $parent->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_END ] ) && $parent !== null ) {
+			while ( ! isset( $parent->_[ Constants::HDOM_INFO_END ] ) && $parent !== null ) {
 				$end    -= 1;
 				$parent = $parent->parent;
 			}
-			$end += $parent->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_END ];
+			$end += $parent->_[ Constants::HDOM_INFO_END ];
 		}
 
-		for ( $i = $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_BEGIN ] + 1; $i < $end; ++ $i ) {
+		for ( $i = $this->_[ Constants::HDOM_INFO_BEGIN ] + 1; $i < $end; ++ $i ) {
 			$node = $this->dom->nodes[ $i ];
 			$pass = true;
 
@@ -492,21 +492,21 @@ class Node {
 	function __set( $name, $value ) {
 		switch ( $name ) {
 			case 'outertext':
-				return $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_OUTER ] = $value;
+				return $this->_[ Constants::HDOM_INFO_OUTER ] = $value;
 			case 'innertext':
-				if ( isset( $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_TEXT ] ) ) {
-					return $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_TEXT ] = $value;
+				if ( isset( $this->_[ Constants::HDOM_INFO_TEXT ] ) ) {
+					return $this->_[ Constants::HDOM_INFO_TEXT ] = $value;
 				}
 
-				return $this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_INNER ] = $value;
+				return $this->_[ Constants::HDOM_INFO_INNER ] = $value;
 		}
 		if ( ! isset( $this->attr[ $name ] ) ) {
-			$this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_SPACE ][] = array(
+			$this->_[ Constants::HDOM_INFO_SPACE ][] = array(
 				' ',
 				'',
 				''
 			);
-			$this->_[ \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_INFO_QUOTE ][] = \BetterTransposh\Libraries\SimpleHtmlDom\Constants::HDOM_QUOTE_DOUBLE;
+			$this->_[ Constants::HDOM_INFO_QUOTE ][] = Constants::HDOM_QUOTE_DOUBLE;
 		}
 		$this->attr[ $name ] = $value;
 	}
