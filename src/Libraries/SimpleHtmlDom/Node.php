@@ -13,21 +13,21 @@ class Node {
 	public $_ = array();
 	private $dom = null;
 
-	function __construct( $dom ) {
+	public function __construct( $dom ) {
 		$this->dom    = $dom;
 		$dom->nodes[] = $this;
 	}
 
-	function __destruct() {
+	public function __destruct() {
 		$this->clear();
 	}
 
-	function __toString() {
+	public function __toString() {
 		return $this->outertext();
 	}
 
 	// clean up memory due to php5 circular references memory leak...
-	function clear() {
+	public function clear() {
 		$this->dom      = null;
 		$this->nodes    = null;
 		$this->parent   = null;
@@ -35,11 +35,11 @@ class Node {
 	}
 
 	// dump node's tree
-	function dump( $show_attr = true ) {
+	public function dump( $show_attr = true ) {
 		$this->dump_html_tree_transposh( $this, $show_attr );
 	}
 
-	function dump_html_tree_transposh( $node, $show_attr = true, $deep = 0 ) {
+	public function dump_html_tree_transposh( $node, $show_attr = true, $deep = 0 ) {
 		$lead = str_repeat( '    ', $deep );
 		echo $lead . $node->tag;
 		if ( $show_attr && count( $node->attr ) > 0 ) {
@@ -57,12 +57,12 @@ class Node {
 	}
 
 	// returns the parent of node
-	function parent() {
+	public function parent() {
 		return $this->parent;
 	}
 
 	// returns children of node
-	function children( $idx = - 1 ) {
+	public function children( $idx = - 1 ) {
 		if ( $idx === - 1 ) {
 			return $this->children;
 		}
@@ -74,7 +74,7 @@ class Node {
 	}
 
 	// returns the first child of node
-	function first_child() {
+	public function first_child() {
 		if ( count( $this->children ) > 0 ) {
 			return $this->children[0];
 		}
@@ -83,7 +83,7 @@ class Node {
 	}
 
 	// returns the last child of node
-	function last_child() {
+	public function last_child() {
 		if ( ( $count = count( $this->children ) ) > 0 ) {
 			return $this->children[ $count - 1 ];
 		}
@@ -92,7 +92,7 @@ class Node {
 	}
 
 	// returns the next sibling of node
-	function next_sibling() {
+	public function next_sibling() {
 		if ( $this->parent === null ) {
 			return null;
 		}
@@ -109,7 +109,7 @@ class Node {
 	}
 
 	// returns the previous sibling of node
-	function prev_sibling() {
+	public function prev_sibling() {
 		if ( $this->parent === null ) {
 			return null;
 		}
@@ -126,7 +126,7 @@ class Node {
 	}
 
 	// get dom node's inner html
-	function innertext() {
+	public function innertext() {
 		if ( isset( $this->_[ Constants::HDOM_INFO_INNER ] ) ) {
 			return $this->_[ Constants::HDOM_INFO_INNER ];
 		}
@@ -143,7 +143,7 @@ class Node {
 	}
 
 	// get dom node's outer text (with tag)
-	function outertext() {
+	public function outertext() {
 		if ( $this->tag === 'root' ) {
 			return $this->innertext();
 		}
@@ -181,7 +181,7 @@ class Node {
 	}
 
 	// get dom node's plain text
-	function text() {
+	public function text() {
 		if ( isset( $this->_[ Constants::HDOM_INFO_INNER ] ) ) {
 			return $this->_[ Constants::HDOM_INFO_INNER ];
 		}
@@ -208,7 +208,7 @@ class Node {
 		return $ret;
 	}
 
-	function xmltext() {
+	public function xmltext() {
 		$ret = $this->innertext();
 		$ret = str_ireplace( '<![CDATA[', '', $ret );
 
@@ -216,7 +216,7 @@ class Node {
 	}
 
 	// build node's text with tag
-	function makeup() {
+	public function makeup() {
 		// text, comment, unknown
 		if ( isset( $this->_[ Constants::HDOM_INFO_TEXT ] ) ) {
 			return $this->dom->restore_noise( $this->_[ Constants::HDOM_INFO_TEXT ] );
@@ -252,7 +252,7 @@ class Node {
 	}
 
 	// find elements by css selector
-	function find( $selector, $idx = null ) {
+	public function find( $selector, $idx = null ) {
 		$selectors = $this->parse_selector( $selector );
 		if ( ( $count = count( $selectors ) ) === 0 ) {
 			return array();
@@ -465,7 +465,7 @@ class Node {
 		return $selectors;
 	}
 
-	function __get( $name ) {
+	public function __get( $name ) {
 		if ( isset( $this->attr[ $name ] ) ) {
 			return $this->attr[ $name ];
 		}
@@ -479,7 +479,7 @@ class Node {
 		};
 	}
 
-	function __set( $name, $value ) {
+	public function __set( $name, $value ) {
 		if ( 'outertext' === $name ) {
 			return $this->_[ Constants::HDOM_INFO_OUTER ] = $value;
 		}
@@ -509,77 +509,77 @@ class Node {
 	 *
 	 * @return bool
 	 */
-	function __isset( $name ) {
+	public function __isset( $name ) {
 		return match ( $name ) {
 			'outertext', 'innertext', 'plaintext' => true,
 			default => array_key_exists( $name, $this->attr ) || isset( $this->attr[ $name ] ),
 		};
 	}
 
-	function __unset( $name ) {
+	public function __unset( $name ) {
 		if ( isset( $this->attr[ $name ] ) ) {
 			unset( $this->attr[ $name ] );
 		}
 	}
 
 	// camel naming conventions
-	function getAllAttributes() {
+	public function getAllAttributes() {
 		return $this->attr;
 	}
 
-	function getAttribute( $name ) {
+	public function getAttribute( $name ) {
 		return $this->__get( $name );
 	}
 
-	function setAttribute( $name, $value ) {
+	public function setAttribute( $name, $value ) {
 		$this->__set( $name, $value );
 	}
 
-	function hasAttribute( $name ) {
+	public function hasAttribute( $name ) {
 		return $this->__isset( $name );
 	}
 
-	function removeAttribute( $name ) {
+	public function removeAttribute( $name ) {
 		$this->__set( $name, null );
 	}
 
-	function getElementById( $id ) {
+	public function getElementById( $id ) {
 		return $this->find( "#$id", 0 );
 	}
 
-	function getElementsById( $id, $idx = null ) {
+	public function getElementsById( $id, $idx = null ) {
 		return $this->find( "#$id", $idx );
 	}
 
-	function getElementByTagName( $name ) {
+	public function getElementByTagName( $name ) {
 		return $this->find( $name, 0 );
 	}
 
-	function getElementsByTagName( $name, $idx = null ) {
+	public function getElementsByTagName( $name, $idx = null ) {
 		return $this->find( $name, $idx );
 	}
 
-	function parentNode() {
+	public function parentNode() {
 		return $this->parent();
 	}
 
-	function childNodes( $idx = - 1 ) {
+	public function childNodes( $idx = - 1 ) {
 		return $this->children( $idx );
 	}
 
-	function firstChild() {
+	public function firstChild() {
 		return $this->first_child();
 	}
 
-	function lastChild() {
+	public function lastChild() {
 		return $this->last_child();
 	}
 
-	function nextSibling() {
+	public function nextSibling() {
 		return $this->next_sibling();
 	}
 
-	function previousSibling() {
+	public function previousSibling() {
 		return $this->prev_sibling();
 	}
 

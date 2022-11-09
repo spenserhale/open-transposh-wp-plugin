@@ -113,7 +113,7 @@ class Plugin {
 	/**
 	 * class constructor
 	 */
-	function __construct() {
+	public function __construct() {
 		// create and initialize sub-objects
 		$this->options     = new Plugin_Options();
 		$this->database    = new Database( $this );
@@ -260,7 +260,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	function on_wp_redirect( $location, $status ) {
+	public function on_wp_redirect( $location, $status ) {
 		// no point in mangling redirection if its our own or its the default language
 		if ( $this->transposh_redirect || $this->options->is_default_language( $this->target_language ) ) {
 			return $location;
@@ -279,7 +279,7 @@ class Plugin {
 	 * @param string $location
 	 * @param int $status
 	 */
-	function tp_redirect( $location, $status = 302 ) {
+	public function tp_redirect( $location, $status = 302 ) {
 		$this->transposh_redirect = true;
 		wp_redirect( $location, $status );
 	}
@@ -292,7 +292,7 @@ class Plugin {
 	 *
 	 * @return mixed false if redirect unneeded - new url if we think we should
 	 */
-	function on_redirect_canonical( $red, $req ) {
+	public function on_redirect_canonical( $red, $req ) {
 		tp_logger( "$red .. $req", 4 );
 		// if the urls are actually the same, don't redirect (same - if it had our proper take care of)
 		if ( $this->rewrite_url( $red ) == urldecode( $req ) ) {
@@ -313,7 +313,7 @@ class Plugin {
 		return $red;
 	}
 
-	function get_clean_url() {
+	public function get_clean_url() {
 		if ( isset( $this->clean_url ) ) {
 			return $this->clean_url;
 		}
@@ -349,7 +349,7 @@ class Plugin {
 	 *
 	 * @return boolean Is it a special page?
 	 */
-	function is_special_page( $url ) {
+	public function is_special_page( $url ) {
 		return ( stripos( $url, '/wp-login.php' ) !== false ||
 		         stripos( $url, '/robots.txt' ) !== false ||
 		         stripos( $url, '/wp-json/' ) !== false ||
@@ -368,7 +368,7 @@ class Plugin {
 	 *
 	 * @return string Modified page buffer
 	 */
-	function process_page( $buffer ) { //php7?
+	public function process_page( $buffer ) { //php7?
 		/*        if (!$this->target_language) {
           global $wp;
           $this->on_parse_request($wp);
@@ -456,7 +456,7 @@ class Plugin {
 	 * Setup a buffer that will contain the contents of the html page.
 	 * Once processing is completed the buffer will go into the translation process.
 	 */
-	function on_init() {
+	public function on_init() {
 		tp_logger( 'init ' . Utilities::get_clean_server_var( 'REQUEST_URI' ), 4 );
 
 		// the wp_rewrite is not available earlier so we can only set the enable_permalinks here
@@ -522,7 +522,7 @@ class Plugin {
 	/**
 	 * Page generation completed - flush buffer.
 	 */
-	function on_shutdown() {
+	public function on_shutdown() {
 		//TODO !!!!!!!!!!!! ob_flush();
 	}
 
@@ -533,7 +533,7 @@ class Plugin {
 	 *
 	 * @return array New rewrite rules
 	 */
-	function update_rewrite_rules( $rules ) {
+	public function update_rewrite_rules( $rules ) {
 		tp_logger( "Enter update_rewrite_rules", 2 );
 
 		if ( ! $this->options->enable_permalinks ) {
@@ -590,7 +590,7 @@ class Plugin {
 	 *
 	 * @return array Modified array
 	 */
-	function parameter_queryvars( $vars ) {
+	public function parameter_queryvars( $vars ) {
 		tp_logger( 'inside query vars', 4 );
 		$vars[] = LANG_PARAM;
 		$vars[] = EDIT_PARAM;
@@ -604,7 +604,7 @@ class Plugin {
 	 *
 	 * @param WP $wp - here we get the WP class
 	 */
-	function on_parse_request( $wp ) {
+	public function on_parse_request( $wp ) {
 		tp_logger( 'on_parse_req', 3 );
 		tp_logger( $wp->query_vars );
 
@@ -721,7 +721,7 @@ class Plugin {
 	 * Determine if the current user is allowed to translate.
 	 * @return boolean Is allowed to translate?
 	 */
-	function is_translator() {
+	public function is_translator() {
 		//if anonymous translation is allowed - let anyone enjoy it
 		if ( $this->options->allow_anonymous_translation ) {
 			return true;
@@ -736,7 +736,7 @@ class Plugin {
 	/**
 	 * Plugin activation
 	 */
-	function plugin_activate() {
+	public function plugin_activate() {
 		tp_logger( "plugin_activate enter: " . dirname( __FILE__ ), 1 );
 
 		$this->database->setup_db();
@@ -770,7 +770,7 @@ class Plugin {
 	/**
 	 * Plugin deactivation
 	 */
-	function plugin_deactivate() {
+	public function plugin_deactivate() {
 		tp_logger( "plugin_deactivate enter: " . dirname( __FILE__ ), 2 );
 
 		// this handles the permalink rewrite
@@ -782,7 +782,7 @@ class Plugin {
 	/**
 	 * Callback from admin_notices - display error message to the admin.
 	 */
-	function plugin_install_error() {
+	public function plugin_install_error() {
 		tp_logger( "install error!", 1 );
 
 		echo '<div class="updated"><p>';
@@ -805,7 +805,7 @@ class Plugin {
 	 * to the admin and deactivate plugin.
 	 * TODO - needs revisiting!
 	 */
-	function plugin_loaded() {
+	public function plugin_loaded() {
 		tp_logger( "Enter", 4 );
 
 		//TODO: fix this...
@@ -852,7 +852,7 @@ class Plugin {
 	/**
 	 * Add custom css, i.e. transposh.css
 	 */
-	function add_transposh_css() {
+	public function add_transposh_css() {
 		//translation not allowed - no need for the transposh.css
 		if ( ! $this->is_editing_permitted() && ! $this->is_auto_translate_permitted() ) {
 			return;
@@ -871,7 +871,7 @@ class Plugin {
 	/**
 	 * Insert references to the javascript files used in the translated version of the page.
 	 */
-	function add_transposh_js() {
+	public function add_transposh_js() {
 		//not in any translation mode - no need for any js.
 		if ( ! ( $this->edit_mode || $this->is_auto_translate_permitted() || is_admin() || $this->options->widget_allow_set_deflang ) ) // TODO: need to include if allowing of setting default language - but smaller!
 		{
@@ -945,7 +945,7 @@ class Plugin {
 	/**
 	 * Implements - http://googlewebmastercentral.blogspot.com/2010/09/unifying-content-under-multilingual.html
 	 */
-	function add_rel_alternate() {
+	public function add_rel_alternate() {
 		if ( is_404() ) {
 			return;
 		}
@@ -981,7 +981,7 @@ class Plugin {
 	 * @return boolean Is translation allowed?
 	 */
 	// TODO????
-	function is_editing_permitted() {
+	public function is_editing_permitted() {
 		// editing is permitted for translators only
 		if ( ! $this->is_translator() ) {
 			return false;
@@ -1001,7 +1001,7 @@ class Plugin {
 	 * @return boolean Is automatic translation allowed?
 	 * TODO: move to options
 	 */
-	function is_auto_translate_permitted() {
+	public function is_auto_translate_permitted() {
 		tp_logger( "checking auto translatability", 4 );
 
 		if ( ! $this->options->enable_autotranslate ) {
@@ -1022,7 +1022,7 @@ class Plugin {
 	 *
 	 * @return array parts that may be translated
 	 */
-	function split_url( $href ) {
+	public function split_url( $href ) {
 		$ret = array();
 		// Ignore urls not from this site
 		if ( ! Utilities::is_rewriteable_url( $href, $this->home_url ) ) {
@@ -1068,7 +1068,7 @@ class Plugin {
 	 *
 	 * @return boolean Modified href
 	 */
-	function rewrite_url( $href ) {
+	public function rewrite_url( $href ) {
 		tp_logger( "got: $href", 4 );
 		////$href = str_replace('&#038;', '&', $href);
 		// fix what might be messed up -- TODO
@@ -1119,7 +1119,7 @@ class Plugin {
 	 *
 	 * @return array Now with settings
 	 */
-	function plugin_action_links( $links ) {
+	public function plugin_action_links( $links ) {
 		tp_logger( 'in plugin action', 5 );
 
 		return array_merge( array( '<a href="' . admin_url( 'admin.php?page=tp_main' ) . '">' . __( 'Settings' ) . '</a>' ), $links );
@@ -1130,7 +1130,7 @@ class Plugin {
 	 *
 	 * @param WP_Query $query
 	 */
-	function pre_post_search( $query ) {
+	public function pre_post_search( $query ) {
 		tp_logger( 'pre post', 4 );
 		tp_logger( $query->query_vars, 4 );
 		// we hide the search query var from further proccesing, because we do this later
@@ -1147,7 +1147,7 @@ class Plugin {
 	 *
 	 * @return string Modified where
 	 */
-	function posts_where_request( $where ) {
+	public function posts_where_request( $where ) {
 
 		tp_logger( $where, 3 );
 		// from query.php line 1742 (v2.8.6)
@@ -1202,7 +1202,7 @@ class Plugin {
 	/**
 	 * Runs a scheduled backup
 	 */
-	function run_backup() {
+	public function run_backup() {
 		tp_logger( 'backup run..', 2 );
 		$my_transposh_backup = new Backup( $this );
 		$my_transposh_backup->do_backup();
@@ -1213,7 +1213,7 @@ class Plugin {
 	/**
 	 * Register for superproxy
 	 */
-	function superproxy_reg() {
+	public function superproxy_reg() {
 		$url = "http://superproxy.transposh.net/?action=register&version=0.1&entry_url=" . admin_url( 'admin-ajax.php' );
 
 		$ch = curl_init();
@@ -1246,7 +1246,7 @@ class Plugin {
 	/**
 	 * Runs a restore
 	 */
-	function run_restore() {
+	public function run_restore() {
 		tp_logger( 'restoring..', 2 );
 		$my_transposh_backup = new Backup( $this );
 		$my_transposh_backup->do_restore();
@@ -1258,7 +1258,7 @@ class Plugin {
 	 *
 	 * @param int $post_id
 	 */
-	function add_comment_meta_settings( $post_id ) {
+	public function add_comment_meta_settings( $post_id ) {
 		if ( Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url ) ) {
 			add_comment_meta( $post_id, 'tp_language', Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url ), true );
 		}
@@ -1272,7 +1272,7 @@ class Plugin {
 	 *
 	 * @return string fixed url
 	 */
-	function comment_post_redirect_filter( $url ) {
+	public function comment_post_redirect_filter( $url ) {
 		$lang = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
 		if ( $lang ) {
 			$url = Utilities::rewrite_url_lang_param( $url, $this->home_url, $this->enable_permalinks_rewrite, $lang, $this->edit_mode );
@@ -1288,7 +1288,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	function comment_text_wrap( $text ) {
+	public function comment_text_wrap( $text ) {
 		$comment_lang = get_comment_meta( get_comment_ID(), 'tp_language', true );
 		if ( $comment_lang ) {
 			$text = "<span lang =\"$comment_lang\">" . $text . "</span>";
@@ -1309,7 +1309,7 @@ class Plugin {
 	 * @return string wrapped text
 	 * @global int $id the post id
 	 */
-	function post_content_wrap( $text ) {
+	public function post_content_wrap( $text ) {
 		if ( ! isset( $GLOBALS['id'] ) ) {
 			return $text;
 		}
@@ -1331,7 +1331,7 @@ class Plugin {
 	 *
 	 * @return string wrapped text
 	 */
-	function post_wrap( $text, $id = 0 ) {
+	public function post_wrap( $text, $id = 0 ) {
 		$id = ( is_object( $id ) ) ? $id->ID : $id;
 		if ( ! $id ) {
 			return $text;
@@ -1360,7 +1360,7 @@ class Plugin {
 	 * @return $query
 	 * @global object $wp the wordpress global
 	 */
-	function request_filter( $query ) {
+	public function request_filter( $query ) {
 		//We only do this once, and if we have a lang
 		$requri = Utilities::get_clean_server_var( 'REQUEST_URI' );
 		$lang   = Utilities::get_language_from_url( $requri, $this->home_url );
@@ -1391,7 +1391,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	function transposh_gettext_filter( $translation, $orig, $domain ) {
+	public function transposh_gettext_filter( $translation, $orig, $domain ) {
 		if ( $this->is_special_page( Utilities::get_clean_server_var( 'REQUEST_URI' ) ) || ( $this->options->is_default_language( $this->tgl ) && ! $this->options->enable_default_translate ) ) {
 			return $translation;
 		}
@@ -1430,7 +1430,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	function transposh_ngettext_filter( $translation, $single, $plural, $domain ) {
+	public function transposh_ngettext_filter( $translation, $single, $plural, $domain ) {
 		if ( $this->is_special_page( Utilities::get_clean_server_var( 'REQUEST_URI' ) ) || ( $this->options->is_default_language( $this->tgl ) && ! $this->options->enable_default_translate ) ) {
 			return $translation;
 		}
@@ -1466,7 +1466,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	function transposh_locale_filter( $locale ) {
+	public function transposh_locale_filter( $locale ) {
 		$lang = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'REQUEST_URI' ), $this->home_url );
 		if ( ! $this->options->is_active_language( $lang ) ) {
 			$lang = '';
@@ -1491,7 +1491,7 @@ class Plugin {
 	 *
 	 * @return string
 	 */
-	function tp_shortcode( $atts, $content = null ) {
+	public function tp_shortcode( $atts, $content = null ) {
 		$only_class = '';
 		$lang       = '';
 		$nt_class   = '';
@@ -1567,7 +1567,7 @@ class Plugin {
 	}
 
 	// Super Proxy 
-	function on_ajax_nopriv_proxy() {
+	public function on_ajax_nopriv_proxy() {
 		// Check if enabled
 		if ( ! $this->options->enable_superproxy ) {
 			$errstr = "Error: 500: Not enabled";
@@ -1637,7 +1637,7 @@ class Plugin {
 
 	// transposh translation proxy ajax wrapper
 
-	function on_ajax_nopriv_tp_tp() {
+	public function on_ajax_nopriv_tp_tp() {
 		$GLOBALS['tp_logger']->set_global_log( 3 );
 		// we need curl for this proxy
 		if ( ! function_exists( 'curl_init' ) ) {
@@ -1778,7 +1778,7 @@ class Plugin {
 	}
 
 	// Proxied Yandex translate suggestions
-	function get_yandex_translation( $tl, $sl, $q ) {
+	public function get_yandex_translation( $tl, $sl, $q ) {
 		$sid       = '';
 		$timestamp = 0;
 		if ( get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array() ) ) {
@@ -1878,7 +1878,7 @@ class Plugin {
 	}
 
 	// Proxied Baidu translate suggestions
-	function get_baidu_translation( $tl, $sl, $q ) {
+	public function get_baidu_translation( $tl, $sl, $q ) {
 		$qstr = 'to=' . ( ( isset( Constants::$engines['u']['langconv'][ $tl ] ) ) ? Constants::$engines['u']['langconv'][ $tl ] : $tl );
 		if ( $sl ) {
 			$qstr .= '&from=' . ( ( isset( Constants::$engines['u']['langconv'][ $tl ] ) ) ? Constants::$engines['u']['langconv'][ $sl ] : $sl );
@@ -1924,7 +1924,7 @@ class Plugin {
 		return $result;
 	}
 
-	function _bitwise_zfrs( $a, $b ) {
+	public function _bitwise_zfrs( $a, $b ) {
 		if ( $b == 0 ) {
 			return $a;
 		}
@@ -1932,7 +1932,7 @@ class Plugin {
 		return ( $a >> $b ) & ~( 1 << ( 8 * PHP_INT_SIZE - 1 ) >> ( $b - 1 ) );
 	}
 
-	function hq( $a, $chunk ) {
+	public function hq( $a, $chunk ) {
 		for ( $offset = 0; $offset < strlen( $chunk ) - 2; $offset += 3 ) {
 			$b = $chunk[ $offset + 2 ];
 			$b = ( $b >= "a" ) ? ord( $b ) - 87 : intval( $b );
@@ -1946,7 +1946,7 @@ class Plugin {
 	/**
 	 * Hey googler, if you are reading this, it means that you are actually here, why won't we work together on this?
 	 */
-	function iq( $input, $error ) {
+	public function iq( $input, $error ) {
 		$e     = explode( ".", $error );
 		$value = intval( $e[0] );
 		for ( $i = 0; $i < strlen( $input ); $i ++ ) {
@@ -1964,7 +1964,7 @@ class Plugin {
 	}
 
 // Proxied translation for google translate
-	function get_google_translation( $tl, $sl, $q ) {
+	public function get_google_translation( $tl, $sl, $q ) {
 		if ( get_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, array() ) ) {
 			list( $googlemethod, $timestamp ) = get_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, array() );
 			//$googlemethod = 0;
@@ -2100,7 +2100,7 @@ class Plugin {
 	/**
 	 * Queue for One Hour Translate
 	 */
-	function on_ajax_nopriv_tp_oht() {
+	public function on_ajax_nopriv_tp_oht() {
 		// Admin access only
 		if ( ! current_user_can( 'manage_options' ) ) {
 			echo "only admin is allowed";
@@ -2138,7 +2138,7 @@ class Plugin {
 	/**
 	 * OHT event running
 	 */
-	function run_oht() {
+	public function run_oht() {
 		tp_logger( "oht should run", 2 );
 		$oht = get_option( TRANSPOSH_OPTIONS_OHT, array() );
 		tp_logger( $oht, 3 );
@@ -2170,7 +2170,7 @@ class Plugin {
 	}
 
 	// getting translation history
-	function on_ajax_nopriv_tp_history() {
+	public function on_ajax_nopriv_tp_history() {
 		// deleting
 		Utilities::allow_cors();
 		if ( isset( $_POST['timestamp'] ) ) {
@@ -2183,7 +2183,7 @@ class Plugin {
 	}
 
 	// the case of posted translation
-	function on_ajax_nopriv_tp_translation() {
+	public function on_ajax_nopriv_tp_translation() {
 		Utilities::allow_cors();
 		do_action( 'transposh_translation_posted' );
 		$this->database->update_translation();
@@ -2193,7 +2193,7 @@ class Plugin {
 	/**
 	 * callback from one hour translation
 	 */
-	function on_ajax_nopriv_tp_ohtcallback() {
+	public function on_ajax_nopriv_tp_ohtcallback() {
 		$ohtp = get_option( TRANSPOSH_OPTIONS_OHT_PROJECTS, array() );
 		tp_logger( $ohtp );
 		if ( $ohtp[ $_POST['projectid'] ] ) {
@@ -2212,21 +2212,21 @@ class Plugin {
 	}
 
 	// getting translation alternates
-	function on_ajax_nopriv_tp_trans_alts() {
+	public function on_ajax_nopriv_tp_trans_alts() {
 		Utilities::allow_cors();
 		$this->database->get_translation_alt( $_GET['token'] );
 		die();
 	}
 
 	// set the cookie with ajax, no redirect needed
-	function on_ajax_nopriv_tp_cookie() {
+	public function on_ajax_nopriv_tp_cookie() {
 		setcookie( 'TR_LNG', Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url ), time() + 90 * 24 * 60 * 60, COOKIEPATH, COOKIE_DOMAIN );
 		tp_logger( 'Cookie ' . Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url ) );
 		die();
 	}
 
 	// Set our cookie and return (if no js works - or we are in the default language)
-	function on_ajax_nopriv_tp_cookie_bck() {
+	public function on_ajax_nopriv_tp_cookie_bck() {
 		global $my_transposh_plugin;
 		setcookie( 'TR_LNG', Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url ), time() + 90 * 24 * 60 * 60, COOKIEPATH, COOKIE_DOMAIN );
 		if ( Utilities::get_clean_server_var( 'HTTP_REFERER' ) ) {
@@ -2238,7 +2238,7 @@ class Plugin {
 	}
 
 	// Catch the wordpress.org update post
-	function filter_wordpress_org_update( $arr, $url ) {
+	public function filter_wordpress_org_update( $arr, $url ) {
 		tp_logger( $url, 5 );
 		if ( str_contains( $url, "api.wordpress.org/plugins/update-check/" ) ) {
 			$this->do_update_check = true;
@@ -2247,7 +2247,7 @@ class Plugin {
 		return $arr;
 	}
 
-	function check_for_plugin_update( $checked_data ) {
+	public function check_for_plugin_update( $checked_data ) {
 		global $wp_version;
 		tp_logger( 'should we check for upgrades?', 4 );
 		if ( ! $this->do_update_check ) {
@@ -2287,7 +2287,7 @@ class Plugin {
 	}
 
 	// Take over the Plugin info screen
-	function plugin_api_call( $def, $action, $args ) {
+	public function plugin_api_call( $def, $action, $args ) {
 		global $wp_version;
 
 		if ( ! isset( $args->slug ) || ( $args->slug != $this->transposh_plugin_basename ) ) {

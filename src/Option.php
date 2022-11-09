@@ -17,31 +17,31 @@ class Option {
 		$this->type  = $type;
 	}
 
-	function __toString() {
+	public function __toString() {
 		return (string) $this->value;
 	}
 
-	function set_value( $value ) {
+	public function set_value( $value ) {
 		$this->value = $value;
 	}
 
-	function from_post() {
+	public function from_post() {
 		$this->value = $_POST[ $this->name ];
 	}
 
-	function get_name() {
+	public function get_name() {
 		return $this->name;
 	}
 
-	function get_value() {
+	public function get_value() {
 		return $this->value;
 	}
 
-	function get_type() {
+	public function get_type() {
 		return $this->type;
 	}
 
-	function post_value_id_name() {
+	public function post_value_id_name() {
 		return 'value="' . $this->value . '" id="' . $this->name . '" name="' . $this->name . '"';
 	}
 

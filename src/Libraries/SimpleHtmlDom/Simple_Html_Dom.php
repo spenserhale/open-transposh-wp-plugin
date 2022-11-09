@@ -44,7 +44,7 @@ class Simple_Html_Dom {
 		'link' => array( 'link' => 1 ),
 	);
 
-	function __construct( $str = null ) {
+	public function __construct( $str = null ) {
 		if ( $str ) {
 			if ( preg_match( "/^http:\/\//i", $str ) || is_file( $str ) ) {
 				$this->load_file( $str );
@@ -54,12 +54,12 @@ class Simple_Html_Dom {
 		}
 	}
 
-	function __destruct() {
+	public function __destruct() {
 		$this->clear();
 	}
 
 	// load html from string
-	function load( $str, $lowercase = true ) {
+	public function load( $str, $lowercase = true ) {
 		// prepare
 		$this->prepare( $str, $lowercase );
 		// strip out comments
@@ -89,23 +89,23 @@ class Simple_Html_Dom {
 	}
 
 	// load html from file
-	function load_file() {
+	public function load_file() {
 		$args = func_get_args();
 		$this->load( call_user_func_array( 'file_get_contents', $args ), true );
 	}
 
 	// set callback function
-	function set_callback( $function_name ) {
+	public function set_callback( $function_name ) {
 		$this->callback = $function_name;
 	}
 
 	// remove callback function
-	function remove_callback() {
+	public function remove_callback() {
 		$this->callback = null;
 	}
 
 	// save dom as string
-	function save( $filepath = '' ) {
+	public function save( $filepath = '' ) {
 		$ret = $this->root->innertext();
 		if ( $filepath !== '' ) {
 			file_put_contents( $filepath, $ret );
@@ -115,12 +115,12 @@ class Simple_Html_Dom {
 	}
 
 	// find dom node by css selector
-	function find( $selector, $idx = null ) {
+	public function find( $selector, $idx = null ) {
 		return $this->root->find( $selector, $idx );
 	}
 
 	// clean up memory due to php5 circular references memory leak...
-	function clear() {
+	public function clear() {
 		foreach ( $this->nodes as $n ) {
 			$n->clear();
 			$n = null;
@@ -144,7 +144,7 @@ class Simple_Html_Dom {
 		unset( $this->noise );
 	}
 
-	function dump( $show_attr = true ) {
+	public function dump( $show_attr = true ) {
 		$this->root->dump( $show_attr );
 	}
 
@@ -556,7 +556,7 @@ class Simple_Html_Dom {
 	}
 
 	// restore noise to html content
-	function restore_noise( $text ) {
+	public function restore_noise( $text ) {
 //        logger ("noise:".$text);
 		while ( ( $pos = strpos( $text, '___noise___' ) ) !== false ) {
 			$key = '___noise___' . $text[ $pos + 11 ] . $text[ $pos + 12 ] . $text[ $pos + 13 ];
@@ -568,11 +568,11 @@ class Simple_Html_Dom {
 		return $text;
 	}
 
-	function __toString() {
+	public function __toString() {
 		return $this->root->innertext();
 	}
 
-	function __get( $name ) {
+	public function __get( $name ) {
 		switch ( $name ) {
 			case 'outertext':
 				return $this->root->innertext();
@@ -584,35 +584,35 @@ class Simple_Html_Dom {
 	}
 
 	// camel naming conventions
-	function childNodes( $idx = - 1 ) {
+	public function childNodes( $idx = - 1 ) {
 		return $this->root->childNodes( $idx );
 	}
 
-	function firstChild() {
+	public function firstChild() {
 		return $this->root->first_child();
 	}
 
-	function lastChild() {
+	public function lastChild() {
 		return $this->root->last_child();
 	}
 
-	function getElementById( $id ) {
+	public function getElementById( $id ) {
 		return $this->find( "#$id", 0 );
 	}
 
-	function getElementsById( $id, $idx = null ) {
+	public function getElementsById( $id, $idx = null ) {
 		return $this->find( "#$id", $idx );
 	}
 
-	function getElementByTagName( $name ) {
+	public function getElementByTagName( $name ) {
 		return $this->find( $name, 0 );
 	}
 
-	function getElementsByTagName( $name, $idx = - 1 ) {
+	public function getElementsByTagName( $name, $idx = - 1 ) {
 		return $this->find( $name, $idx );
 	}
 
-	function loadFile() {
+	public function loadFile() {
 		$args = func_get_args();
 		$this->load( call_user_func_array( 'file_get_contents', $args ), true );
 	}

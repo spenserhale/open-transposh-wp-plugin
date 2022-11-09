@@ -31,7 +31,7 @@ class Logger {
 	/** @var self Singelton instance of our logger */
 	protected static $instance = null;
 
-	function __construct() {
+	public function __construct() {
 		// If not outputting to stdout, we should buffer so firephp will work
 		if ( ! $this->printout ) {
 			ob_start();
@@ -44,7 +44,7 @@ class Logger {
 	 * @param mixed $msg
 	 * @param int $severity
 	 */
-	function do_log( $msg, $severity = 3, $do_backtrace = false, $nest = 0 ) {
+	public function do_log( $msg, $severity = 3, $do_backtrace = false, $nest = 0 ) {
 		//globalvarlogging
 		if ( $severity < $this->global_log ) {
 			$this->logstr .= $msg . "<br>";

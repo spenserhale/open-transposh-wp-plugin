@@ -30,7 +30,7 @@ class Mail {
 	 *
 	 * @param Plugin $transposh
 	 */
-	function __construct( &$transposh ) {
+	public function __construct( &$transposh ) {
 		$this->transposh = &$transposh;
 
 		add_action( 'transposh_human_translation', array( &$this, 'transposh_mail_humantranslation' ), 10, 4 );
@@ -45,7 +45,7 @@ class Mail {
 	 * Whom should we mail?
 	 * @return string email address
 	 */
-	function get_mail_to() {
+	public function get_mail_to() {
 		if ( $this->transposh->options->mail_to ) {
 			$to = $this->transposh->options->mail_to;
 		} else {
@@ -63,7 +63,7 @@ class Mail {
 	 * @param string $lang
 	 * @param string $translated_by
 	 */
-	function transposh_mail_humantranslation( $translation, $original, $lang, $translated_by ) {
+	public function transposh_mail_humantranslation( $translation, $original, $lang, $translated_by ) {
 		//** FULL VERSION
 		if ( $this->transposh->options->mail_ignore_admin ) {
 			$user = new WP_User( $translated_by );
@@ -117,7 +117,7 @@ class Mail {
 	 *
 	 * @return type
 	 */
-	function transposh_mail_filter( $args ) {
+	public function transposh_mail_filter( $args ) {
 
 		return array(
 			'to'          => $args['to'],
@@ -130,7 +130,7 @@ class Mail {
 
 	//** FULL VERSION
 
-	function generate_digest() {
+	public function generate_digest() {
 		$digest = "";
 		tp_logger( "digest should be generated from:" . $this->transposh->options->transposh_last_mail_digest );
 		$rowstosend = $this->transposh->database->get_all_human_translation_history( $this->transposh->options->transposh_last_mail_digest, 500 );
@@ -156,7 +156,7 @@ class Mail {
 		return $digest;
 	}
 
-	function run_digest() {
+	public function run_digest() {
 		$digest = $this->generate_digest();
 		tp_logger( "Trying to digest a mail" );
 		if ( ! $digest ) {
@@ -177,7 +177,7 @@ class Mail {
 		$this->transposh->options->update_options();
 	}
 
-	function run_buffered() {
+	public function run_buffered() {
 		tp_logger( "buffered mail outgoing" );
 		if ( false === ( $buffered_mail = get_transient( 'transposh_buffered_mail' ) ) ) {
 			tp_logger( "nothing buffered - should not happened" );

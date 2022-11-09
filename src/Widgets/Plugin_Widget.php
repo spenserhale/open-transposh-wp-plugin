@@ -11,18 +11,18 @@ use WP_Widget;
  * mode.
  */
 class Plugin_Widget extends WP_Widget {
-	const TRANSPOSH_WIDGET_PREFIX = 'tpw_';
+	public const TRANSPOSH_WIDGET_PREFIX = 'tpw_';
 
 	/** @var Plugin Container class */
 	private $transposh;
 
 	/** @staticvar boolean Contains the fact that this is our first run */
-	static $first_init = true;
+	public static $first_init = true;
 
 	/** @staticvar int Counts call to the widget do to generate unique IDs */
-	static $draw_calls = '';
+	public static $draw_calls = '';
 
-	function __construct() {
+	public function __construct() {
 		// We get the transposh details from the global variable
 		$this->transposh = &$GLOBALS['my_transposh_plugin'];
 
@@ -50,7 +50,7 @@ class Plugin_Widget extends WP_Widget {
 	/**
 	 * Saves the widgets settings. (override of wp_widget)
 	 */
-	function update( $new_instance, $old_instance ) {
+	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
 		tp_logger( $instance );
 		tp_logger( $new_instance );
@@ -64,7 +64,7 @@ class Plugin_Widget extends WP_Widget {
 	 * Creates the edit form for the widget. (override of wp_widget)
 	 *
 	 */
-	function form( $instance ) {
+	public function form( $instance ) {
 		// Defaults
 		/* TRANSLATORS: this will be the default widget title */
 		$instance = wp_parse_args( (array) $instance, array( 'title' => __( 'Translation', TRANSPOSH_TEXT_DOMAIN ) ) );
@@ -103,7 +103,7 @@ class Plugin_Widget extends WP_Widget {
 	 * No more then one "/" no more than one "." - Also sanitize nonsense by WP
 	 */
 
-	function sanitize_file( $file ) {
+	public function sanitize_file( $file ) {
 		$slashcount = substr_count( $file, '/' );
 		if ( $slashcount > 1 ) {
 			return ""; // We would not like more than one degree of recursion
@@ -124,7 +124,7 @@ class Plugin_Widget extends WP_Widget {
 	/**
 	 * Loads the subwidget class code
 	 */
-	function load_widget( $file = "" ) {
+	public function load_widget( $file = "" ) {
 		tp_logger( "widget loaded: $file", 4 );
 		// This is the support for user widgets that won't be deleted in newer versions
 		if ( $file && $file[0] == '*' ) {
@@ -149,7 +149,7 @@ class Plugin_Widget extends WP_Widget {
 	/**
 	 * Add custom css, i.e. transposh_widget.css, flags now override widget
 	 */
-	function add_transposh_widget_css() {
+	public function add_transposh_widget_css() {
 		// first we discover all active widgets of ours, and aggregate the files
 		$activewidgets = array();
 		$settings      = $this->get_settings();
@@ -178,7 +178,7 @@ class Plugin_Widget extends WP_Widget {
 	/**
 	 * Add custom js, i.e. transposh_widget.js
 	 */
-	function add_transposh_widget_js() {
+	public function add_transposh_widget_js() {
 		$activewidgets = array();
 		$settings      = $this->get_settings();
 		foreach ( $settings as $key => $value ) {
@@ -210,7 +210,7 @@ class Plugin_Widget extends WP_Widget {
 	 *
 	 * @return array
 	 */
-	function create_widget_args( $clean_page_url ) {
+	public function create_widget_args( $clean_page_url ) {
 		// only calculate urls once even for multiple instances
 		static $widget_args;
 		if ( is_array( $widget_args ) ) {
@@ -258,7 +258,7 @@ class Plugin_Widget extends WP_Widget {
 	 *
 	 * @param array $args Contains such as $before_widget, $after_widget, $before_title, $after_title, etc
 	 */
-	function widget( $args, $instance, $extcall = false ) {
+	public function widget( $args, $instance, $extcall = false ) {
 		// extract args given by wordpress
 		extract( $args );
 		tp_logger( $args, 4 );
@@ -375,7 +375,7 @@ class Plugin_Widget extends WP_Widget {
 	/**
 	 * Inspired (and used code) from the get_plugins function of wordpress
 	 */
-	function get_widgets( $widget_folder = '' ) {
+	public function get_widgets( $widget_folder = '' ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		get_plugins();
 

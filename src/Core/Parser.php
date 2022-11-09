@@ -101,7 +101,7 @@ class Parser {
 	 *
 	 * @return boolean true if current position marks a white space
 	 */
-	function is_white_space( $char ) {
+	public function is_white_space( $char ) {
 		if ( ! $char ) {
 			return true;
 		}
@@ -114,7 +114,7 @@ class Parser {
 	 * range of a-z (case insensetive).
 	 * @return boolean true if a-z
 	 */
-	function is_a_to_z_character( $char ) {
+	public function is_a_to_z_character( $char ) {
 		return ( ( $char >= 'a' && $char <= 'z' ) || ( $char >= 'A' && $char <= 'Z' ) ) ? true : false;
 	}
 
@@ -122,7 +122,7 @@ class Parser {
 	 * Determine if the current position is a digit.
 	 * @return boolean true if a digit
 	 */
-	function is_digit( $char ) {
+	public function is_digit( $char ) {
 		return ( ( $char >= '0' && $char <= '9' ) ) ? true : false;
 	}
 
@@ -134,7 +134,7 @@ class Parser {
 	 *
 	 * @return int length of entity
 	 */
-	function is_html_entity( $string, $position ) {
+	public function is_html_entity( $string, $position ) {
 		if ( $string[ $position ] == '&' ) {
 			$end_pos = $position + 1;
 			while ( $string[ $end_pos ] == '#' || $this->is_digit( $string[ $end_pos ] ) || $this->is_a_to_z_character( $string[ $end_pos ] ) ) {
@@ -158,7 +158,7 @@ class Parser {
 	 *
 	 * @return boolean true if not a breaker (apostrophy)
 	 */
-	function is_entity_breaker( $entity ) { // &#8216;&#8217;??
+	public function is_entity_breaker( $entity ) { // &#8216;&#8217;??
 		return ! ( stripos( '&#8216;&#8217;&apos;&quot;&#039;&#39;&rsquo;&lsquo;&rdquo;&ldquo;', $entity ) !== false );
 	}
 
@@ -236,7 +236,7 @@ class Parser {
 	 * &scaron;    &#353;                        latin small letter s with caron
 	 * &Yuml;      &#376;                        latin capital letter Y with diaeresis
 	 */
-	function is_entity_letter( $entity ) {
+	public function is_entity_letter( $entity ) {
 		tp_logger( "checking ($entity) - " . htmlentities( $entity ), 4 );
 		$entnum = (int) substr( $entity, 2 );
 		// skip multiply and divide (215, 247)
@@ -259,7 +259,7 @@ class Parser {
 	 *
 	 * @return int length of breaker if current position marks a break in sentence
 	 */
-	function is_sentence_breaker( $char, $nextchar, $nextnextchar ) {
+	public function is_sentence_breaker( $char, $nextchar, $nextnextchar ) {
 		if ( ( $char == '.' || $char == '-' ) && ( $this->is_white_space( $nextchar ) ) ) {
 			return 1;
 		}
@@ -297,7 +297,7 @@ class Parser {
 	 * Determines if the current position marks the begining of a number, e.g. 123 050-391212232
 	 * @return int length of number.
 	 */
-	function is_number( $page, $position ) {
+	public function is_number( $page, $position ) {
 		return strspn( $page, '0123456789-+$%#*,.\\/', $position );
 	}
 
@@ -307,7 +307,7 @@ class Parser {
 	 * @param int $start - beginning of phrase in element
 	 * @param int $end - end of phrase in element
 	 */
-	function tag_phrase( $string, $start, $end ) {
+	public function tag_phrase( $string, $start, $end ) {
 		$phrase      = trim( substr( $string, $start, $end - $start ) );
 		$phrasefixed = trim( str_replace( '&nbsp;', ' ', $phrase ) );
 //        $logstr = str_replace(array(chr(1),chr(2),chr(3),chr(4)), array('[1]','[2]','[3]','[4]'), $string);
@@ -345,7 +345,7 @@ class Parser {
 	 *
 	 * @param string $string - the string which is "broken" into smaller strings
 	 */
-	function parsetext( $string ) {
+	public function parsetext( $string ) {
 		$pos = 0;
 		//	$pos = skip_white_space($string, $pos);
 		// skip CDATA in feed_fix mode
@@ -458,7 +458,7 @@ class Parser {
 	 *
 	 * @param Node $node
 	 */
-	function translate_tagging( $node, $level = 0 ) {
+	public function translate_tagging( $node, $level = 0 ) {
 		$this->currentnode = $node;
 		// we don't want to translate non-translatable classes
 		if ( stripos( $node->class, NO_TRANSLATE_CLASS ) !== false || stripos( $node->class, NO_TRANSLATE_CLASS_GOOGLE ) !== false ) {
@@ -589,7 +589,7 @@ class Parser {
 	 *
 	 * @return string
 	 */
-	function create_edit_span( $original_text, $translated_text, $source, $for_hidden_element = false, $src_lang = '' ) {
+	public function create_edit_span( $original_text, $translated_text, $source, $for_hidden_element = false, $src_lang = '' ) {
 		// Use base64 encoding to make that when the page is translated (i.e. update_translation) we
 		// get back exactlly the same string without having the client decode/encode it in anyway.
 		$this->edit_span_created = true;
@@ -628,7 +628,7 @@ class Parser {
 	/**
 	 * This function does some ad replacement for transposh benefit
 	 */
-	function do_ad_switch() {
+	public function do_ad_switch() {
 		if ( isset( $this->html->noise ) && is_array( $this->html->noise ) ) {
 			foreach ( $this->html->noise as $key => $value ) {
 				if ( str_contains( $value, 'google_ad_client' ) ) {
@@ -659,7 +659,7 @@ class Parser {
 	 * @param $numbers
 	 * @param $entities
 	 */
-	function change_parsing_rules( $puncts, $numbers, $entities ) {
+	public function change_parsing_rules( $puncts, $numbers, $entities ) {
 		$this->punct_breaks = $puncts;
 		$this->num_breaks   = $numbers;
 		$this->ent_breaks   = $entities;
@@ -672,7 +672,7 @@ class Parser {
 	 *
 	 * @return string Translated content is here
 	 */
-	function fix_html( $string ) {
+	public function fix_html( $string ) {
 		// ready our stats
 		$this->stats = new Parser_Stats();
 		// handler for possible json (buddypress)
@@ -1060,7 +1060,7 @@ class Parser {
 	 * @return array List of phrases (or an empty one)
 	 * @since 0.3.5
 	 */
-	function get_phrases_list( $string ) {
+	public function get_phrases_list( $string ) {
 		$result = array();
 		// create our dom
 		$this->html = $this->str_get_html_transposh( '<span lang="xx">' . $string . '</span>' );

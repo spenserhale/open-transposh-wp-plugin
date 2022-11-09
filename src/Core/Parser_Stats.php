@@ -40,7 +40,7 @@ class Parser_Stats {
 	/**
 	 * This function is when the object is initialized, which is a good time to start ticking.
 	 */
-	function __construct() {
+	public function __construct() {
 		$this->start_time = microtime( true );
 	}
 
@@ -48,7 +48,7 @@ class Parser_Stats {
 	 * Calculated values - computer translated phrases
 	 * @return int How many phrases were auto-translated
 	 */
-	function get_computer_translated_phrases() {
+	public function get_computer_translated_phrases() {
 		return $this->translated_phrases - $this->human_translated_phrases;
 	}
 
@@ -56,21 +56,21 @@ class Parser_Stats {
 	 * Calculated values - missing phrases
 	 * @return int How many phrases are missing
 	 */
-	function get_missing_phrases() {
+	public function get_missing_phrases() {
 		return $this->total_phrases - $this->translated_phrases;
 	}
 
 	/**
 	 * Start the timer
 	 */
-	function start_timing() {
+	public function start_timing() {
 		$this->start_time = microtime( true );
 	}
 
 	/**
 	 * Stop timing, store time for reference
 	 */
-	function stop_timing() {
+	public function stop_timing() {
 		$this->time = number_format( microtime( true ) - $this->start_time, 3 );
 	}
 

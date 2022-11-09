@@ -14,7 +14,7 @@ class Editor_Table extends WP_List_Table {
 
 	private $filter = "";
 
-	function __construct() {
+	public function __construct() {
 		//global $status, $page;
 		parent::__construct( array(
 			'singular' => __( 'translation', TRANSPOSH_TEXT_DOMAIN ), //singular name of the listed records
@@ -23,14 +23,14 @@ class Editor_Table extends WP_List_Table {
 		) );
 	}
 
-	function print_style() {
+	public function print_style() {
 		echo '<style type="text/css">';
 		echo '.wp-list-table .column-lang { width: 5%; }';
 		echo '.wp-list-table .column-source { width: 5%; }';
 		echo '</style>';
 	}
 
-	function add_screen_options() {
+	public function add_screen_options() {
 		$option = 'per_page';
 		$args   = array(
 			'label'   => __( 'Translations', TRANSPOSH_TEXT_DOMAIN ),
@@ -40,22 +40,22 @@ class Editor_Table extends WP_List_Table {
 		add_screen_option( $option, $args );
 	}
 
-	function no_items() {
+	public function no_items() {
 		_e( 'No translations found.', TRANSPOSH_TEXT_DOMAIN );
 	}
 
-	function item_key( $item ) {
+	public function item_key( $item ) {
 		return base64_encode( $item['timestamp'] . ',' . $item['lang'] . ',' . $item['original'] );
 	}
 
-	function column_default( $item, $column_name ) {
+	public function column_default( $item, $column_name ) {
 		return match ( $column_name ) {
 			'original', 'lang', 'translated', 'translated_by', 'source', 'timestamp' => $item[ $column_name ],
 			default => print_r( $item, true ),
 		};
 	}
 
-	function get_sortable_columns() {
+	public function get_sortable_columns() {
 		return array(
 			'original'      => array( 'original', false ),
 			'lang'          => array( 'lang', false ),
@@ -65,7 +65,7 @@ class Editor_Table extends WP_List_Table {
 		);
 	}
 
-	function get_columns() {
+	public function get_columns() {
 		return array(
 			'cb'            => '<input type="checkbox" />',
 			'lang'          => __( 'Language', TRANSPOSH_TEXT_DOMAIN ),
@@ -77,13 +77,13 @@ class Editor_Table extends WP_List_Table {
 		);
 	}
 
-	function column_cb( $item ) {
+	public function column_cb( $item ) {
 		return sprintf(
 			'<input type="checkbox" name="keys[]" value="%s" />', $this->item_key( $item )
 		);
 	}
 
-	function get_column_filter( $remove = "" ) {
+	public function get_column_filter( $remove = "" ) {
 		$filter = "";
 		foreach ( [ "fts", "fl", "lang" ] as $curfilt ) {
 			if ( $remove != $curfilt && filter_input( INPUT_GET, $curfilt, FILTER_DEFAULT, FILTER_NULL_ON_FAILURE ) !== false ) {
@@ -95,7 +95,7 @@ class Editor_Table extends WP_List_Table {
 		return $filter;
 	}
 
-	function column_lang( $item ) {
+	public function column_lang( $item ) {
 		$filter = "";
 		if ( filter_input( INPUT_GET, 'fl', FILTER_DEFAULT, FILTER_NULL_ON_FAILURE ) ) {
 			$filter = sprintf( '<a href="?page=%s&action=%s%s">' . __( 'Remove filter' ) . '</a>', filter_input( INPUT_GET, "page" ), 'filter-by', $this->get_column_filter( 'fl' ) );
@@ -107,13 +107,13 @@ class Editor_Table extends WP_List_Table {
 		return sprintf( '%1$s %2$s', Constants::get_language_name( $item['lang'] ), $this->row_actions( $actions ) );
 	}
 
-	function column_original( $item ) {
+	public function column_original( $item ) {
 		$actions = [ 'delete' => sprintf( '<a href="?page=%s&action=%s&key=%s">' . __( 'Delete' ) . '</a>', filter_input( INPUT_GET, "page" ), 'delete', $this->item_key( $item ) ) ];
 
 		return sprintf( '%1$s %2$s', htmlspecialchars( htmlspecialchars_decode( $item['original'] ) ), $this->row_actions( $actions ) );
 	}
 
-	function column_translated( $item ) {
+	public function column_translated( $item ) {
 		if ( ( in_array( $item['lang'], Constants::$rtl_languages ) ) ) {
 			return sprintf( '<span dir="rtl" style="float:right">%1$s</span>', $item['translated'] );
 		}
@@ -121,7 +121,7 @@ class Editor_Table extends WP_List_Table {
 		return $item['translated'];
 	}
 
-	function column_translated_by( $item ) {
+	public function column_translated_by( $item ) {
 		// check if its a user and try to grab his login
 		$by     = Utilities::wordpress_user_by_by( $item['translated_by'] );
 		$filter = "";
@@ -139,7 +139,7 @@ class Editor_Table extends WP_List_Table {
 		return sprintf( '%1$s %2$s', $by, $this->row_actions( $actions ) );
 	}
 
-	function extra_tablenav( $which ) {
+	public function extra_tablenav( $which ) {
 		//echo "Filter me this!";
 		/* 	echo "<label for='bulk-action-selector-" . esc_attr( $which ) . "' class='screen-reader-text'>" . __( 'Select bulk action' ) . "</label>";
 		  echo "<select name='filter' id='bulk-action-selector-" . esc_attr( $which ) . "'>\n";
@@ -157,13 +157,13 @@ class Editor_Table extends WP_List_Table {
 		  echo "\n"; */
 	}
 
-	function get_bulk_actions() {
+	public function get_bulk_actions() {
 		return array(
 			'delete' => 'Delete'
 		);
 	}
 
-	function prepare_items() {
+	public function prepare_items() {
 		global $my_transposh_plugin;
 		$columns               = $this->get_columns();
 		$hidden                = array();
@@ -204,7 +204,7 @@ class Editor_Table extends WP_List_Table {
 		$this->items = $my_transposh_plugin->database->get_filtered_translations( '', 'null', "$limit, $per_page", $orderby, $order, $this->filter );
 	}
 
-	function render_table() {
+	public function render_table() {
 		echo '</pre><div class="wrap"><h2>' . __( 'Translations', TRANSPOSH_TEXT_DOMAIN ) . '</h2>';
 		$this->prepare_items();
 		if ( $this->filter ) {
@@ -237,7 +237,7 @@ class Editor_Table extends WP_List_Table {
 	 *
 	 * @global Plugin $my_transposh_plugin
 	 */
-	function perform_actions() {
+	public function perform_actions() {
 		global $my_transposh_plugin;
 		// echo "Actioning";
 		// echo $this->current_action();

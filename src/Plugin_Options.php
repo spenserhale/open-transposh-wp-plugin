@@ -159,7 +159,7 @@ class Plugin_Options {
 	private $changed = false;
 	private $vars = array();
 
-	function set_default_option_value( $option, $value = '' ) {
+	public function set_default_option_value( $option, $value = '' ) {
 		if ( ! isset( $this->options[ $option ] ) ) {
 			$this->options[ $option ] = $value;
 		}
@@ -167,7 +167,7 @@ class Plugin_Options {
 
 	// private $vars array() = (1,2,3);
 
-	function register_option( $name, $type, $default_value = '' ) {
+	public function register_option( $name, $type, $default_value = '' ) {
 		if ( ! isset( $this->options[ $name ] ) ) {
 			$this->options[ $name ] = $default_value;
 		}
@@ -175,7 +175,7 @@ class Plugin_Options {
 		$this->vars[ $name ] = new BetterTransposh\Option( $name, $this->options[ $name ], $type );
 	}
 
-	function __get( $name ) {
+	public function __get( $name ) {
 		if ( str_ends_with( $name, "_o" ) ) {
 			return $this->vars[ substr( $name, 0, - 2 ) ];
 		}
@@ -184,7 +184,7 @@ class Plugin_Options {
 		return $this->vars[ $name ]->get_value();
 	}
 
-	function __set( $name, $value ) {
+	public function __set( $name, $value ) {
 		if ( $value == TP_FROM_POST ) {
 			if ( isset( $_POST[ $name ] ) ) {
 				$value = $_POST[ $name ];
@@ -204,7 +204,7 @@ class Plugin_Options {
 		}
 	}
 
-	function __construct() {
+	public function __construct() {
 
 		// can't      BetterTransposh\Core\Logger("creating options");
 		// load them here
@@ -303,7 +303,7 @@ class Plugin_Options {
 	 * @return array sorted list of languages, pointing to names and flags
 	 * @since 0.3.9
 	 */
-	function get_sorted_langs() {
+	public function get_sorted_langs() {
 		if ( $this->sorted_languages ) {
 			tp_logger( $this->sorted_languages, 5 );
 
@@ -318,7 +318,7 @@ class Plugin_Options {
 	 * @return array sorted list of translation engines
 	 * @since 0.9.8
 	 */
-	function get_sorted_engines() {
+	public function get_sorted_engines() {
 		if ( $this->preferred_translators ) {
 			tp_logger( $this->preferred_translators, 3 );
 
@@ -328,11 +328,11 @@ class Plugin_Options {
 		return Constants::$engines;
 	}
 
-	function get_transposh_admin_hide_warning( $id ) {
+	public function get_transposh_admin_hide_warning( $id ) {
 		return str_contains( $this->transposh_admin_hide_warnings, $id . ',' );
 	}
 
-	function set_transposh_admin_hide_warning( $id ) {
+	public function set_transposh_admin_hide_warning( $id ) {
 		if ( ! $this->get_transposh_admin_hide_warning( $id ) ) {
 			$this->transposh_admin_hide_warnings = $this->transposh_admin_hide_warnings . $id . ',';
 		}
@@ -341,7 +341,7 @@ class Plugin_Options {
 	/**
 	 * Updates options at the wordpress options table if there was a change
 	 */
-	function update_options() {
+	public function update_options() {
 		if ( $this->changed ) {
 			foreach ( $this->vars as $name => $var ) {
 				$this->options[ $name ] = $var->get_value();
@@ -356,7 +356,7 @@ class Plugin_Options {
 	/**
 	 * Resets all options except keys
 	 */
-	function reset_options() {
+	public function reset_options() {
 		$this->options = array();
 		foreach ( array( 'msn_key', 'google_key', 'oht_id', 'oht_key', 'transposh_key' ) as $key ) {
 			$this->options[ $key ] = $this->vars[ $key ]->get_value();
@@ -371,7 +371,7 @@ class Plugin_Options {
 	 *
 	 * @return boolean Is this the default language?
 	 */
-	function is_default_language( $language ) { // XXXX
+	public function is_default_language( $language ) { // XXXX
 		return ( $this->default_language == $language || '' == $language );
 	}
 
@@ -379,7 +379,7 @@ class Plugin_Options {
 	 * Determine if the given language in on the list of active languages
 	 * @return boolean Is this language viewable?
 	 */
-	function is_active_language( $language ) {
+	public function is_active_language( $language ) {
 		if ( $this->is_default_language( $language ) ) {
 			return true;
 		}

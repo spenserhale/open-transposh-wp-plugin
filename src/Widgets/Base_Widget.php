@@ -10,7 +10,7 @@ class Base_Widget {
 	/**
 	 * Function that performs the actual subwidget rendering
 	 */
-	static function tp_widget_do( $args ) {
+	public static function tp_widget_do( $args ) {
 		echo "you should override this function in your widget";
 	}
 
@@ -21,7 +21,7 @@ class Base_Widget {
 	 * @param string $plugin_dir
 	 * @param string $plugin_url
 	 */
-	static function tp_widget_css( $file, $plugin_dir, $plugin_url ) {
+	public static function tp_widget_css( $file, $plugin_dir, $plugin_url ) {
 		tp_logger( 'looking for css:' . $file, 4 );
 		$basefile   = substr( $file, 0, - 4 );
 		$widget_css = TRANSPOSH_DIR_WIDGETS . '/' . $basefile . ".css";
@@ -37,7 +37,7 @@ class Base_Widget {
 	 * @param string $plugin_dir
 	 * @param string $plugin_url
 	 */
-	static function tp_widget_js( $file, $plugin_dir, $plugin_url ) {
+	public static function tp_widget_js( $file, $plugin_dir, $plugin_url ) {
 		tp_logger( 'looking for js:' . $file, 4 );
 		$basefile  = substr( $file, 0, - 4 );
 		$widget_js = TRANSPOSH_DIR_WIDGETS . '/' . $basefile . ".js";
