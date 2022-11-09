@@ -211,9 +211,8 @@ class Node {
 	function xmltext() {
 		$ret = $this->innertext();
 		$ret = str_ireplace( '<![CDATA[', '', $ret );
-		$ret = str_replace( ']]>', '', $ret );
 
-		return $ret;
+		return str_replace( ']]>', '', $ret );
 	}
 
 	// build node's text with tag

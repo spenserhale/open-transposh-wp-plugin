@@ -269,9 +269,7 @@ class Plugin {
 		// $trace = debug_backtrace();
 		// BetterTransposh\Core\Logger($trace);
 		// BetterTransposh\Core\Logger($this->target_language);
-		$location = $this->rewrite_url( $location );
-
-		return $location;
+		return $this->rewrite_url( $location );
 	}
 
 	/**
@@ -1405,7 +1403,8 @@ class Plugin {
 		if ( $translation != $orig && $translation != "'" ) { // who thought about this, causing apostrophes to break
 			$translation = TP_GTXT_BRK . $translation . TP_GTXT_BRK_CLOSER;
 		}
-		$translation = str_replace( array(
+
+		return str_replace( array(
 			'%s',
 			'%1$s',
 			'%2$s',
@@ -1420,8 +1419,6 @@ class Plugin {
 			TP_GTXT_IBRK . '%4$s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%5$s' . TP_GTXT_IBRK_CLOSER
 		), $translation );
-
-		return $translation;
 	}
 
 	/**
@@ -1444,7 +1441,8 @@ class Plugin {
 		if ( $translation != $single && $translation != $plural ) {
 			$translation = TP_GTXT_BRK . $translation . TP_GTXT_BRK_CLOSER;
 		}
-		$translation = str_replace( array(
+
+		return str_replace( array(
 			'%s',
 			'%1$s',
 			'%2$s',
@@ -1459,8 +1457,6 @@ class Plugin {
 			TP_GTXT_IBRK . '%4$s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%5$s' . TP_GTXT_IBRK_CLOSER
 		), $translation );
-
-		return $translation;
 	}
 
 	/**
@@ -1876,11 +1872,9 @@ class Plugin {
 			}
 
 			return false;
-		};
+		}
 
-		$result = $jsonarr->text;
-
-		return $result;
+		return $jsonarr->text;
 	}
 
 	// Proxied Baidu translate suggestions

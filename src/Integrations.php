@@ -155,9 +155,8 @@ class Integrations {
 	 */
 	function bbp_get_search_results_url( $url ) {
 		$lang = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
-		$href = Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, false );
 
-		return $href;
+		return Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, false );
 	}
 
 	/**

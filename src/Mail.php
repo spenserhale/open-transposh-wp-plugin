@@ -119,15 +119,13 @@ class Mail {
 	 */
 	function transposh_mail_filter( $args ) {
 
-		$new_mail = array(
+		return array(
 			'to'          => $args['to'],
 			'subject'     => Utilities::clean_breakers( $args['subject'] ),
 			'message'     => Utilities::clean_breakers( $args['message'] ),
 			'headers'     => $args['headers'],
 			'attachments' => $args['attachments'],
 		);
-
-		return $new_mail;
 	}
 
 	//** FULL VERSION

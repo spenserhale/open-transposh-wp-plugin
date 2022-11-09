@@ -755,23 +755,20 @@ class Constants {
 
 	public static function get_language_name( $lang ) {
 		list ( $langname ) = explode( ",", Constants::$languages[ $lang ] );
-		$langname_r = apply_filters( "tp_language_name", $langname );
 
-		return $langname_r;
+		return apply_filters( "tp_language_name", $langname );
 	}
 
 	public static function get_language_orig_name( $lang ) {
 		list ( , $langorigname ) = explode( ",", Constants::$languages[ $lang ] );
-		$langorigname_r = apply_filters( "tp_language_origname", $langorigname );
 
-		return $langorigname_r;
+		return apply_filters( "tp_language_origname", $langorigname );
 	}
 
 	public static function get_language_flag( $lang ) {
 		list ( , , $flag ) = explode( ",", Constants::$languages[ $lang ] );
-		$flag_r = apply_filters( "tp_language_flag", $flag );
 
-		return $flag_r;
+		return apply_filters( "tp_language_flag", $flag );
 	}
 
 	public static function get_language_locale( $lang ) {
