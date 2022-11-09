@@ -126,8 +126,7 @@ class Utilities {
 			$parsedurl['path'] = $home_path . $parsedurl['path'];
 		}
 		if ( $remove_host ) {
-			unset( $parsedurl['scheme'] );
-			unset( $parsedurl['host'] );
+			unset( $parsedurl['scheme'], $parsedurl['host'] );
 		}
 		$url = Utilities::glue_url( $parsedurl );
 		if ( ! $url ) {

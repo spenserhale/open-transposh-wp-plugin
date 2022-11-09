@@ -140,8 +140,7 @@ class Simple_Html_Dom {
 			$this->root->clear();
 			unset( $this->root );
 		}
-		unset( $this->doc );
-		unset( $this->noise );
+		unset( $this->doc, $this->noise );
 	}
 
 	public function dump( $show_attr = true ) {
