@@ -595,13 +595,6 @@ class Utilities {
 		return preg_match( "#(bot|yandex|validator|google|jeeves|spider|crawler|slurp)#si", Utilities::get_clean_server_var( 'HTTP_USER_AGENT' ) );
 	}
 
-	public static function allow_cors() {
-		header( 'Access-Control-Allow-Origin: *' );
-		header( 'Access-Control-Allow-Methods: GET, POST, OPTIONS' );
-		header( 'Access-Control-Allow-Headers: X-Requested-With' );
-		header( 'Access-Control-Max-Age: 86400' );
-	}
-
 	/**
 	 * Cleans stray locale markings
 	 *

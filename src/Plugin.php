@@ -101,13 +101,15 @@ class Plugin {
 	 */
 	public function __construct() {
 		// create and initialize sub-objects
-		$this->options     = new Plugin_Options();
-		$this->database    = new Database( $this );
-		$this->admin       = new Plugin_Admin( $this );
-		$this->widget      = new Plugin_Widget( $this );
-		$this->postpublish = new Post_Publish( $this );
-		$this->third_party = new Integrations( $this );
-		$this->mail        = new Mail( $this );
+		$this->options         = new Plugin_Options();
+		$this->database        = new Database( $this );
+		$this->admin           = new Plugin_Admin( $this );
+		$this->widget          = new Plugin_Widget( $this );
+		$this->postpublish     = new Post_Publish( $this );
+		$this->third_party     = new Integrations( $this );
+		$this->mail            = new Mail( $this );
+		$this->ajax_controller = new Ajax_Controller( $this );
+
 		$this->initialize_logger();
 
 		// "global" vars
@@ -1617,7 +1619,7 @@ class Plugin {
 		}
 
 		// we are permissive for sites using multiple domains and such
-		Utilities::allow_cors();
+		Ajax_Controller::allow_cors();
 		// get the needed params
 		$tl = $_GET['tl'];
 		// avoid handling inactive languages
@@ -2136,7 +2138,7 @@ class Plugin {
 	// getting translation history
 	public function on_ajax_nopriv_tp_history() {
 		// deleting
-		Utilities::allow_cors();
+		Ajax_Controller::allow_cors();
 		if ( isset( $_POST['timestamp'] ) ) {
 			$result = $this->database->del_translation_history( stripslashes( $_POST['token'] ), $_POST['lang'], $_POST['timestamp'] );
 			echo json_encode( $result );
@@ -2148,7 +2150,7 @@ class Plugin {
 
 	// the case of posted translation
 	public function on_ajax_nopriv_tp_translation() {
-		Utilities::allow_cors();
+		Ajax_Controller::allow_cors();
 		do_action( 'transposh_translation_posted' );
 		$this->database->update_translation();
 		die();
@@ -2177,7 +2179,7 @@ class Plugin {
 
 	// getting translation alternates
 	public function on_ajax_nopriv_tp_trans_alts() {
-		Utilities::allow_cors();
+		Ajax_Controller::allow_cors();
 		$this->database->get_translation_alt( $_GET['token'] );
 		die();
 	}
