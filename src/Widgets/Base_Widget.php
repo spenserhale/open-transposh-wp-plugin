@@ -2,6 +2,8 @@
 
 namespace BetterTransposh\Widgets;
 
+use BetterTransposh\Logging\LogService;
+
 /**
  * Class for subwidgets to inherit from
  */
@@ -22,7 +24,7 @@ class Base_Widget {
 	 * @param string $plugin_url
 	 */
 	public static function tp_widget_css( $file, $plugin_dir, $plugin_url ) {
-		tp_logger( 'looking for css:' . $file, 4 );
+		LogService::legacy_log( 'looking for css:' . $file, 4 );
 		$basefile   = substr( $file, 0, - 4 );
 		$widget_css = TRANSPOSH_DIR_WIDGETS . '/' . $basefile . ".css";
 		if ( file_exists( $plugin_dir . $widget_css ) ) {
@@ -38,7 +40,7 @@ class Base_Widget {
 	 * @param string $plugin_url
 	 */
 	public static function tp_widget_js( $file, $plugin_dir, $plugin_url ) {
-		tp_logger( 'looking for js:' . $file, 4 );
+		LogService::legacy_log( 'looking for js:' . $file, 4 );
 		$basefile  = substr( $file, 0, - 4 );
 		$widget_js = TRANSPOSH_DIR_WIDGETS . '/' . $basefile . ".js";
 		if ( file_exists( $plugin_dir . $widget_js ) ) {

@@ -16,6 +16,7 @@ namespace BetterTransposh;
 
 use BetterTransposh;
 use BetterTransposh\Core\Constants;
+use BetterTransposh\Logging\LogService;
 use ip;
 use transposh_option;
 
@@ -171,7 +172,7 @@ class Plugin_Options {
 		if ( ! isset( $this->options[ $name ] ) ) {
 			$this->options[ $name ] = $default_value;
 		}
-		// can't log...     BetterTransposh\Core\Logger($name . ' ' . $this->options[$name]);
+		// can't log...     BetterTransposh\Logging\Logger($name . ' ' . $this->options[$name]);
 		$this->vars[ $name ] = new BetterTransposh\Option( $name, $this->options[ $name ], $type );
 	}
 
@@ -180,7 +181,7 @@ class Plugin_Options {
 			return $this->vars[ substr( $name, 0, - 2 ) ];
 		}
 
-		// can't!? BetterTransposh\Core\Logger($this->vars[$name]->get_value(), 5);
+		// can't!? BetterTransposh\Logging\Logger($this->vars[$name]->get_value(), 5);
 		return $this->vars[ $name ]->get_value();
 	}
 
@@ -194,7 +195,7 @@ class Plugin_Options {
 		}
 
 		if ( $this->vars[ $name ]->get_value() !== $value ) {
-			tp_logger( "option '$name' value set: $value" );
+			LogService::legacy_log( "option '$name' value set: $value" );
 			$this->vars[ $name ]->set_value( $value );
 			$this->changed = true;
 		}
@@ -202,10 +203,10 @@ class Plugin_Options {
 
 	public function __construct() {
 
-		// can't      BetterTransposh\Core\Logger("creating options");
+		// can't      BetterTransposh\Logging\Logger("creating options");
 		// load them here
 		$this->options = get_option( TRANSPOSH_OPTIONS );
-//        BetterTransposh\Core\Logger($this->options);
+//        BetterTransposh\Logging\Logger($this->options);
 
 		$this->register_option( 'default_language', TP_OPT_STRING ); // default?
 		$this->register_option( 'viewable_languages', TP_OPT_STRING );
@@ -281,7 +282,7 @@ class Plugin_Options {
 
 
 		// Fix default language if needed, only done once now, and since this was being done constantly, we gain
-		//BetterTransposh\Core\Logger($this->default_language->get_value());
+		//BetterTransposh\Logging\Logger($this->default_language->get_value());
 
 		if ( ! isset( Constants::$languages[ $this->default_language ] ) ) {
 			if ( defined( 'WPLANG' ) && isset( Constants::$languages[ WPLANG ] ) ) {
@@ -291,7 +292,7 @@ class Plugin_Options {
 			}
 		}
 
-		// can't log...   BetterTransposh\Core\Logger($this->options, 4);
+		// can't log...   BetterTransposh\Logging\Logger($this->options, 4);
 	}
 
 	/**
@@ -301,7 +302,7 @@ class Plugin_Options {
 	 */
 	public function get_sorted_langs() {
 		if ( $this->sorted_languages ) {
-			tp_logger( $this->sorted_languages, 5 );
+			LogService::legacy_log( $this->sorted_languages, 5 );
 
 			return array_merge( array_flip( explode( ",", $this->sorted_languages ) ), Constants::$languages );
 		}
@@ -316,7 +317,7 @@ class Plugin_Options {
 	 */
 	public function get_sorted_engines() {
 		if ( $this->preferred_translators ) {
-			tp_logger( $this->preferred_translators, 3 );
+			LogService::legacy_log( $this->preferred_translators, 3 );
 
 			return array_merge( array_flip( explode( ",", $this->preferred_translators ) ), Constants::$engines );
 		}
@@ -345,7 +346,7 @@ class Plugin_Options {
 			update_option( TRANSPOSH_OPTIONS, $this->options );
 			$this->changed = false;
 		} else {
-			tp_logger( "no changes and no updates done", 3 );
+			LogService::legacy_log( "no changes and no updates done", 3 );
 		}
 	}
 

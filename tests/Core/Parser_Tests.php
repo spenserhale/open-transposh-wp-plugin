@@ -2,8 +2,9 @@
 
 namespace Tests\Core;
 
-use BetterTransposh\Core\Logger;
 use BetterTransposh\Core\Parser;
+use BetterTransposh\Logging\Logger;
+use BetterTransposh\Logging\LogService;
 use WP_UnitTestCase;
 
 /**
@@ -25,7 +26,7 @@ class Parser_Tests extends WP_UnitTestCase {
 	 * @access protected
 	 */
 	protected function setUp(): void {
-		$GLOBALS['logger']              = Logger::getInstance( true );
+		$GLOBALS['logger']              = Logger::get_instance();
 		$GLOBALS['logger']->show_caller = true;
 		$GLOBALS['logger']->set_debug_level( 5 );
 		$GLOBALS['logger']->eolprint = true;
@@ -156,7 +157,7 @@ class Parser_Tests extends WP_UnitTestCase {
 
 	function fetch_translation( $original_text, $lang ) {
 		//echo "fetch for: <b>$original_text</b><br/>";
-		tp_logger( "fetch for: $original_text, returning z-$original_text-z" );
+		LogService::legacy_log( "fetch for: $original_text, returning z-$original_text-z" );
 
 		return array( 0, "z-$original_text-z" );
 	}

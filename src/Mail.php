@@ -18,6 +18,7 @@
 namespace BetterTransposh;
 
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Logging\LogService;
 use WP_User;
 
 class Mail {
@@ -68,7 +69,7 @@ class Mail {
 		if ( $this->transposh->options->mail_ignore_admin ) {
 			$user = new WP_User( $translated_by );
 			if ( $user->has_cap( TRANSLATOR ) ) {
-				tp_logger( $user->ID . " is a translator..." );
+				LogService::legacy_log( $user->ID . " is a translator..." );
 
 				return;
 			}
@@ -87,7 +88,7 @@ class Mail {
 			                  . __( 'Translated on', TRANSPOSH_TEXT_DOMAIN ) . ": " . date( "r" ) . "\n\n<br/><br/>";
 
 			set_transient( 'transposh_buffered_mail', $buffered_mail, 1 * HOUR_IN_SECONDS );
-			tp_logger( "Some mail buffered for later" );
+			LogService::legacy_log( "Some mail buffered for later" );
 
 			return;
 		}
@@ -132,7 +133,7 @@ class Mail {
 
 	public function generate_digest() {
 		$digest = "";
-		tp_logger( "digest should be generated from:" . $this->transposh->options->transposh_last_mail_digest );
+		LogService::legacy_log( "digest should be generated from:" . $this->transposh->options->transposh_last_mail_digest );
 		$rowstosend = $this->transposh->database->get_all_human_translation_history( $this->transposh->options->transposh_last_mail_digest, 500 );
 		if ( count( $rowstosend ) ) {
 			$digest .= "<table><tr><th>" .
@@ -158,9 +159,9 @@ class Mail {
 
 	public function run_digest() {
 		$digest = $this->generate_digest();
-		tp_logger( "Trying to digest a mail" );
+		LogService::legacy_log( "Trying to digest a mail" );
 		if ( ! $digest ) {
-			tp_logger( "Nothing to digest" );
+			LogService::legacy_log( "Nothing to digest" );
 
 			return;
 		}
@@ -178,9 +179,9 @@ class Mail {
 	}
 
 	public function run_buffered() {
-		tp_logger( "buffered mail outgoing" );
+		LogService::legacy_log( "buffered mail outgoing" );
 		if ( false === ( $buffered_mail = get_transient( 'transposh_buffered_mail' ) ) ) {
-			tp_logger( "nothing buffered - should not happened" );
+			LogService::legacy_log( "nothing buffered - should not happened" );
 
 			return;
 		}

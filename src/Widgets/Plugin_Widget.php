@@ -3,6 +3,7 @@
 namespace BetterTransposh\Widgets;
 
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Logging\LogService;
 use BetterTransposh\Plugin;
 use WP_Widget;
 
@@ -22,9 +23,8 @@ class Plugin_Widget extends WP_Widget {
 	/** @staticvar int Counts call to the widget do to generate unique IDs */
 	public static $draw_calls = '';
 
-	public function __construct() {
-		// We get the transposh details from the global variable
-		$this->transposh = &$GLOBALS['my_transposh_plugin'];
+	public function __construct(?Plugin $transposh = null) {
+		$this->transposh = $transposh ?? Plugin::get_instance();
 
 		// Widget control defenitions
 		$widget_ops  = array(
@@ -52,8 +52,8 @@ class Plugin_Widget extends WP_Widget {
 	 */
 	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
-		tp_logger( $instance );
-		tp_logger( $new_instance );
+		LogService::legacy_log( $instance );
+		LogService::legacy_log( $new_instance );
 		$instance['title']       = strip_tags( stripslashes( $new_instance['title'] ) );
 		$instance['widget_file'] = strip_tags( stripslashes( $new_instance['widget_file'] ) );
 
@@ -90,7 +90,7 @@ class Plugin_Widget extends WP_Widget {
 		echo '<p><label for="' . $this->get_field_name( 'widget_file' ) . '">' . __( 'Style:', TRANSPOSH_TEXT_DOMAIN ) .
 		     '<select id="' . $this->get_field_id( 'widget_file' ) . '" name="' . $this->get_field_name( 'widget_file' ) . '">';
 		foreach ( $widgets as $file => $widget ) {
-			tp_logger( $widget, 4 );
+			LogService::legacy_log( $widget, 4 );
 			$selected = ( isset( $instance['widget_file'] ) && $instance['widget_file'] == $file ) ? ' selected="selected"' : '';
 			echo "<option value=\"$file\"$selected>{$widget['Name']}</option>";
 		}
@@ -125,7 +125,7 @@ class Plugin_Widget extends WP_Widget {
 	 * Loads the subwidget class code
 	 */
 	public function load_widget( $file = "" ) {
-		tp_logger( "widget loaded: $file", 4 );
+		LogService::legacy_log( "widget loaded: $file", 4 );
 		// This is the support for user widgets that won't be deleted in newer versions
 		if ( $file && $file[0] == '*' ) {
 			$upload     = wp_upload_dir();
@@ -172,7 +172,7 @@ class Plugin_Widget extends WP_Widget {
 				}
 			}
 		}
-		tp_logger( 'Added transposh_widget_css', 4 );
+		LogService::legacy_log( 'Added transposh_widget_css', 4 );
 	}
 
 	/**
@@ -200,7 +200,7 @@ class Plugin_Widget extends WP_Widget {
 				}
 			}
 		}
-		tp_logger( 'Added transposh_widget_js', 4 );
+		LogService::legacy_log( 'Added transposh_widget_js', 4 );
 	}
 
 	/**
@@ -261,7 +261,7 @@ class Plugin_Widget extends WP_Widget {
 	public function widget( $args, $instance, $extcall = false ) {
 		// extract args given by wordpress
 		extract( $args );
-		tp_logger( $args, 4 );
+		LogService::legacy_log( $args, 4 );
 
 		// we load the class needed and get its base name for later
 		if ( isset( $instance['widget_file'] ) ) {
@@ -277,12 +277,12 @@ class Plugin_Widget extends WP_Widget {
 
 		$clean_page = $this->transposh->get_clean_url();
 
-		tp_logger( "WIDGET: clean page url: $clean_page", 4 );
+		LogService::legacy_log( "WIDGET: clean page url: $clean_page", 4 );
 
 		$widget_args = $this->create_widget_args( $clean_page );
 		// at this point the widget args are ready
 
-		tp_logger( 'Enter widget', 4 );
+		LogService::legacy_log( 'Enter widget', 4 );
 
 		// widget default title
 		//echo $before_widget . $before_title . __('Translation', TRANSPOSH_TEXT_DOMAIN) . $after_title; - hmm? po/mo?

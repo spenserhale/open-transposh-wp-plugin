@@ -20,6 +20,7 @@
 namespace BetterTransposh;
 
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Logging\LogService;
 
 /**
  * Table name in database for storing translations
@@ -55,18 +56,18 @@ class Database {
 
 		if ( class_exists( 'Memcache' ) ) {
 			if ( $this->transposh->options->debug_enable ) {
-				tp_logger( 'Trying pecl-Memcache!', 3 );
+				LogService::legacy_log( 'Trying pecl-Memcache!', 3 );
 			}
 			$this->memcache_working = true;
 			$this->memcache         = new Memcache;
 			@$this->memcache->connect( TP_MEMCACHED_SRV, TP_MEMCACHED_PORT ) or $this->memcache_working = false;
 			if ( $this->transposh->options->debug_enable && $this->memcache_working ) {
-				tp_logger( 'Memcache seems working' );
+				LogService::legacy_log( 'Memcache seems working' );
 			}
 		}
 		// I have space in keys issues...
 		/* elseif (class_exists('Memcached')) {
-		  BetterTransposh\Core\Logger('I am using pecl-Memcached!', 3);
+		  BetterTransposh\Logging\Logger('I am using pecl-Memcached!', 3);
 		  $this->memcache_working = true;
 		  $this->memcache = new Memcached();
 		  //if (!count($this->memcache->getServerList())) {
@@ -74,7 +75,7 @@ class Database {
 		  // }
 		  //@$this->memcache->connect(TP_MEMCACHED_SRV, TP_MEMCACHED_PORT) or $this->memcache_working = false;
 		  } */
-		//BetterTransposh\Core\Logger($this->memcache_working); // TODO!! make sure it does something
+		//BetterTransposh\Logging\Logger($this->memcache_working); // TODO!! make sure it does something
 	}
 
 	/**
@@ -93,35 +94,35 @@ class Database {
 		$key    = $lang . '_' . $original;
 		if ( $this->memcache_working ) {
 			$cached = $this->memcache->get( $key );
-			tp_logger( 'memcached ' . $key . ' ' . $cached, 5 );
+			LogService::legacy_log( 'memcached ' . $key . ' ' . $cached, 5 );
 		} elseif ( function_exists( 'apc_fetch' ) ) {
 			$cached = apc_fetch( $key, $rc );
 			if ( $rc === false ) {
 				return false;
 			}
-			tp_logger( 'apc', 5 );
+			LogService::legacy_log( 'apc', 5 );
 		} elseif ( function_exists( 'apcu_fetch' ) ) {
 			$cached = apcu_fetch( $key, $rc );
 			if ( $rc === false ) {
 				return false;
 			}
-			tp_logger( 'apcu', 5 );
+			LogService::legacy_log( 'apcu', 5 );
 		} elseif ( function_exists( 'xcache_get' ) ) {
 			$rc = @xcache_isset( $key );
 			if ( $rc === false ) {
 				return false;
 			}
 			$cached = @xcache_get( $key );
-			tp_logger( 'xcache', 5 );
+			LogService::legacy_log( 'xcache', 5 );
 		} elseif ( function_exists( 'eaccelerator_get' ) ) {
 			$cached = eaccelerator_get( $key );
 			if ( $cached === null ) {
 				return false;
 			}
 			//TODO - unfortunantly null storing does not work here..
-			tp_logger( 'eaccelerator', 5 );
+			LogService::legacy_log( 'eaccelerator', 5 );
 		}
-		tp_logger( "Cache fetched: $original => $cached", 4 );
+		LogService::legacy_log( "Cache fetched: $original => $cached", 4 );
 		if ( $cached !== null && $cached !== false ) {
 			$cached = explode( '_', $cached, 2 );
 		}
@@ -161,9 +162,9 @@ class Database {
 		}
 
 		if ( $rc ) {
-			tp_logger( "Stored in cache: $original => {$translated}", 4 );
+			LogService::legacy_log( "Stored in cache: $original => {$translated}", 4 );
 		} else {
-			tp_logger( "Didn't cache: $original => {$translated}", 4 );
+			LogService::legacy_log( "Didn't cache: $original => {$translated}", 4 );
 		}
 
 		return $rc;
@@ -222,7 +223,7 @@ class Database {
 		if ( ! $originals ) {
 			return;
 		}
-		tp_logger( $originals, 4 );
+		LogService::legacy_log( $originals, 4 );
 		$where = '';
 		foreach ( $originals as $original ) {
 			$original = esc_sql( html_entity_decode( $original, ENT_NOQUOTES, 'UTF-8' ) );
@@ -257,7 +258,7 @@ class Database {
 				str_replace( '&amp;nbsp;', '&nbsp;', stripslashes( $row['translated'] ) )
 			);
 		}
-		tp_logger( 'prefetched: ' . count( $this->translations ), 5 );
+		LogService::legacy_log( 'prefetched: ' . count( $this->translations ), 5 );
 	}
 
 	/**
@@ -272,20 +273,21 @@ class Database {
 	 */
 	function fetch_translation( $orig, $lang ) {
 		$translated = null;
-		tp_logger( "Fetching for: $orig-$lang", 4 );
+		LogService::legacy_log( "Fetching for: $orig-$lang", 4 );
 		//The original is saved in db in its escaped form
 		$original = esc_sql( html_entity_decode( $orig, ENT_NOQUOTES, 'UTF-8' ) );
 		// first we look in the cache
 		$cached = $this->cache_fetch( $original, $lang );
 		if ( $cached !== false ) {
-			tp_logger( "Exit from cache: {$cached[0]} {$cached[1]}", 4 );
+			LogService::legacy_log( "Exit from cache: {$cached[0]} {$cached[1]}", 4 );
 
 			return $cached;
 		}
 		// then we look for a prefetch
 		if ( isset( $this->translations[ $original ] ) ) {
 			$translated = $this->translations[ $original ];
-			tp_logger( "prefetch result for $original >>> {$this->translations[$original][0]} ({$this->translations[$original][1]})", 4 );
+			LogService::legacy_log( "prefetch result for $original >>> {$this->translations[$original][0]} ({$this->translations[$original][1]})",
+				4 );
 		} else {
 			// make sure $lang is reasonable, unless someone is messing with us, it will be ok
 			if ( ! ( $this->transposh->options->is_active_language( $lang ) ) ) {
@@ -297,7 +299,8 @@ class Database {
 			if ( $row !== null ) {
 				$translated_text = stripslashes( $row->translated );
 				$translated      = array( $row->source, $translated_text );
-				tp_logger( "db result for $original >>> $translated_text ($lang) ({$row->source})", 4 );
+				LogService::legacy_log( "db result for $original >>> $translated_text ($lang) ({$row->source})",
+					4 );
 			}
 		}
 		// we can store the result in the cache (or the fact we don't have one)
@@ -318,14 +321,14 @@ class Database {
 	 */
 	function fetch_original( $trans, $lang ) {
 		$original = null;
-		tp_logger( "Enter: $trans", 4 );
+		LogService::legacy_log( "Enter: $trans", 4 );
 
 		// The translation is saved in db in its escaped form
 		$translation = esc_sql( html_entity_decode( $trans, ENT_NOQUOTES, 'UTF-8' ) );
 		// The translation might be cached (notice the additional postfix)
 		[ $rev, $cached ] = $this->cache_fetch( 'R_' . $translation, $lang );
 		if ( $rev == 'r' ) {
-			tp_logger( "Exit from cache: $translation $cached", 4 );
+			LogService::legacy_log( "Exit from cache: $translation $cached", 4 );
 
 			return $cached;
 		}
@@ -333,21 +336,22 @@ class Database {
 		// FIXME - no prefetching for originals yet...
 		if ( isset( $this->translations ) && $this->translations[ $translation ] ) {
 			$original = $this->translations[ $translation ];
-			tp_logger( "prefetch result for $translation >>> {$this->translations[$translation][0]} ({$this->translations[$translation][1]})", 3 );
+			LogService::legacy_log( "prefetch result for $translation >>> {$this->translations[$translation][0]} ({$this->translations[$translation][1]})",
+				3 );
 		} else {
 			$query = "SELECT original FROM {$this->translation_table} WHERE translated = '$translation' and lang = '$lang' ";
 			$row   = $GLOBALS['wpdb']->get_row( $query );
 
 			if ( $row !== null ) {
 				$original = stripslashes( $row->original );
-				tp_logger( "db result for $translation >>> $original ($lang)", 4 );
+				LogService::legacy_log( "db result for $translation >>> $original ($lang)", 4 );
 			}
 		}
 
 		// we can store the result in the cache (or the fact we don't have one)
 		$this->cache_store( 'R_' . $translation, $lang, array( 'r', $original ), TP_CACHE_TTL );
 
-		tp_logger( "Exit: $translation/$original", 4 );
+		LogService::legacy_log( "Exit: $translation/$original", 4 );
 
 		return $original;
 	}
@@ -366,9 +370,9 @@ class Database {
 		$lang   = $_POST['ln0'];
 		$source = $_POST['sr0'];
 		// check params
-		tp_logger( "Enter " . __FILE__ . " Params: $items, $lang, $ref", 5 );
+		LogService::legacy_log( "Enter " . __FILE__ . " Params: $items, $lang, $ref", 5 );
 		if ( ! isset( $items ) || ! isset( $lang ) ) {
-			tp_logger( "Enter " . __FILE__ . " missing Params: $items, $lang, $ref", 1 );
+			LogService::legacy_log( "Enter " . __FILE__ . " missing Params: $items, $lang, $ref", 1 );
 
 			return;
 		}
@@ -385,7 +389,8 @@ class Database {
 		}
 		if ( ! $by && ! ( $all_editable &&
 		                  ( $this->transposh->is_translator() || ( $source > 0 && $this->transposh->options->enable_autotranslate ) ) ) ) {
-			tp_logger( "Unauthorized translation attempt " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ), 1 );
+			LogService::legacy_log( "Unauthorized translation attempt " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ),
+				1 );
 			header( "HTTP/1.0 401 Unauthorized translation" );
 			exit;
 		}
@@ -431,7 +436,7 @@ class Database {
 
 			// we attempt to avoid
 			if ( isset( $alreadybatched[ $original . '---' . $lang ] ) ) {
-				tp_logger( "Warning same item appeared twice in batch: $original $lang", 1 );
+				LogService::legacy_log( "Warning same item appeared twice in batch: $original $lang", 1 );
 				continue;
 			}
 			$alreadybatched[ $original . '---' . $lang ] = true;
@@ -444,12 +449,14 @@ class Database {
 			[ $old_source, $translated_text ] = $this->fetch_translation( $orig, $lang );
 			if ( $translated_text ) {
 				if ( $source > 0 ) {
-					tp_logger( "Warning auto-translation for already translated: $original $lang, $old_source - $translated_text", 1 );
+					LogService::legacy_log( "Warning auto-translation for already translated: $original $lang, $old_source - $translated_text",
+						1 );
 					continue;
 					//return; // too harsh, we just need to get to the next in for
 				}
 				if ( $translation == esc_sql( htmlspecialchars( stripslashes( rawurldecode( $translated_text ) ) ) ) && $old_source == $source ) {
-					tp_logger( "Warning attempt to retranslate with same text: $original, $translation", 1 );
+					LogService::legacy_log( "Warning attempt to retranslate with same text: $original, $translation",
+						1 );
 					continue;
 					//return; // too harsh, we just need to get to the next in for
 				}
@@ -474,35 +481,35 @@ class Database {
 		             "SELECT original, translated, lang, translated_by, source, timestamp " .
 		             "FROM {$this->translation_table} " .
 		             "WHERE $delvalues";
-		tp_logger( $copytolog, 3 );
+		LogService::legacy_log( $copytolog, 3 );
 		$copyresult = $GLOBALS['wpdb']->query( $copytolog );
 		if ( $copyresult === false ) {
-			tp_logger( $GLOBALS['wpdb']->last_error, 1 );
-			tp_logger( "Error !!! failed to move to log $delvalues,", 1 );
+			LogService::legacy_log( $GLOBALS['wpdb']->last_error, 1 );
+			LogService::legacy_log( "Error !!! failed to move to log $delvalues,", 1 );
 			header( "HTTP/1.0 404 Failed to update language database " . $GLOBALS['wpdb']->last_error );
 		}
 
 		// now we remove existing values
 		$delfrommain = "DELETE FROM " . $this->translation_table . " WHERE $delvalues";
-		tp_logger( $delfrommain, 3 );
+		LogService::legacy_log( $delfrommain, 3 );
 		$delresult = $GLOBALS['wpdb']->query( $delfrommain );
 		if ( $delresult === false ) {
-			tp_logger( $GLOBALS['wpdb']->last_error, 1 );
-			tp_logger( "Error !!! failed remove $delvalues,", 1 );
+			LogService::legacy_log( $GLOBALS['wpdb']->last_error, 1 );
+			LogService::legacy_log( "Error !!! failed remove $delvalues,", 1 );
 			header( "HTTP/1.0 404 Failed to update language database " . $GLOBALS['wpdb']->last_error );
 		}
 
 		// and finally - insert new ones
 		$addnewtrans = "INSERT INTO " . $this->translation_table . " (original, translated, lang, translated_by, source) VALUES $values"; //TODO!!
-		tp_logger( $addnewtrans, 3 );
+		LogService::legacy_log( $addnewtrans, 3 );
 		$addresult = $GLOBALS['wpdb']->query( $addnewtrans );
 
 		// if the insertion worked, we will update the translation log
 		if ( $addresult !== false ) {
-			tp_logger( "Inserted to db '$values'", 3 );
+			LogService::legacy_log( "Inserted to db '$values'", 3 );
 		} else {
-			tp_logger( $GLOBALS['wpdb']->last_error, 1 );
-			tp_logger( "Error !!! failed to insert to db $original , $translation, $lang,", 1 );
+			LogService::legacy_log( $GLOBALS['wpdb']->last_error, 1 );
+			LogService::legacy_log( "Error !!! failed to insert to db $original , $translation, $lang,", 1 );
 			header( "HTTP/1.0 404 Failed to update language database " . $GLOBALS['wpdb']->last_error );
 		}
 
@@ -529,25 +536,26 @@ class Database {
 
 		$ref = getenv( 'HTTP_REFERER' );
 		//$original = BetterTransposh\Core\transposh_utils::base64_url_decode($token);
-		tp_logger( "Inside history for ($token)", 4 );
+		LogService::legacy_log( "Inside history for ($token)", 4 );
 
 		// check params
-		tp_logger( "Enter " . __FILE__ . " Params:  $token, $lang, $ref", 3 );
+		LogService::legacy_log( "Enter " . __FILE__ . " Params:  $token, $lang, $ref", 3 );
 		if ( ! isset( $token ) || ! isset( $lang ) ) {
-			tp_logger( "Enter " . __FILE__ . " missing params: $token, $lang," . $ref, 1 );
+			LogService::legacy_log( "Enter " . __FILE__ . " missing params: $token, $lang," . $ref, 1 );
 
 			return;
 		}
-		tp_logger( "Passed check for $lang", 4 );
+		LogService::legacy_log( "Passed check for $lang", 4 );
 
 		// Check permissions, first the lanugage must be on the edit list. Then either the user
 		// is a translator or automatic translation if it is enabled.
 		if ( ! ( $this->transposh->options->is_active_language( $lang ) && $this->transposh->is_translator() ) ) {
-			tp_logger( "Unauthorized history request " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ), 1 );
+			LogService::legacy_log( "Unauthorized history request " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ),
+				1 );
 			header( 'HTTP/1.0 401 Unauthorized history' );
 			exit;
 		}
-		tp_logger( 'Passed check for editable and translator', 4 );
+		LogService::legacy_log( 'Passed check for editable and translator', 4 );
 
 		// The original content is encoded as base64 before it is sent (i.e. token), after we
 		// decode it should just the same after it was parsed.
@@ -566,7 +574,7 @@ class Database {
 		         "LEFT JOIN {$GLOBALS['wpdb']->prefix}users ON translated_by = {$GLOBALS['wpdb']->prefix}users.id " .
 		         "WHERE original='$original' AND lang='$lang' " .
 		         "ORDER BY timestamp DESC";
-		tp_logger( "query is $query" );
+		LogService::legacy_log( "query is $query" );
 
 		$rows = $GLOBALS['wpdb']->get_results( $query );
 		for ( $i = 0; $i < count( $rows ); $i ++ ) {
@@ -602,7 +610,7 @@ class Database {
 		              "ORDER BY timestamp DESC";
 		$rows       = $GLOBALS['wpdb']->get_results( $query );
 		if ( ! empty( $rows ) ) {
-			tp_logger( 'found in log' );
+			LogService::legacy_log( 'found in log' );
 			$inlogtable = true;
 		}
 		// than we look in the main table, if its not found
@@ -614,12 +622,12 @@ class Database {
 			         "ORDER BY timestamp DESC";
 			$rows  = $GLOBALS['wpdb']->get_results( $query );
 			if ( ! empty( $rows ) ) {
-				tp_logger( 'found in mains' );
+				LogService::legacy_log( 'found in mains' );
 				$inmaintable = true;
 			}
 		}
 
-		tp_logger( $query, 3 );
+		LogService::legacy_log( $query, 3 );
 		// We only delete if we found something to delete and it is allowed to delete it (user either did that - by ip, has the translator role or is an admin)
 		if ( ( $inmaintable || $inlogtable ) && ( ( $rows[0]->translated_by == Utilities::get_clean_server_var( 'REMOTE_ADDR' ) && $rows[0]->source == '0' ) || ( is_user_logged_in() && current_user_can( TRANSLATOR ) ) || current_user_can( 'manage_options' ) ) ) {
 			// delete faulty record, if in log
@@ -628,14 +636,14 @@ class Database {
 				         "FROM {$this->translation_log_table} " .
 				         "WHERE original='$original' AND lang='$lang' AND timestamp='$timestamp'";
 				$GLOBALS['wpdb']->query( $query );
-				tp_logger( $query, 3 );
+				LogService::legacy_log( $query, 3 );
 			} else {
 				// delete from main table
 				$query = "DELETE " .
 				         "FROM {$this->translation_table} " .
 				         "WHERE original='$original' AND lang='$lang'"; // AND timestamp='$timestamp'";
 				$GLOBALS['wpdb']->query( $query );
-				tp_logger( $query, 3 );
+				LogService::legacy_log( $query, 3 );
 
 				// clear cache!
 				$this->cache_delete( $original, $lang );
@@ -646,7 +654,7 @@ class Database {
 				         "WHERE original='$original' AND lang='$lang' " .
 				         "ORDER BY timestamp DESC LIMIT 1";
 				$GLOBALS['wpdb']->query( $query );
-				tp_logger( $query, 3 );
+				LogService::legacy_log( $query, 3 );
 
 				//need to remove last from log now...
 				$removelastfromlog = "DELETE {$this->translation_log_table} FROM {$this->translation_log_table} INNER JOIN {$this->translation_table} ON " .
@@ -655,7 +663,7 @@ class Database {
 				                     "{$this->translation_table}.translated = {$this->translation_log_table}.translated AND " .
 				                     "{$this->translation_table}.timestamp = {$this->translation_log_table}.timestamp " .
 				                     "WHERE {$this->translation_log_table}.original='$original' AND {$this->translation_log_table}.lang='$lang'";
-				tp_logger( $removelastfromlog, 3 );
+				LogService::legacy_log( $removelastfromlog, 3 );
 				$GLOBALS['wpdb']->query( $removelastfromlog );
 			}
 
@@ -675,7 +683,7 @@ class Database {
 		//$ref = getenv('HTTP_REFERER');
 		//  $original = BetterTransposh\Core\transposh_utils::base64_url_decode($token);
 		$original = $token;
-		tp_logger( "Inside alt for $original ($token)", 4 );
+		LogService::legacy_log( "Inside alt for $original ($token)", 4 );
 
 		if ( ! isset( $original ) ) {
 			exit;
@@ -683,11 +691,12 @@ class Database {
 
 		// Check permissions
 		if ( ! ( $this->transposh->is_translator() ) ) {
-			tp_logger( "Unauthorized alt request " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ), 1 );
+			LogService::legacy_log( "Unauthorized alt request " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ),
+				1 );
 			header( 'HTTP/1.0 401 Unauthorized alt request' );
 			exit;
 		}
-		tp_logger( 'Passed check for editable and translator', 4 );
+		LogService::legacy_log( 'Passed check for editable and translator', 4 );
 
 		// The original content is encoded as base64 before it is sent (i.e. token), after we
 		// decode it should just the same after it was parsed.
@@ -702,7 +711,7 @@ class Database {
 		         "FROM {$this->translation_table} " .
 		         "WHERE original='$original' AND source=0 " .
 		         "ORDER BY lang";
-		tp_logger( "query is $query" );
+		LogService::legacy_log( "query is $query" );
 		$rows = $GLOBALS['wpdb']->get_results( $query );
 
 		echo json_encode( $rows );
@@ -733,7 +742,7 @@ class Database {
 		         "FROM {$this->translation_table} " .
 		         "WHERE source= 0 $dateterm " .
 		         "ORDER BY timestamp ASC $limitterm";
-		tp_logger( "query is $query" );
+		LogService::legacy_log( "query is $query" );
 
 		return $GLOBALS['wpdb']->get_results( $query );
 	}
@@ -775,7 +784,7 @@ class Database {
 			$query .= "WHERE $sourceterm $dateterm $filter ";
 		}
 		$query .= "ORDER BY $orderby $order $limitterm";
-		tp_logger( "query is $query" );
+		LogService::legacy_log( "query is $query" );
 
 		return $GLOBALS['wpdb']->get_results( $query, ARRAY_A );
 	}
@@ -812,7 +821,7 @@ class Database {
 		if ( ( $sourceterm || $dateterm || $filter ) ) {
 			$query .= "WHERE $sourceterm $dateterm $filter";
 		}
-		tp_logger( "query is $query" );
+		LogService::legacy_log( "query is $query" );
 
 		return $GLOBALS['wpdb']->get_var( $query );
 	}
@@ -822,8 +831,8 @@ class Database {
 	 */
 
 	function setup_db( $force = false ) {
-		tp_logger( "Enter" );
-		tp_logger( "charset: " . $GLOBALS['wpdb']->charset );
+		LogService::legacy_log( "Enter" );
+		LogService::legacy_log( "charset: " . $GLOBALS['wpdb']->charset );
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		$installed_ver = get_option( TRANSPOSH_DB_VERSION );
@@ -833,13 +842,13 @@ class Database {
 			if ( time() - 7200 > $timestamp ) { //two hours are more than enough
 				delete_option( self::TRANSPOSH_OPTIONS_DBSETUP );
 			} else {
-				tp_logger( "we don't want to upgrade transposh tables more than once" );
+				LogService::legacy_log( "we don't want to upgrade transposh tables more than once" );
 
 				return;
 			}
 			update_option( self::TRANSPOSH_OPTIONS_DBSETUP, time() );
 
-			tp_logger( "Attempting to create table {$this->translation_table}", 1 );
+			LogService::legacy_log( "Attempting to create table {$this->translation_table}", 1 );
 			// notice - keep every field on a new line or dbdelta fails
 			$rows = $GLOBALS['wpdb']->get_results( "SHOW INDEX FROM {$this->translation_table} WHERE key_name = 'PRIMARY'" );
 			if ( count( $rows ) ) {
@@ -857,13 +866,13 @@ class Database {
 
 			dbDelta( $sql );
 			if ( $GLOBALS['wpdb']->charset === 'utf8mb4' ) {
-				tp_logger( "charset is utfmb4: " . $GLOBALS['wpdb']->charset );
+				LogService::legacy_log( "charset is utfmb4: " . $GLOBALS['wpdb']->charset );
 				$GLOBALS['wpdb']->query( "ALTER TABLE {$this->translation_table} CONVERT TO CHARSET utf8mb4 COLLATE utf8mb4_bin" );
 			} else {
-				tp_logger( "charset is not utfmb4: " . $GLOBALS['wpdb']->charset );
+				LogService::legacy_log( "charset is not utfmb4: " . $GLOBALS['wpdb']->charset );
 				$GLOBALS['wpdb']->query( "ALTER TABLE {$this->translation_table} CONVERT TO CHARSET utf8 COLLATE utf8_bin" );
 			}
-			tp_logger( "Attempting to create table {$this->translation_log_table}", 1 );
+			LogService::legacy_log( "Attempting to create table {$this->translation_log_table}", 1 );
 			// notice - keep every field on a new line or dbdelta fails
 			// this should be removed in a far future...
 			$rows = $GLOBALS['wpdb']->get_results( "SHOW INDEX FROM {$this->translation_log_table} WHERE key_name = 'PRIMARY'" );
@@ -887,13 +896,13 @@ class Database {
 				$GLOBALS['wpdb']->query( "ALTER TABLE {$this->translation_log_table} CONVERT TO CHARSET utf8 COLLATE utf8_bin" );
 			}
 			// do the cleanups too
-			tp_logger( "premaint" );
+			LogService::legacy_log( "premaint" );
 			$this->db_maint();
-			tp_logger( "postmaint" );
+			LogService::legacy_log( "postmaint" );
 			update_option( TRANSPOSH_DB_VERSION, DB_VERSION );
 			delete_option( self::TRANSPOSH_OPTIONS_DBSETUP );
 		}
-		tp_logger( "Exit" );
+		LogService::legacy_log( "Exit" );
 	}
 
 	/**
@@ -943,7 +952,7 @@ class Database {
 		            " WHERE `lang` = '$language'" .
 		            " AND `translated` LIKE '{$n}{$term}{$n}'";
 		//TODO wait for feedbacks to see if we should put a limit here.
-		tp_logger( $query, 4 );
+		LogService::legacy_log( $query, 4 );
 		$result = array();
 		if ( strlen( $term ) < 3 ) {
 			return $result;
@@ -986,13 +995,13 @@ class Database {
 			           ' WHERE original = translated' .
 			           ' AND source >0';
 			$result  = $GLOBALS['wpdb']->query( $cleanup );
-			tp_logger( $cleanup, 4 );
+			LogService::legacy_log( $cleanup, 4 );
 			$cleanup = 'DELETE ' .
 			           ' FROM ' . $this->translation_log_table .
 			           ' WHERE original = translated' .
 			           ' AND source >0';
 			$result  = $GLOBALS['wpdb']->query( $cleanup );
-			tp_logger( $cleanup, 4 );
+			LogService::legacy_log( $cleanup, 4 );
 		} else {
 			$cleanup = 'DELETE ' . $this->translation_table . ' ,' . $this->translation_log_table .
 			           ' FROM ' . $this->translation_table .
@@ -1002,7 +1011,7 @@ class Database {
 			           ' WHERE ' . $this->translation_table . '.source > 0' .
 			           ' AND ' . $this->translation_table . ".timestamp < SUBDATE(NOW(),$days)";
 			$result  = $GLOBALS['wpdb']->query( $cleanup );
-			tp_logger( $cleanup, 4 );
+			LogService::legacy_log( $cleanup, 4 );
 		}
 		// clean up cache so that results will actually show
 		$this->cache_clean();
@@ -1018,7 +1027,7 @@ class Database {
 			         ' WHERE source > 0 ' .
 			         ' GROUP BY `' . $target . '` , `lang`' .
 			         ' HAVING count( * ) >1';
-			tp_logger( $dedup, 3 );
+			LogService::legacy_log( $dedup, 3 );
 			$rows = $GLOBALS['wpdb']->get_results( $dedup );
 			foreach ( $rows as $row ) {
 				// var_dump($row);
@@ -1026,7 +1035,7 @@ class Database {
 				$row->lang    = esc_sql( $row->lang );
 				$delvalues    = "($target ='{$row->$target}' AND lang='{$row->lang}' AND source > 0)";
 				$update       = "DELETE FROM " . $this->translation_table . " WHERE $delvalues";
-				tp_logger( $update, 3 );
+				LogService::legacy_log( $update, 3 );
 				$GLOBALS['wpdb']->query( $update );
 				$this->cache_delete( $row->original, $row->lang );
 			}
@@ -1040,7 +1049,7 @@ class Database {
 		         ' GROUP BY `original` , `lang` , `translated` , `translated_by` , `timestamp` , `source`' .
 		         ' HAVING count( * ) >1';
 		$rows  = $GLOBALS['wpdb']->get_results( $dedup );
-		tp_logger( $dedup, 3 );
+		LogService::legacy_log( $dedup, 3 );
 		foreach ( $rows as $row ) {
 			$row->original      = esc_sql( $row->original );
 			$row->translated    = esc_sql( $row->translated );
@@ -1048,11 +1057,11 @@ class Database {
 			$delvalues          = "(original ='{$row->original}' AND lang='{$row->lang}' AND translated='{$row->translated}'" .
 			                      " AND translated_by='{$row->translated_by}' AND timestamp='{$row->timestamp}' AND source='{$row->source}')";
 			$update             = "DELETE FROM " . $this->translation_log_table . " WHERE $delvalues";
-			tp_logger( $update, 3 );
+			LogService::legacy_log( $update, 3 );
 			$result = $GLOBALS['wpdb']->query( $update );
 			$values = "('{$row->original}','{$row->lang}','{$row->translated}','$row->translated_by','$row->timestamp','$row->source')";
 			$update = "INSERT INTO " . $this->translation_log_table . " (original, lang, translated, translated_by, timestamp, source) VALUES $values";
-			tp_logger( $update, 3 );
+			LogService::legacy_log( $update, 3 );
 			$result = $GLOBALS['wpdb']->query( $update );
 			$this->cache_delete( $row->original, $row->lang );
 		}
@@ -1067,7 +1076,7 @@ class Database {
 		            ' AND w2.source >0' .
 		            ' AND w1.timestamp < w2.timestamp';
 		$rows     = $GLOBALS['wpdb']->get_results( $autojunk );
-		tp_logger( $autojunk, 3 );
+		LogService::legacy_log( $autojunk, 3 );
 		foreach ( $rows as $row ) {
 			$row->original      = esc_sql( $row->original );
 			$row->translated    = esc_sql( $row->translated );
@@ -1075,7 +1084,7 @@ class Database {
 			$delvalues          = "(original ='{$row->original}' AND lang='{$row->lang}' AND translated='{$row->translated}'" .
 			                      " AND translated_by='{$row->translated_by}' AND timestamp='{$row->timestamp}' AND source='{$row->source}')";
 			$update             = "DELETE FROM " . $this->translation_log_table . " WHERE $delvalues";
-			tp_logger( $update, 3 );
+			LogService::legacy_log( $update, 3 );
 			$result = $GLOBALS['wpdb']->query( $update );
 			$this->cache_delete( $row->original, $row->lang );
 		}
@@ -1085,7 +1094,7 @@ class Database {
 		         ' FROM ' . $this->translation_table .
 		         ' GROUP BY `original` , `lang`' .
 		         ' HAVING count( * ) >1';
-		tp_logger( $dedup, 3 );
+		LogService::legacy_log( $dedup, 3 );
 		$rows = $GLOBALS['wpdb']->get_results( $dedup );
 		foreach ( $rows as $row ) {
 			$row->original = esc_sql( $row->original );
@@ -1094,13 +1103,13 @@ class Database {
 			if ( $source != null ) {
 				$delvalues = "(original ='{$row->original}' AND lang='{$row->lang}')";
 				$update    = "DELETE FROM " . $this->translation_table . " WHERE $delvalues";
-				tp_logger( $update, 3 );
+				LogService::legacy_log( $update, 3 );
 				$result          = $GLOBALS['wpdb']->query( $update );
 				$row->translated = esc_sql( $translation );
 				$row->source     = esc_sql( $source );
 				$values          = "('{$row->original}','{$row->lang}','{$row->translated}','{$row->translated_by}','$row->source')";
 				$update          = "INSERT INTO " . $this->translation_table . " (original, lang, translated, translated_by, source) VALUES $values";
-				tp_logger( $update, 3 );
+				LogService::legacy_log( $update, 3 );
 				$result = $GLOBALS['wpdb']->query( $update );
 			}
 			$this->cache_delete( $row->original, $row->lang );
@@ -1115,7 +1124,7 @@ class Database {
 		             "SET {$this->translation_table}.translated_by = {$this->translation_log_table}.translated_by, " .
 		             "{$this->translation_table}.timestamp = {$this->translation_log_table}.timestamp " .
 		             "WHERE {$this->translation_table}.translated_by IS NULL";
-		tp_logger( $denullsql, 3 );
+		LogService::legacy_log( $denullsql, 3 );
 		$GLOBALS['wpdb']->query( $denullsql );
 
 		// and now the translation log is trimmed
@@ -1126,21 +1135,21 @@ class Database {
 		                        "{$this->translation_table}.source = {$this->translation_log_table}.source AND " .
 		                        "{$this->translation_table}.translated_by = {$this->translation_log_table}.translated_by AND " .
 		                        "{$this->translation_table}.timestamp = {$this->translation_log_table}.timestamp";
-		tp_logger( $removetranslogextras, 3 );
+		LogService::legacy_log( $removetranslogextras, 3 );
 		$GLOBALS['wpdb']->query( $removetranslogextras );
 
 		// some more cleanups
 		$removebase64baddies = "DELETE FROM {$this->translation_table} WHERE `original` LIKE '%,' AND `source` != 0";
-		tp_logger( $removebase64baddies, 3 );
+		LogService::legacy_log( $removebase64baddies, 3 );
 		$GLOBALS['wpdb']->query( $removebase64baddies );
 
 		$removetranslationsofnothing = "DELETE FROM {$this->translation_table} WHERE `original` = '' AND `source` != 0";
-		tp_logger( $removetranslationsofnothing, 3 );
+		LogService::legacy_log( $removetranslationsofnothing, 3 );
 		$GLOBALS['wpdb']->query( $removetranslationsofnothing );
 
 		// optimize it
 		$optimizesql = "OPTIMIZE TABLE {$this->translation_table}, {$this->translation_log_table}";
-		tp_logger( $optimizesql, 3 );
+		LogService::legacy_log( $optimizesql, 3 );
 		$GLOBALS['wpdb']->query( $optimizesql );
 
 		$this->cache_clean();
@@ -1163,21 +1172,21 @@ class Database {
 		$logvalues .= "('" . $original . "','" . $translation . "','" . $lang . "','" . $by . "',FROM_UNIXTIME(" . $timestamp . "),'" . $source . "')";
 
 		$update = "DELETE FROM " . $this->translation_table . " WHERE $delvalues";
-		tp_logger( $update, 3 );
+		LogService::legacy_log( $update, 3 );
 		$result = $GLOBALS['wpdb']->query( $update );
 		$update = "INSERT INTO " . $this->translation_table . " (original, translated, lang, source) VALUES $values";
-		tp_logger( $update, 3 );
+		LogService::legacy_log( $update, 3 );
 		$result = $GLOBALS['wpdb']->query( $update );
 
 		if ( $result !== false ) {
 			// update the transaction log too
 			$log = "INSERT INTO " . $this->translation_log_table . " (original, translated, lang, translated_by, timestamp, source) " .
 			       "VALUES $logvalues";
-			tp_logger( $log, 3 );
+			LogService::legacy_log( $log, 3 );
 			$result = $GLOBALS['wpdb']->query( $log );
 		} else {
-			tp_logger( $GLOBALS['wpdb']->last_error, 1 );
-			tp_logger( "Error !!! failed to insert to db $original , $translation, $lang,", 0 );
+			LogService::legacy_log( $GLOBALS['wpdb']->last_error, 1 );
+			LogService::legacy_log( "Error !!! failed to insert to db $original , $translation, $lang,", 0 );
 			header( "HTTP/1.0 404 Failed to update language database " . $GLOBALS['wpdb']->last_error );
 		}
 	}

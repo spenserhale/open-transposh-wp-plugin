@@ -16,25 +16,25 @@ if ( $handle ) {
 	while ( ( $line = fgets( $handle ) ) !== false ) {
 		$ignorenext = false;
 		// those lines will never be included
-		if ( strpos( $line, 'FULL VERSION' ) !== false ||
-		     strpos( $line, 'FULLSTOP' ) !== false ||
-		     strpos( $line, 'WPORG VERSION' ) !== false ||
-		     strpos( $line, 'WPORGSTOP' ) !== false ) {
+		if ( str_contains( $line, 'FULL VERSION' ) ||
+		     str_contains( $line, 'FULLSTOP' ) ||
+		     str_contains( $line, 'WPORG VERSION' ) ||
+		     str_contains( $line, 'WPORGSTOP' ) ) {
 			$ignorenext = true;
 		}
 		if ( $version == "full" ) {
-			if ( strpos( $line, 'WPORG VERSION' ) !== false ) {
+			if ( str_contains( $line, 'WPORG VERSION' ) ) {
 				$excludesection = true;
 			}
-			if ( strpos( $line, 'WPORGSTOP' ) !== false ) {
+			if ( str_contains( $line, 'WPORGSTOP' ) ) {
 				$excludesection = false;
 			}
 		}
 		if ( $version == "wporg" ) {
-			if ( strpos( $line, 'FULL VERSION' ) !== false ) {
+			if ( str_contains( $line, 'FULL VERSION' ) ) {
 				$excludesection = true;
 			}
-			if ( strpos( $line, 'FULLSTOP' ) !== false ) {
+			if ( str_contains( $line, 'FULLSTOP' ) ) {
 				$excludesection = false;
 			}
 		}

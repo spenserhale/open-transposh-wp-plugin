@@ -22,6 +22,7 @@ namespace BetterTransposh;
 
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Logging\LogService;
 
 
 // class that reperesent the admin page
@@ -74,7 +75,7 @@ class Plugin_Admin {
 	}
 
 	function on_screen_option( $status, $option, $value ) {
-		tp_logger( "($status, $option, $value)" );
+		LogService::legacy_log( "($status, $option, $value)" );
 
 		return $value;
 	}
@@ -98,8 +99,8 @@ class Plugin_Admin {
 	 * Handle newly posted admin options.
 	 */
 	function update_admin_options() {
-		tp_logger( 'Enter', 1 );
-		tp_logger( $_POST );
+		LogService::legacy_log( 'Enter', 1 );
+		LogService::legacy_log( $_POST );
 
 		switch ( $_POST['page'] ) {
 			case 'tp_langs':
@@ -111,7 +112,7 @@ class Plugin_Admin {
 				unset( $_POST['languages'][0] );
 
 				// update the list of supported/editable/sortable languages
-				tp_logger( $_POST['languages'] );
+				LogService::legacy_log( $_POST['languages'] );
 				foreach ( $_POST['languages'] as $lang ) {
 					list ( $langcode, $viewable ) = explode( ",", $lang );
 					// clean possible wrong data
@@ -146,7 +147,7 @@ class Plugin_Admin {
 					$this->transposh->options->allow_full_version_upgrade = TP_FROM_POST;
 				} //** WPORGSTOP
 				// anonymous needs to be handled differently as it does not have a role
-				tp_logger( $_POST['anonymous'] );
+				LogService::legacy_log( $_POST['anonymous'] );
 				$this->transposh->options->allow_anonymous_translation = $_POST['anonymous'];
 
 				$this->transposh->options->enable_default_translate      = TP_FROM_POST;
@@ -214,7 +215,7 @@ class Plugin_Admin {
 				$this->transposh->options->google_key               = TP_FROM_POST;
 				$this->transposh->options->yandex_key               = TP_FROM_POST;
 				$this->transposh->options->baidu_key                = TP_FROM_POST;
-				tp_logger( $_POST['engines'] );
+				LogService::legacy_log( $_POST['engines'] );
 				foreach ( $_POST['engines'] as $engine ) {
 					$sorted_engines[ $engine ] = $engine;
 				}
@@ -509,7 +510,7 @@ class Plugin_Admin {
 		} //** WPORGSTOP
 		echo '<ul id="sortable">';
 		foreach ( $this->transposh->options->get_sorted_langs() as $langcode => $langrecord ) {
-			tp_logger( $langcode, 5 );
+			LogService::legacy_log( $langcode, 5 );
 			list ( $langname, $langorigname, $flag ) = explode( ",", $langrecord );
 			echo '<li id="' . $langcode . '" class="languages ' . ( $this->transposh->options->is_active_language( $langcode ) || $this->transposh->options->is_default_language( $langcode ) ? "lng_active" : "" )
 			     . '"><div style="float:' . $this->localeleft . '">'
@@ -1043,10 +1044,10 @@ class Plugin_Admin {
 			// I don't know why I need to run this more than once, but what the heck
 			for ( $i = 0; $i < 5; $i ++ ) {
 				foreach ( $actions as $key => $value ) {
-					if ( strpos( $key, 'notices' ) !== false ) {
+					if ( str_contains( $key, 'notices' ) ) {
 						foreach ( $value as $key2 => $value2 ) {
 							foreach ( $value2 as $key3 => $value3 ) {
-								if ( strpos( $key3, 'tp_notices' ) === false ) {
+								if ( ! str_contains( $key3, 'tp_notices' ) ) {
 									remove_action( $key, $key3, $key2 );
 								}
 							}
@@ -1152,13 +1153,13 @@ class Plugin_Admin {
 //	foreach ( $transients as $transient => $type ) {
 //            delete_site_transient($transient);
 //        };
-//        BetterTransposh\Core\Logger('site transient removed');
-//        BetterTransposh\Core\Logger(wp_get_translation_updates());*/
+//        BetterTransposh\Logging\Logger('site transient removed');
+//        BetterTransposh\Logging\Logger(wp_get_translation_updates());*/
 //        $currentlangs = wp_get_installed_translations('core');
 //        
 //        /** Load WordPress Translation Install API */
 //        require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
-//       // BetterTransposh\Core\Logger(wp_can_install_language_pack());
+//       // BetterTransposh\Logging\Logger(wp_can_install_language_pack());
 //        $translations = wp_get_available_translations();
 //        
 //        //con
@@ -1174,20 +1175,20 @@ class Plugin_Admin {
 //			break;
 //		}*/
 //                if ($translation['language'] == $locale) {
-//                  //   BetterTransposh\Core\Logger($translation);
-//                     BetterTransposh\Core\Logger("$translation[version] $translation[updated]");
+//                  //   BetterTransposh\Logging\Logger($translation);
+//                     BetterTransposh\Logging\Logger("$translation[version] $translation[updated]");
 //                     $getme = true;
 //                }
 //            }
 //            if ($locale != 'en_US' && $getme) {
-//                BetterTransposh\Core\Logger("fetching $locale");
-//                BetterTransposh\Core\Logger($currentlangs['default'][$locale]);
-//                BetterTransposh\Core\Logger(wp_download_language_pack($locale));
+//                BetterTransposh\Logging\Logger("fetching $locale");
+//                BetterTransposh\Logging\Logger($currentlangs['default'][$locale]);
+//                BetterTransposh\Logging\Logger(wp_download_language_pack($locale));
 //            } else {
-//                BetterTransposh\Core\Logger("NOT fetching $locale");                
+//                BetterTransposh\Logging\Logger("NOT fetching $locale");                
 //            }
 //        }
-//        //BetterTransposh\Core\Logger(wp_download_language_pack('he_IL'));
+//        //BetterTransposh\Logging\Logger(wp_download_language_pack('he_IL'));
 //        die();
 //    }
 	// Start full translation

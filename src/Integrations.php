@@ -19,6 +19,7 @@ namespace BetterTransposh;
 
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Logging\LogService;
 
 class Integrations {
 
@@ -84,43 +85,43 @@ class Integrations {
 		$GLOBALS['wp_cache_request_uri'] = preg_replace( '/[ <>\'\"\r\n\t\(\)]/', '', str_replace( '/index.php', '/', str_replace( '..', '', preg_replace( "/(\?.*)?$/", '', $GLOBALS['wp_cache_request_uri'] ) ) ) );
 		// get some supercache variables
 		extract( wp_super_cache_init() );
-		tp_logger( wp_super_cache_init() );
+		LogService::legacy_log( wp_super_cache_init() );
 		// this is hackery for logged in users, a cookie is added to the request somehow and gzip is not correctly set, so we forcefully fix this
 		if ( ! $cache_file ) {
 			$GLOBALS['wp_cache_gzip_encoding'] = gzip_accepted();
 			unset( $_COOKIE[ key( $_COOKIE ) ] );
 			extract( wp_super_cache_init() );
-			tp_logger( wp_super_cache_init() );
+			LogService::legacy_log( wp_super_cache_init() );
 		}
 
 		$dir = get_current_url_supercache_dir();
 		// delete possible files that we can figure out, not deleting files for other cookies for example, but will do the trick in most cases
 		$cache_fname = "{$dir}index.html";
-		tp_logger( "attempting delete of supercache: $cache_fname" );
+		LogService::legacy_log( "attempting delete of supercache: $cache_fname" );
 		@unlink( $cache_fname );
 		$cache_fname = "{$dir}index.html.gz";
-		tp_logger( "attempting delete of supercache: $cache_fname" );
+		LogService::legacy_log( "attempting delete of supercache: $cache_fname" );
 		@unlink( $cache_fname );
-		tp_logger( "attempting delete of wp_cache: $cache_file" );
+		LogService::legacy_log( "attempting delete of wp_cache: $cache_file" );
 		@unlink( $cache_file );
-		tp_logger( "attempting delete of wp_cache_meta: $meta_pathname" );
+		LogService::legacy_log( "attempting delete of wp_cache_meta: $meta_pathname" );
 		@unlink( $meta_pathname );
 
 		// go at edit pages too
 		$GLOBALS['wp_cache_request_uri'] .= "?edit=1";
 		extract( wp_super_cache_init() );
-		tp_logger( wp_super_cache_init() );
-		tp_logger( "attempting delete of edit_wp_cache: $cache_file" );
+		LogService::legacy_log( wp_super_cache_init() );
+		LogService::legacy_log( "attempting delete of edit_wp_cache: $cache_file" );
 		@unlink( $cache_file );
-		tp_logger( "attempting delete of edit_wp_cache_meta: $meta_pathname" );
+		LogService::legacy_log( "attempting delete of edit_wp_cache_meta: $meta_pathname" );
 		@unlink( $meta_pathname );
 	}
 
 	public function w3tc_invalidate() {
-		tp_logger( "W3TC invalidate:" . Utilities::get_clean_server_var( 'HTTP_REFERER' ) );
+		LogService::legacy_log( "W3TC invalidate:" . Utilities::get_clean_server_var( 'HTTP_REFERER' ) );
 		$id = url_to_postid( Utilities::get_clean_server_var( 'HTTP_REFERER' ) );
 		if ( is_numeric( $id ) ) {
-			tp_logger( "W3TC invalidate post id: $id" );
+			LogService::legacy_log( "W3TC invalidate post id: $id" );
 			w3tc_pgcache_flush_post( $id );
 		} else {
 			w3tc_pgcache_flush();
@@ -247,7 +248,8 @@ class Integrations {
 	public function add_sm_transposh_urls( $sm_page ) {
 		// up to 4.1.4
 		if ( method_exists( $sm_page, "GetUrl" ) ) {
-			tp_logger( "in sitemap add url: " . $sm_page->GetUrl() . " " . $sm_page->GetPriority(), 4 );
+			LogService::legacy_log( "in sitemap add url: " . $sm_page->GetUrl() . " " . $sm_page->GetPriority(),
+				4 );
 			$sm_page = clone $sm_page;
 			// we need the generator object (we know it must exist...)
 			$generatorObject = &GoogleSitemapGenerator::GetInstance();
@@ -276,7 +278,8 @@ class Integrations {
 				}
 			}
 		} elseif ( method_exists( $sm_page, "get_url" ) ) {
-			tp_logger( "in sitemap add url: " . $sm_page->get_url() . " " . $sm_page->get_priority(), 4 );
+			LogService::legacy_log( "in sitemap add url: " . $sm_page->get_url() . " " . $sm_page->get_priority(),
+				4 );
 			$sm_page = clone $sm_page;
 			// we need the generator object (we know it must exist...)
 			$generatorObject = GoogleSitemapGenerator::get_instance();
@@ -343,7 +346,7 @@ class Integrations {
 	 * @param yoast_url array $yoast_url Object containing the page information
 	 */
 	public function add_yoast_transposh_urls( $yoast_url ) {
-		tp_logger( "in sitemap add url: " . $yoast_url['loc'] . " " . $yoast_url['pri'], 2 );
+		LogService::legacy_log( "in sitemap add url: " . $yoast_url['loc'] . " " . $yoast_url['pri'], 2 );
 		$urls = array();
 
 		$yoast_url['pri'] = max( $yoast_url['pri'] - 0.2, 0 );
@@ -370,7 +373,9 @@ class Integrations {
 
 	public function woo_uri_filter( $url ) {
 		$lang = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->transposh->home_url );
-		tp_logger( 'altering woo url to:' . Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, $this->transposh->edit_mode ) );
+		LogService::legacy_log( 'altering woo url to:' . Utilities::rewrite_url_lang_param( $url,
+				$this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang,
+				$this->transposh->edit_mode ) );
 
 		return Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->enable_permalinks_rewrite, $lang, $this->transposh->edit_mode );
 	}
@@ -387,25 +392,25 @@ class Integrations {
 	 */
 
 	public function fix_wpbdp_cat_links( $url ) {
-		tp_logger( $url, 1 );
+		LogService::legacy_log( $url, 1 );
 
 		return $url;
 		$url = preg_replace( '#/.lang=[a-z]*/#', '/', $url );
 		if ( $this->transposh->options->is_default_language( $this->transposh->target_language ) ) {
 			return $url;
 		}
-		tp_logger( $url, 1 );
+		LogService::legacy_log( $url, 1 );
 
 		return Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->options->enable_permalinks, $this->transposh->target_language, $this->transposh->edit_mode );
 	}
 
 	public function fix_wpbdp_links( $url ) {
-		tp_logger( $url, 1 );
+		LogService::legacy_log( $url, 1 );
 		$url = preg_replace( '#/.lang=[a-z]*/#', '/', $url );
 		if ( $this->transposh->options->is_default_language( $this->transposh->target_language ) ) {
 			return $url;
 		}
-		tp_logger( $url, 1 );
+		LogService::legacy_log( $url, 1 );
 
 		return Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->options->enable_permalinks, $this->transposh->target_language, $this->transposh->edit_mode );
 	}
@@ -414,7 +419,7 @@ class Integrations {
 		if ( $this->transposh->options->is_default_language( $this->transposh->target_language ) ) {
 			return $url;
 		}
-		tp_logger( $url, 1 );
+		LogService::legacy_log( $url, 1 );
 
 		return Utilities::rewrite_url_lang_param( $url, $this->transposh->home_url, $this->transposh->options->enable_permalinks, $this->transposh->target_language, $this->transposh->edit_mode );
 	}

@@ -2,8 +2,8 @@
 
 namespace Tests\Core;
 
-use BetterTransposh\Core\Logger;
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Logging\Logger;
 use WP_UnitTestCase;
 
 ini_set( "include_path", "../core" . PATH_SEPARATOR . "../../core" . PATH_SEPARATOR . ini_get( "include_path" ) );
@@ -28,7 +28,7 @@ class Utilities_Tests extends WP_UnitTestCase {
 	 * @access protected
 	 */
 	protected function setUp(): void {
-		$GLOBALS['logger']              = Logger::getInstance( true );
+		$GLOBALS['logger']              = Logger::get_instance();
 		$GLOBALS['logger']->show_caller = true;
 		$GLOBALS['logger']->set_debug_level( 5 );
 		$GLOBALS['logger']->eolprint = true;

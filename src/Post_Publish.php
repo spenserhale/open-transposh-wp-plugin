@@ -19,6 +19,7 @@ namespace BetterTransposh;
 
 use BetterTransposh\Core\Constants;
 use BetterTransposh\Core\Parser;
+use BetterTransposh\Logging\LogService;
 
 /**
  * class that makes changed to the edit page and post page, adding our change to the side ba
@@ -49,13 +50,13 @@ class Post_Publish {
 	 */
 	public function on_admin_menu() {
 		//add our metaboxs to the post and publish pages
-		tp_logger( 'adding metaboxes for admin pages/post/custom', 4 );
+		LogService::legacy_log( 'adding metaboxes for admin pages/post/custom', 4 );
 		$post_types = get_post_types();
 		foreach ( $post_types as $post_type ) {
 			if ( in_array( $post_type, array( 'attachment', 'revision', 'nav_menu_item' ) ) ) {
 				continue;
 			}
-			tp_logger( $post_type, 5 );
+			LogService::legacy_log( $post_type, 5 );
 			if ( $this->transposh->options->enable_autoposttranslate ) {
 				add_meta_box( 'transposh_postpublish', __( 'Transposh', TRANSPOSH_TEXT_DOMAIN ), array(
 					&$this,
@@ -144,7 +145,7 @@ class Post_Publish {
 
 			// Merge the two arrays for traversing
 			$phrases = array_merge( $phrases, $phrases2, $phrases3, $phrases4, $phrases5 );
-			tp_logger( $phrases, 4 );
+			LogService::legacy_log( $phrases, 4 );
 
 			// Add phrases from permalink
 			if ( $this->transposh->options->enable_url_translate ) {
@@ -255,7 +256,7 @@ class Post_Publish {
 				$this->transposh->options->update_options();
 			}
 		}
-		tp_logger( $postID . ' ' . $_POST['transposh_tp_language'] ); //??
+		LogService::legacy_log( $postID . ' ' . $_POST['transposh_tp_language'] ); //??
 	}
 
 }

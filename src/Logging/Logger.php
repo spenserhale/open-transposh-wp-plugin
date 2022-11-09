@@ -1,10 +1,13 @@
 <?php
 
-namespace BetterTransposh\Core;
+namespace BetterTransposh\Logging;
 
+use BetterTransposh\Core\Utilities;
 use BetterTransposh\Libraries\ChromePhp;
+use BetterTransposh\Traits\Static_Instance_Trait;
 
 class Logger {
+	use Static_Instance_Trait;
 
 	/** @var string Name of file to log into */
 	private $logfile;
@@ -27,9 +30,6 @@ class Logger {
 	private $global_log = 0;
 
 	private $logstr = "";
-
-	/** @var self Singelton instance of our logger */
-	protected static $instance = null;
 
 	public function __construct() {
 		// If not outputting to stdout, we should buffer so firephp will work
@@ -102,29 +102,6 @@ class Logger {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Gets singleton instance of logger
-	 *
-	 * @param boolean $AutoCreate
-	 *
-	 * @return self
-	 */
-	public static function getInstance( $AutoCreate = false ) {
-		if ( $AutoCreate === true && ! self::$instance ) {
-			self::init();
-		}
-
-		return self::$instance;
-	}
-
-	/**
-	 * Creates logger object and stores it for singleton access
-	 * @return self
-	 */
-	public static function init() {
-		return self::$instance = new self();
 	}
 
 	public function set_debug_level( $int ) {

@@ -5,6 +5,7 @@ namespace BetterTransposh\Core;
 use BetterTransposh\Libraries\SimpleHtmlDom\Constants;
 use BetterTransposh\Libraries\SimpleHtmlDom\Node;
 use BetterTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom;
+use BetterTransposh\Logging\LogService;
 
 /**
  * Parser class - allows phrase marking and translation with callback functions
@@ -238,7 +239,7 @@ class Parser {
 	 * &Yuml;      &#376;                        latin capital letter Y with diaeresis
 	 */
 	public function is_entity_letter( $entity ) {
-		tp_logger( "checking ($entity) - " . htmlentities( $entity ), 4 );
+		LogService::legacy_log( "checking ($entity) - " . htmlentities( $entity ), 4 );
 		$entnum = (int) substr( $entity, 2 );
 		// skip multiply and divide (215, 247)
 		if ( ( $entnum >= 192 && $entnum <= 214 ) || ( $entnum >= 216 && $entnum <= 246 ) || ( $entnum >= 248 && $entnum <= 696 ) ) {
@@ -312,14 +313,14 @@ class Parser {
 		$phrase      = trim( substr( $string, $start, $end - $start ) );
 		$phrasefixed = trim( str_replace( '&nbsp;', ' ', $phrase ) );
 //        $logstr = str_replace(array(chr(1),chr(2),chr(3),chr(4)), array('[1]','[2]','[3]','[4]'), $string);
-//        BetterTransposh\Core\Logger ("p:$phrasefixed, s:$logstr, st:$start, en:$end, gt:{$this->in_get_text}, gti:{$this->in_get_text_inner}");
+//        BetterTransposh\Logging\Logger ("p:$phrasefixed, s:$logstr, st:$start, en:$end, gt:{$this->in_get_text}, gti:{$this->in_get_text_inner}");
 		if ( $this->in_get_text > $this->in_get_text_inner ) {
-			tp_logger( 'not tagging ' . $phrase . ' assumed gettext translated', 4 );
+			LogService::legacy_log( 'not tagging ' . $phrase . ' assumed gettext translated', 4 );
 
 			return;
 		}
 		if ( $phrase ) {
-			tp_logger( 'tagged phrase: ' . $phrase, 4 );
+			LogService::legacy_log( 'tagged phrase: ' . $phrase, 4 );
 			$node                                   = new Node( $this->html );
 			$node->tag                              = 'phrase';
 			$node->parent                           = $this->currentnode;
@@ -362,12 +363,12 @@ class Parser {
 			if ( $this->ent_breaks && $len_of_entity = $this->is_html_entity( $string, $pos ) ) {
 				$entity = substr( $string, $pos, $len_of_entity );
 				if ( ( $this->is_white_space( @$string[ $pos + $len_of_entity ] ) || $this->is_entity_breaker( $entity ) ) && ! $this->is_entity_letter( $entity ) ) {
-					tp_logger( "entity ($entity) breaks", 4 );
+					LogService::legacy_log( "entity ($entity) breaks", 4 );
 					$this->tag_phrase( $string, $start, $pos );
 					$start = $pos + $len_of_entity;
 				}
 				// skip nbsp starting a phrase
-				tp_logger( "entity ($entity)", 4 );
+				LogService::legacy_log( "entity ($entity)", 4 );
 				if ( $entity === '&nbsp;' && $start === $pos ) {
 					$start = $pos + $len_of_entity;
 				}
@@ -384,7 +385,7 @@ class Parser {
 			} elseif ( $string[ $pos ] == TP_GTXT_BRK || $string[ $pos ] == TP_GTXT_BRK_CLOSER ) {
 //                $logstr = str_replace(array(chr(1),chr(2),chr(3),chr(4)), array('[1]','[2]','[3]','[4]'), $string);
 //                $closers = ($string[$pos] == TP_GTXT_BRK) ? '': 'closer';
-//                BetterTransposh\Core\Logger(" $closers TEXT breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text, 3);
+//                BetterTransposh\Logging\Logger(" $closers TEXT breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text, 3);
 				$this->tag_phrase( $string, $start, $pos );
 				( $string[ $pos ] == TP_GTXT_BRK ) ? $this->in_get_text += 1 : $this->in_get_text -= 1;
 				$pos ++;
@@ -395,8 +396,8 @@ class Parser {
 			} elseif ( $string[ $pos ] == TP_GTXT_IBRK || $string[ $pos ] == TP_GTXT_IBRK_CLOSER ) {
 //                $logstr = str_replace(array(chr(1),chr(2),chr(3),chr(4)), array('[1]','[2]','[3]','[4]'), $string);
 //                $closers = ($string[$pos] == TP_GTXT_IBRK) ? '': 'closer';
-//                BetterTransposh\Core\Logger("   $closers INNER text breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text_inner, 3);
-				//BetterTransposh\Core\Logger("inner text breaker $start $pos $string " . (($this->in_get_text_inner) ? 'true' : 'false'), 5);
+//                BetterTransposh\Logging\Logger("   $closers INNER text breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text_inner, 3);
+				//BetterTransposh\Logging\Logger("inner text breaker $start $pos $string " . (($this->in_get_text_inner) ? 'true' : 'false'), 5);
 				$this->tag_phrase( $string, $start, $pos );
 				if ( $this->in_get_text ) {
 					( $string[ $pos ] == TP_GTXT_IBRK ) ? $this->in_get_text_inner += 1 : $this->in_get_text_inner -= 1;
@@ -541,7 +542,7 @@ class Parser {
 		elseif ( $node->tag == 'iframe' ) {
 			if ( $this->url_rewrite_func ) {
 				$node->src = call_user_func_array( $this->url_rewrite_func, array( $node->src ) );
-				tp_logger( 'iframe: ' . $node->src, 4 );
+				LogService::legacy_log( 'iframe: ' . $node->src, 4 );
 			}
 		}
 
@@ -556,7 +557,7 @@ class Parser {
 			$this->parsetext( $node->alt );
 		}
 		if ( $node->{'data-quickview'} ) {
-			//    BetterTransposh\Core\Logger("in DQV " . $node->{'data-quickview'}, 2);
+			//    BetterTransposh\Logging\Logger("in DQV " . $node->{'data-quickview'}, 2);
 			$this->parsetext( $node->{'data-quickview'} );
 		}
 
@@ -678,7 +679,7 @@ class Parser {
 		if ( $this->might_json && $string[0] == '{' ) {
 			$jsoner = json_decode( $string );
 			if ( $jsoner != null ) {
-				tp_logger( "json detected (buddypress?)", 4 );
+				LogService::legacy_log( "json detected (buddypress?)", 4 );
 				// currently we only handle contents (which buddypress heavily use)
 				if ( $jsoner->contents ) {
 					$jsoner->contents = $this->fix_html( $jsoner->contents );
@@ -742,7 +743,7 @@ class Parser {
 		// fix feed
 		if ( $this->feed_fix ) {
 			// fix urls on feed
-			tp_logger( 'fixing rss feed', 3 );
+			LogService::legacy_log( 'fixing rss feed', 3 );
 			foreach ( array( 'link', 'wfw:commentrss', 'comments' ) as $tag ) {
 				foreach ( $this->html->find( $tag ) as $e ) {
 					$e->innertext = htmlspecialchars( call_user_func_array( $this->url_rewrite_func, array( $e->innertext ) ) );
@@ -902,7 +903,7 @@ class Parser {
 				if ( isset( $e->parent->_[ Constants::HDOM_INFO_OUTER ] ) ) {
 					$saved_outertext = $e->outertext;
 				}
-				tp_logger( "$title-original: $e->$title}", 4 );
+				LogService::legacy_log( "$title-original: $e->$title}", 4 );
 				if ( isset( $e->nodes ) ) {
 					foreach ( $e->nodes as $ep ) {
 						if ( $ep->tag == 'phrase' ) {
@@ -987,7 +988,7 @@ class Parser {
 						$hiddenspans .= $this->create_edit_span( $ep->phrase, $translated_text, $source, true, $ep->srclang );
 					}
 					if ( ! $translated_text && $this->is_auto_translate && ! $this->is_edit_mode ) {
-						tp_logger( 'untranslated meta for ' . $ep->phrase . ' ' . $this->lang );
+						LogService::legacy_log( 'untranslated meta for ' . $ep->phrase . ' ' . $this->lang );
 						//if ($this->is_edit_mode || $this->is_auto_translate) { // FIX
 						//}
 					}
@@ -995,7 +996,7 @@ class Parser {
 			}
 			if ( $newtext ) {
 				$e->content = $newtext . $right;
-				tp_logger( "content-phrase: $newtext", 4 );
+				LogService::legacy_log( "content-phrase: $newtext", 4 );
 			}
 		}
 

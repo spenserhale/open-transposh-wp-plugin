@@ -45,4 +45,7 @@ require __DIR__ . '/constants.php';
 require __DIR__ . '/legacy.php';
 require __DIR__ . '/functions.php';
 
+$my_transposh_plugin = new transposh_plugin();
+$tp_logger = new tp_logger();
+
 add_action('plugins_loaded', [BetterTransposh\Plugin::class, 'init']);

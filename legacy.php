@@ -1,23 +1,25 @@
 <?php
 
+use BetterTransposh\Legacy\Legacy_Usage_Reporter;
+
 /**
  * Legacy Transposh Names for Backwards Compatibility
  */
 
-class tp_logger extends \BetterTransposh\Core\Logger {}
+class tp_logger extends Legacy_Usage_Reporter {}
 
-class transposh_consts extends \BetterTransposh\Core\Constants {}
+class transposh_consts extends Legacy_Usage_Reporter {}
 
-class ChromePhp_tp extends \BetterTransposh\Libraries\ChromePhp {}
+class ChromePhp_tp extends Legacy_Usage_Reporter {}
 
-class transposh_utils extends \BetterTransposh\Core\Utilities {}
+class transposh_utils extends Legacy_Usage_Reporter {}
 
-class tp_parserstats extends \BetterTransposh\Core\Parser_Stats {}
+class tp_parserstats extends Legacy_Usage_Reporter {}
 
-class tp_parser extends \BetterTransposh\Core\Parser {}
+class tp_parser extends Legacy_Usage_Reporter {}
 
-class transposh_plugin extends \BetterTransposh\Plugin {}
+class transposh_plugin extends Legacy_Usage_Reporter {}
 
-class transposh_base_widget extends \BetterTransposh\Widgets\Base_Widget {}
+class transposh_base_widget extends Legacy_Usage_Reporter {}
 
-class transposh_plugin_widget extends \BetterTransposh\Widgets\Plugin_Widget {}
+class transposh_plugin_widget extends Legacy_Usage_Reporter {}

@@ -3,15 +3,14 @@
 namespace BetterTransposh;
 
 use BetterTransposh\Core\Constants;
-use BetterTransposh\Core\Logger;
 use BetterTransposh\Core\Parser;
-use BetterTransposh\Core\Query_Monitor_Logger;
 use BetterTransposh\Core\Utilities;
+use BetterTransposh\Logging\Logger;
+use BetterTransposh\Logging\LogService;
+use BetterTransposh\Logging\Query_Monitor_Logger;
 use BetterTransposh\Widgets\Plugin_Widget;
 use Psr\Log\NullLogger;
 use stdClass;
-use tp_logger;
-use transposh_plugin;
 use WP;
 use WP_Error;
 use WP_Query;
@@ -20,6 +19,7 @@ use WP_Query;
  * This class represents the complete plugin
  */
 class Plugin {
+	use Traits\Static_Instance_Trait;
 	// List of contained objects
 
 	/** @var Plugin_Options An options object */
@@ -88,26 +88,12 @@ class Plugin {
 
 	/** @var boolean Do I need to check for updates by myself? After wordpress checked his */
 	private $do_update_check = false;
+	private Logger|NullLogger|Query_Monitor_Logger $logger;
 
 	public static function init() {
-		if ( defined( 'TRANSPOSH_LEGACY_COMPATIBILITY' ) ) {
-			self::init_legacy_compatibility();
-		} else {
-			self::init_modern();
-		}
-	}
-
-	private static function init_modern() {
 		global $better_transposh;
 
-		$better_transposh = new self();
-	}
-
-	private static function init_legacy_compatibility() {
-		global $my_transposh_plugin, $tp_logger;
-
-		$my_transposh_plugin = new transposh_plugin();
-		$tp_logger           = tp_logger::getInstance( true );
+		$better_transposh = self::get_instance();
 	}
 
 	/**
@@ -136,18 +122,8 @@ class Plugin {
 		//$tr_plugin_url= plugins_url('', __FILE__);
 
 		$this->transposh_plugin_dir = plugin_dir_path( __FILE__ );
-
-		if ( $this->options->debug_enable ) {
-			tp_logger( 'Transposh object created: ' . Utilities::get_clean_server_var( 'REQUEST_URI' ), 3 );
-		}
-
 		$this->transposh_plugin_basename = plugin_basename( __FILE__ );
-		//Register some functions into wordpress
-		if ( $this->options->debug_enable ) {
-			//BetterTransposh\Core\Logger(preg_replace('|^' . preg_quote(WP_PLUGIN_DIR, '|') . '/|', '', __FILE__), 4); // includes transposh dir and php
-			// BetterTransposh\Core\Logger($this->get_plugin_name());
-			tp_logger( plugin_basename( __FILE__ ) );
-		}
+
 
 		// TODO: get_class_methods to replace said mess, other way?
 		add_filter( 'plugin_action_links_' . $this->transposh_plugin_basename, array( &$this, 'plugin_action_links' ) );
@@ -265,10 +241,10 @@ class Plugin {
 		if ( $this->transposh_redirect || $this->options->is_default_language( $this->target_language ) ) {
 			return $location;
 		}
-		tp_logger( $status . ' ' . $location );
+		LogService::legacy_log( $status . ' ' . $location );
 		// $trace = debug_backtrace();
-		// BetterTransposh\Core\Logger($trace);
-		// BetterTransposh\Core\Logger($this->target_language);
+		// BetterTransposh\Logging\Logger($trace);
+		// BetterTransposh\Logging\Logger($this->target_language);
 		return $this->rewrite_url( $location );
 	}
 
@@ -293,7 +269,7 @@ class Plugin {
 	 * @return mixed false if redirect unneeded - new url if we think we should
 	 */
 	public function on_redirect_canonical( $red, $req ) {
-		tp_logger( "$red .. $req", 4 );
+		LogService::legacy_log( "$red .. $req", 4 );
 		// if the urls are actually the same, don't redirect (same - if it had our proper take care of)
 		if ( $this->rewrite_url( $red ) == urldecode( $req ) ) {
 			return false;
@@ -373,13 +349,13 @@ class Plugin {
           global $wp;
           $this->on_parse_request($wp);
           } */
-		tp_logger( 'processing page hit with language:' . $this->target_language, 1 );
+		LogService::legacy_log( 'processing page hit with language:' . $this->target_language, 1 );
 		$bad_content = false;
 		foreach ( headers_list() as $header ) {
 			if ( stripos( $header, 'Content-Type:' ) !== false ) {
-				tp_logger( $header );
+				LogService::legacy_log( $header );
 				if ( stripos( $header, 'text' ) === false && stripos( $header, 'json' ) === false && stripos( $header, 'rss' ) === false ) {
-					tp_logger( "won't do that - $header" );
+					LogService::legacy_log( "won't do that - $header" );
 					$bad_content = true;
 				}
 			}
@@ -388,33 +364,34 @@ class Plugin {
 
 		// Refrain from touching the administrative interface and important pages
 		if ( $this->is_special_page( Utilities::get_clean_server_var( 'REQUEST_URI' ) ) && ! $this->attempt_json ) {
-			tp_logger( "Skipping translation for admin pages", 3 );
+			LogService::legacy_log( "Skipping translation for admin pages", 3 );
 		} elseif ( $bad_content ) {
-			tp_logger( "Seems like content we should not handle" );
+			LogService::legacy_log( "Seems like content we should not handle" );
 		}
 		// This one fixed a bug transposh created with other pages (xml generator for other plugins - such as the nextgen gallery)
 		// TODO: need to further investigate (will it be needed?)
 		elseif ( $this->target_language == '' ) {
-			tp_logger( "Skipping translation where target language is unset", 3 );
+			LogService::legacy_log( "Skipping translation where target language is unset", 3 );
 			if ( ! $buffer ) {
-				tp_logger( "seems like we had a premature flushing" );
+				LogService::legacy_log( "seems like we had a premature flushing" );
 				$this->tried_buffer = true;
 			}
 		} // Don't translate the default language unless specifically allowed to...
 		elseif ( $this->options->is_default_language( $this->target_language ) && ! $this->options->enable_default_translate ) {
-			tp_logger( "Skipping translation for default language {$this->target_language}", 3 );
+			LogService::legacy_log( "Skipping translation for default language {$this->target_language}", 3 );
 		} else {
 			// This one allows to redirect to a static element which we can find, since the redirection will remove
 			// the target language, we are able to avoid nasty redirection loops
 			if ( is_404() ) {
 				global $wp;
 				if ( isset( $wp->query_vars['pagename'] ) && file_exists( ABSPATH . $wp->query_vars['pagename'] ) ) { // Hmm
-					tp_logger( 'Redirecting a static file ' . $wp->query_vars['pagename'], 1 );
+					LogService::legacy_log( 'Redirecting a static file ' . $wp->query_vars['pagename'], 1 );
 					$this->tp_redirect( '/' . $wp->query_vars['pagename'], 301 );
 				}
 			}
 
-			tp_logger( "Translating " . Utilities::get_clean_server_var( 'REQUEST_URI' ) . " to: {$this->target_language} for: " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ), 1 );
+			LogService::legacy_log( "Translating " . Utilities::get_clean_server_var( 'REQUEST_URI' ) . " to: {$this->target_language} for: " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ),
+				1 );
 
 			//translate the entire page
 			$parse                          = new Parser();
@@ -433,7 +410,7 @@ class Plugin {
 			//** FULLSTOP
 			// TODO - check this!
 			if ( stripos( Utilities::get_clean_server_var( 'REQUEST_URI' ), '/feed/' ) !== false ) {
-				tp_logger( "in rss feed!", 2 );
+				LogService::legacy_log( "in rss feed!", 2 );
 				$parse->is_auto_translate = false;
 				$parse->is_edit_mode      = false;
 				$parse->feed_fix          = true;
@@ -442,14 +419,14 @@ class Plugin {
 			$buffer = $parse->fix_html( $buffer );
 
 			$end_time = microtime( true );
-			tp_logger( 'Translation completed in ' . ( $end_time - $start_time ) . ' seconds', 1 );
+			LogService::legacy_log( 'Translation completed in ' . ( $end_time - $start_time ) . ' seconds', 1 );
 		}
 
 		return $buffer;
 	}
 
 //    function on_admin_init() {
-//        BetterTransposh\Core\Logger("admin init called");
+//        BetterTransposh\Logging\Logger("admin init called");
 //    }
 
 	/**
@@ -457,17 +434,17 @@ class Plugin {
 	 * Once processing is completed the buffer will go into the translation process.
 	 */
 	public function on_init() {
-		tp_logger( 'init ' . Utilities::get_clean_server_var( 'REQUEST_URI' ), 4 );
+		LogService::legacy_log( 'init ' . Utilities::get_clean_server_var( 'REQUEST_URI' ), 4 );
 
 		// the wp_rewrite is not available earlier so we can only set the enable_permalinks here
 		if ( is_object( $GLOBALS['wp_rewrite'] ) && $GLOBALS['wp_rewrite']->using_permalinks() && $this->options->enable_permalinks ) {
-			tp_logger( "enabling permalinks" );
+			LogService::legacy_log( "enabling permalinks" );
 			$this->enable_permalinks_rewrite = true;
 		}
 
 		// this is an ajax special case, currently crafted and tested on buddy press, lets hope this won't make hell break loose.
 		// it basically sets language based on referred when accessing wp-load.php (which is the way bp does ajax)
-		tp_logger( substr( Utilities::get_clean_server_var( 'SCRIPT_FILENAME' ), - 11 ), 5 );
+		LogService::legacy_log( substr( Utilities::get_clean_server_var( 'SCRIPT_FILENAME' ), - 11 ), 5 );
 		if ( str_ends_with( Utilities::get_clean_server_var( 'SCRIPT_FILENAME' ), 'wp-load.php' ) ) {
 			$this->target_language = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
 			$this->attempt_json    = true;
@@ -504,9 +481,9 @@ class Plugin {
 			$this->attempt_json    = true;
 		}
 
-		tp_logger( Utilities::get_clean_server_var( 'REQUEST_URI' ), 5 );
+		LogService::legacy_log( Utilities::get_clean_server_var( 'REQUEST_URI' ), 5 );
 		if ( strpos( Utilities::get_clean_server_var( 'REQUEST_URI' ), '/wpv-ajax-pagination/' ) === true ) {
-			tp_logger( 'wpv pagination', 5 );
+			LogService::legacy_log( 'wpv pagination', 5 );
 			$this->target_language = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
 		}
 
@@ -532,10 +509,10 @@ class Plugin {
 	 * @return array New rewrite rules
 	 */
 	public function update_rewrite_rules( $rules ) {
-		tp_logger( "Enter update_rewrite_rules", 2 );
+		LogService::legacy_log( "Enter update_rewrite_rules", 2 );
 
 		if ( ! $this->options->enable_permalinks ) {
-			tp_logger( "Not touching rewrite rules - permalinks modification disabled by admin", 2 );
+			LogService::legacy_log( "Not touching rewrite rules - permalinks modification disabled by admin", 2 );
 
 			return $rules;
 		}
@@ -547,7 +524,7 @@ class Plugin {
 
 		//catch the root url
 		$newRules[ $lang_prefix . "?$" ] = "index.php?lang=\$matches[1]";
-		tp_logger( "\t {$lang_prefix} ?$  --->  index.php?lang=\$matches[1]", 4 );
+		LogService::legacy_log( "\t {$lang_prefix} ?$  --->  index.php?lang=\$matches[1]", 4 );
 
 		foreach ( $rules as $key => $value ) {
 			$original_key   = $key;
@@ -563,15 +540,15 @@ class Plugin {
 
 			$value .= $lang_parameter;
 
-			tp_logger( "\t $key ---> $value", 2 );
+			LogService::legacy_log( "\t $key ---> $value", 2 );
 
 			$newRules[ $key ]          = $value;
 			$newRules[ $original_key ] = $original_value;
 
-			tp_logger( ": \t{$original_key} ---> {$original_value}", 4 );
+			LogService::legacy_log( ": \t{$original_key} ---> {$original_value}", 4 );
 		}
 
-		tp_logger( "Exit update_rewrite_rules", 2 );
+		LogService::legacy_log( "Exit update_rewrite_rules", 2 );
 
 		return $newRules;
 	}
@@ -589,10 +566,10 @@ class Plugin {
 	 * @return array Modified array
 	 */
 	public function parameter_queryvars( $vars ) {
-		tp_logger( 'inside query vars', 4 );
+		LogService::legacy_log( 'inside query vars', 4 );
 		$vars[] = LANG_PARAM;
 		$vars[] = EDIT_PARAM;
-		tp_logger( $vars, 4 );
+		LogService::legacy_log( $vars, 4 );
 
 		return $vars;
 	}
@@ -603,8 +580,8 @@ class Plugin {
 	 * @param WP $wp - here we get the WP class
 	 */
 	public function on_parse_request( $wp ) {
-		tp_logger( 'on_parse_req', 3 );
-		tp_logger( $wp->query_vars );
+		LogService::legacy_log( 'on_parse_req', 3 );
+		LogService::legacy_log( $wp->query_vars );
 
 		// fix for custom-permalink (and others that might be double parsing?)
 		if ( $this->target_language ) {
@@ -615,16 +592,16 @@ class Plugin {
 		/*        $this->target_language = (isset($wp->query_vars[LANG_PARAM])) ? $wp->query_vars[LANG_PARAM] : '';
           if (!$this->target_language)
           $this->target_language = $this->options->default_language;
-          BetterTransposh\Core\Logger("requested language: {$this->target_language}"); */
+          BetterTransposh\Logging\Logger("requested language: {$this->target_language}"); */
 		// TODO TOCHECK!!!!!!!!!!!!!!!!!!!!!!!!!!1
 		$this->target_language = $this->tgl;
 		if ( ! $this->target_language ) {
 			$this->target_language = $this->options->default_language;
 		}
-		tp_logger( "requested language: {$this->target_language}", 3 );
+		LogService::legacy_log( "requested language: {$this->target_language}", 3 );
 
 		if ( $this->tried_buffer ) {
-			tp_logger( "we will retrigger the output buffering" );
+			LogService::legacy_log( "we will retrigger the output buffering" );
 			ob_start( array( &$this, "process_page" ) );
 		}
 
@@ -646,7 +623,7 @@ class Plugin {
 			}
 			// no redirections if we already redirected in this session or we suspect cyclic redirections
 			if ( ! isset( $_SESSION['TR_REDIRECTED'] ) && ! ( Utilities::get_clean_server_var( 'HTTP_REFERER' ) == Utilities::get_clean_server_var( 'REQUEST_URI' ) ) ) {
-				tp_logger( 'session redirection never happened (yet)', 2 );
+				LogService::legacy_log( 'session redirection never happened (yet)', 2 );
 				// we redirect once per session
 				$_SESSION['TR_REDIRECTED'] = true;
 				// redirect according to stored lng cookie, and than according to detection
@@ -657,7 +634,7 @@ class Plugin {
 						{
 							$url = Utilities::cleanup_url( Utilities::get_clean_server_var( "REQUEST_URI" ), $this->home_url );
 						}
-						tp_logger( "redirected to $url because of cookie", 2 );
+						LogService::legacy_log( "redirected to $url because of cookie", 2 );
 						$this->tp_redirect( $url );
 						exit;
 					}
@@ -676,13 +653,13 @@ class Plugin {
 						{
 							$url = Utilities::cleanup_url( Utilities::get_clean_server_var( 'REQUEST_URI' ), $this->home_url );
 						}
-						tp_logger( "redirected to $url because of bestlang", 2 );
+						LogService::legacy_log( "redirected to $url because of bestlang", 2 );
 						$this->tp_redirect( $url );
 						exit;
 					}
 				}
 			} else {
-				tp_logger( 'session was already redirected', 2 );
+				LogService::legacy_log( 'session was already redirected', 2 );
 			}
 		}
 		// this method allows posts from the search box to maintain the language,
@@ -709,7 +686,7 @@ class Plugin {
 		}
 		// We are removing our query vars since they are no longer needed and also make issues when a user select a static page as his home
 		unset( $wp->query_vars[ LANG_PARAM ], $wp->query_vars[ EDIT_PARAM ] );
-		tp_logger( "edit mode: " . ( ( $this->edit_mode ) ? 'enabled' : 'disabled' ), 2 );
+		LogService::legacy_log( "edit mode: " . ( ( $this->edit_mode ) ? 'enabled' : 'disabled' ), 2 );
 	}
 
 	// TODO ? move to options?
@@ -734,7 +711,7 @@ class Plugin {
 	 * Plugin activation
 	 */
 	public function plugin_activate() {
-		tp_logger( "plugin_activate enter: " . __DIR__, 1 );
+		LogService::legacy_log( "plugin_activate enter: " . __DIR__, 1 );
 
 		$this->database->setup_db();
 		// this handles the permalink rewrite
@@ -758,9 +735,9 @@ class Plugin {
 		}
 		//** FULLSTOP        
 
-		tp_logger( "plugin_activate exit: " . __DIR__, 1 );
-		tp_logger( "testing name:" . plugin_basename( __FILE__ ), 4 );
-		// BetterTransposh\Core\Logger("testing name2:" . $this->get_plugin_name(), 4);
+		LogService::legacy_log( "plugin_activate exit: " . __DIR__, 1 );
+		LogService::legacy_log( "testing name:" . plugin_basename( __FILE__ ), 4 );
+		// BetterTransposh\Logging\Logger("testing name2:" . $this->get_plugin_name(), 4);
 		//activate_plugin($plugin);
 	}
 
@@ -768,19 +745,19 @@ class Plugin {
 	 * Plugin deactivation
 	 */
 	public function plugin_deactivate() {
-		tp_logger( "plugin_deactivate enter: " . __DIR__, 2 );
+		LogService::legacy_log( "plugin_deactivate enter: " . __DIR__, 2 );
 
 		// this handles the permalink rewrite
 		$GLOBALS['wp_rewrite']->flush_rules();
 
-		tp_logger( "plugin_deactivate exit: " . __DIR__, 2 );
+		LogService::legacy_log( "plugin_deactivate exit: " . __DIR__, 2 );
 	}
 
 	/**
 	 * Callback from admin_notices - display error message to the admin.
 	 */
 	public function plugin_install_error() {
-		tp_logger( "install error!", 1 );
+		LogService::legacy_log( "install error!", 1 );
 
 		echo '<div class="updated"><p>';
 		echo 'Error has occured in the installation process of the translation plugin: <br>';
@@ -803,7 +780,7 @@ class Plugin {
 	 * TODO - needs revisiting!
 	 */
 	public function plugin_loaded() {
-		tp_logger( "Enter", 4 );
+		LogService::legacy_log( "Enter", 4 );
 
 		//TODO: fix this...
 		$db_version = get_option( TRANSPOSH_DB_VERSION );
@@ -812,7 +789,7 @@ class Plugin {
 			$this->database->setup_db();
 			//$this->admin_msg = "Translation database version ($db_version) is not comptabile with this plugin (". DB_VERSION . ")  <br>";
 
-			tp_logger( "Updating database in plugin loaded", 1 );
+			LogService::legacy_log( "Updating database in plugin loaded", 1 );
 			//Some error occured - notify admin and deactivate plugin
 			//add_action('admin_notices', 'plugin_install_error');
 		}
@@ -823,7 +800,7 @@ class Plugin {
 		if ( $db_version != DB_VERSION ) {
 			$this->admin_msg = "Failed to locate the translation table  <em> " . TRANSLATIONS_TABLE . "</em> in local database. <br>";
 
-			tp_logger( "Messsage to admin: {$this->admin_msg}", 1 );
+			LogService::legacy_log( "Messsage to admin: {$this->admin_msg}", 1 );
 			//Some error occured - notify admin and deactivate plugin
 			add_action( 'admin_notices', array( &$this, 'plugin_install_error' ) );
 		}
@@ -842,7 +819,7 @@ class Plugin {
       $file = preg_replace('|/+|', '/', $file); // remove any duplicate slash
       //keep only the file name and its parent directory
       $file = preg_replace('/.*\/([^\/]+\/[^\/]+)$/', '$1', $file);
-      BetterTransposh\Core\Logger("Plugin path - $file", 4);
+      BetterTransposh\Logging\Logger("Plugin path - $file", 4);
       return $file;
       } */
 
@@ -862,7 +839,7 @@ class Plugin {
 		//include the transposh.css
 		wp_enqueue_style( 'transposh', $this->transposh_plugin_url . '/' . TRANSPOSH_DIR_CSS . '/transposh.css', array(), TRANSPOSH_PLUGIN_VER );
 
-		tp_logger( 'Added transposh_css', 4 );
+		LogService::legacy_log( 'Added transposh_css', 4 );
 	}
 
 	/**
@@ -936,7 +913,7 @@ class Plugin {
 		if ( ( $this->edit_mode || $this->is_auto_translate_permitted() || $this->options->widget_allow_set_deflang ) && ! is_admin() && ! Utilities::is_bot() ) {
 			wp_enqueue_script( 'transposh' );
 		}
-		tp_logger( 'Added transposh_js', 4 );
+		LogService::legacy_log( 'Added transposh_js', 4 );
 	}
 
 	/**
@@ -947,7 +924,7 @@ class Plugin {
 			return;
 		}
 		$widget_args = $this->widget->create_widget_args( $this->get_clean_url() );
-		tp_logger( $widget_args, 4 );
+		LogService::legacy_log( $widget_args, 4 );
 		foreach ( $widget_args as $lang ) {
 			if ( ! $lang['active'] ) {
 				echo '<link rel="alternate" hreflang="' . $lang['isocode'] . '" href="';
@@ -999,7 +976,7 @@ class Plugin {
 	 * TODO: move to options
 	 */
 	public function is_auto_translate_permitted() {
-		tp_logger( "checking auto translatability", 4 );
+		LogService::legacy_log( "checking auto translatability", 4 );
 
 		if ( ! $this->options->enable_autotranslate ) {
 			return false;
@@ -1066,13 +1043,13 @@ class Plugin {
 	 * @return boolean Modified href
 	 */
 	public function rewrite_url( $href ) {
-		tp_logger( "got: $href", 4 );
+		LogService::legacy_log( "got: $href", 4 );
 		////$href = str_replace('&#038;', '&', $href);
 		// fix what might be messed up -- TODO
 		$href = Utilities::clean_breakers( $href );
 
 		// Ignore urls not from this site
-		tp_logger( "homeurl: {$this->home_url} ", 4 );
+		LogService::legacy_log( "homeurl: {$this->home_url} ", 4 );
 		if ( ! Utilities::is_rewriteable_url( $href, $this->home_url ) ) {
 			return $href;
 		}
@@ -1091,7 +1068,7 @@ class Plugin {
 		//       if ($this->target_language == $this->options->default_language) 
 		if ( $this->options->is_default_language( $this->target_language ) ) {
 			$href = Utilities::cleanup_url( $href, $this->home_url );
-			tp_logger( "cleaned up: $href", 4 );
+			LogService::legacy_log( "cleaned up: $href", 4 );
 
 			return $href;
 		}
@@ -1104,7 +1081,7 @@ class Plugin {
 			) );
 		}
 		$href = Utilities::rewrite_url_lang_param( $href, $this->home_url, $this->enable_permalinks_rewrite, $this->target_language, $this->edit_mode, $use_params );
-		tp_logger( "rewritten: $href", 4 );
+		LogService::legacy_log( "rewritten: $href", 4 );
 
 		return $href;
 	}
@@ -1117,7 +1094,7 @@ class Plugin {
 	 * @return array Now with settings
 	 */
 	public function plugin_action_links( $links ) {
-		tp_logger( 'in plugin action', 5 );
+		LogService::legacy_log( 'in plugin action', 5 );
 
 		return array_merge( array( '<a href="' . admin_url( 'admin.php?page=tp_main' ) . '">' . __( 'Settings' ) . '</a>' ), $links );
 	}
@@ -1128,8 +1105,8 @@ class Plugin {
 	 * @param WP_Query $query
 	 */
 	public function pre_post_search( $query ) {
-		tp_logger( 'pre post', 4 );
-		tp_logger( $query->query_vars, 4 );
+		LogService::legacy_log( 'pre post', 4 );
+		LogService::legacy_log( $query->query_vars, 4 );
 		// we hide the search query var from further proccesing, because we do this later
 		if ( $query->query_vars['s'] ) {
 			$this->search_s         = $query->query_vars['s'];
@@ -1146,7 +1123,7 @@ class Plugin {
 	 */
 	public function posts_where_request( $where ) {
 
-		tp_logger( $where, 3 );
+		LogService::legacy_log( $where, 3 );
 		// from query.php line 1742 (v2.8.6)
 		// If a search pattern is specified, load the posts that match
 		$q = &$GLOBALS['wp_query']->query_vars;
@@ -1191,7 +1168,7 @@ class Plugin {
 				}
 			}
 		}
-		tp_logger( $search, 3 );
+		LogService::legacy_log( $search, 3 );
 
 		return $search . $where;
 	}
@@ -1200,7 +1177,7 @@ class Plugin {
 	 * Runs a scheduled backup
 	 */
 	public function run_backup() {
-		tp_logger( 'backup run..', 2 );
+		LogService::legacy_log( 'backup run..', 2 );
 		$my_transposh_backup = new Backup( $this );
 		$my_transposh_backup->do_backup();
 	}
@@ -1222,11 +1199,11 @@ class Plugin {
 			die();
 		}
 
-		tp_logger( $output );
+		LogService::legacy_log( $output );
 		curl_close( $ch );
 
 		$info = json_decode( $output );
-		tp_logger( $info );
+		LogService::legacy_log( $info );
 		if ( isset( $info->id ) ) {
 			$this->options->superproxy_key = $info->id;
 			$this->options->update_options();
@@ -1244,7 +1221,7 @@ class Plugin {
 	 * Runs a restore
 	 */
 	public function run_restore() {
-		tp_logger( 'restoring..', 2 );
+		LogService::legacy_log( 'restoring..', 2 );
 		$my_transposh_backup = new Backup( $this );
 		$my_transposh_backup->do_restore();
 	}
@@ -1293,7 +1270,7 @@ class Plugin {
 				$text = str_replace( '<a href="' . $this->home_url, '<a lang="' . $this->options->default_language . '" href="' . $this->home_url, $text );
 			}
 		}
-		tp_logger( "$comment_lang " . get_comment_ID(), 4 );
+		LogService::legacy_log( "$comment_lang " . get_comment_ID(), 4 );
 
 		return $text;
 	}
@@ -1336,7 +1313,8 @@ class Plugin {
 		$lang = get_post_meta( $id, 'tp_language', true );
 		if ( $lang ) {
 			if ( str_contains( Utilities::get_clean_server_var( 'REQUEST_URI' ), 'wp-admin/edit' ) ) {
-				tp_logger( 'iamhere?' . strpos( Utilities::get_clean_server_var( 'REQUEST_URI' ), 'wp-admin/edit' ) );
+				LogService::legacy_log( 'iamhere?' . strpos( Utilities::get_clean_server_var( 'REQUEST_URI' ),
+						'wp-admin/edit' ) );
 				$plugpath = @parse_url( $this->transposh_plugin_url, PHP_URL_PATH );
 				[ $langeng, $langorig, $langflag ] = explode( ',', Constants::$languages[ $lang ] );
 				//$text = BetterTransposh\Core\transposh_utils::display_flag("$plugpath/img/flags", $langflag, $langorig, false) . ' ' . $text;
@@ -1362,7 +1340,7 @@ class Plugin {
 		$requri = Utilities::get_clean_server_var( 'REQUEST_URI' );
 		$lang   = Utilities::get_language_from_url( $requri, $this->home_url );
 		if ( $lang && ! $this->got_request ) {
-			tp_logger( 'Trying to find original url' );
+			LogService::legacy_log( 'Trying to find original url' );
 			$this->got_request = true;
 			// the trick is to replace the URI and put it back afterwards
 			$_SERVER['REQUEST_URI'] = Utilities::get_original_url( $requri, '', $lang, array(
@@ -1373,8 +1351,8 @@ class Plugin {
 			$wp->parse_request();
 			$query                  = $wp->query_vars;
 			$_SERVER['REQUEST_URI'] = $requri;
-			tp_logger( 'new query vars are' );
-			tp_logger( $query );
+			LogService::legacy_log( 'new query vars are' );
+			LogService::legacy_log( $query );
 		}
 
 		return $query;
@@ -1392,7 +1370,7 @@ class Plugin {
 		if ( $this->is_special_page( Utilities::get_clean_server_var( 'REQUEST_URI' ) ) || ( $this->options->is_default_language( $this->tgl ) && ! $this->options->enable_default_translate ) ) {
 			return $translation;
 		}
-		tp_logger( "($translation, $orig, $domain)", 5 );
+		LogService::legacy_log( "($translation, $orig, $domain)", 5 );
 		// HACK - TODO - FIX
 		if ( in_array( $domain, Constants::$ignored_po_domains ) ) {
 			return $translation;
@@ -1431,7 +1409,7 @@ class Plugin {
 		if ( $this->is_special_page( Utilities::get_clean_server_var( 'REQUEST_URI' ) ) || ( $this->options->is_default_language( $this->tgl ) && ! $this->options->enable_default_translate ) ) {
 			return $translation;
 		}
-		tp_logger( "($translation, $single, $plural, $domain)", 4 );
+		LogService::legacy_log( "($translation, $single, $plural, $domain)", 4 );
 		if ( in_array( $domain, Constants::$ignored_po_domains ) ) {
 			return $translation;
 		}
@@ -1497,8 +1475,8 @@ class Plugin {
 			return do_shortcode( $content );
 		}
 
-		tp_logger( $atts );
-		tp_logger( $content );
+		LogService::legacy_log( $atts );
+		LogService::legacy_log( $content );
 
 		if ( isset( $atts['not_in'] ) && $this->target_language && stripos( $atts['not_in'], $this->target_language ) !== false ) {
 			return;
@@ -1526,7 +1504,7 @@ class Plugin {
 
 		if ( isset( $atts['only'] ) || in_array( 'only', $atts ) ) {
 			$only_class = ' class="' . ONLY_THISLANGUAGE_CLASS . '"';
-			tp_logger( $atts['lang'] . " " . $this->target_language );
+			LogService::legacy_log( $atts['lang'] . " " . $this->target_language );
 //            if ($atts['lang'] != $this->target_language) {
 //                return;
 //            }
@@ -1566,7 +1544,7 @@ class Plugin {
 		// Check if enabled
 		if ( ! $this->options->enable_superproxy ) {
 			$errstr = "Error: 500: Not enabled";
-			tp_logger( $errstr );
+			LogService::legacy_log( $errstr );
 			die( $errstr );
 		}
 
@@ -1574,14 +1552,14 @@ class Plugin {
 		$ips = json_decode( $this->options->superproxy_ips );
 		if ( ! in_array( Utilities::get_clean_server_var( 'REMOTE_ADDR' ), $ips ) ) {
 			$errstr = "Error: 503: Unauthorized " . Utilities::get_clean_server_var( 'REMOTE_ADDR' );
-			tp_logger( $errstr );
+			LogService::legacy_log( $errstr );
 			die( $errstr );
 		}
 
 		// We need curl for this proxy
 		if ( ! function_exists( 'curl_init' ) ) {
 			$errstr = "Error: 504: fatal error - curl";
-			tp_logger( $errstr );
+			LogService::legacy_log( $errstr );
 			die( $errstr );
 		}
 
@@ -1595,18 +1573,18 @@ class Plugin {
 
 		// Send the headers we got
 		$reqheaders = getallheaders();
-		//BetterTransposh\Core\Logger($reqheaders);
+		//BetterTransposh\Logging\Logger($reqheaders);
 		unset( $reqheaders['Host'], $reqheaders['Content-Length'] );
 		$headers = array();
 		foreach ( $reqheaders as $name => $value ) {
 			$headers[] = "$name: $value";
 		}
-		//BetterTransposh\Core\Logger($headers);
+		//BetterTransposh\Logging\Logger($headers);
 		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 
 		// Handle POST method
 		if ( Utilities::get_clean_server_var( 'REQUEST_METHOD' ) === 'POST' ) {
-			//BetterTransposh\Core\Logger($_POST);
+			//BetterTransposh\Logging\Logger($_POST);
 			curl_setopt( $ch, CURLOPT_POST, true );
 			foreach ( $_POST as $key => $value ) {
 				$post .= $amp . $key . "=" . urlencode( $value );
@@ -1615,12 +1593,12 @@ class Plugin {
 			curl_setopt( $ch, CURLOPT_POSTFIELDS, $post ); //$_POST);
 		}
 
-		tp_logger( "Before curl" );
+		LogService::legacy_log( "Before curl" );
 		$output = curl_exec( $ch );
-		tp_logger( "After curl" );
+		LogService::legacy_log( "After curl" );
 		if ( $output === false ) {
 			$errstr = "Error: " . curl_errno( $ch ) . ' ' . curl_error( $ch );
-			tp_logger( $errstr );
+			LogService::legacy_log( $errstr );
 			die( $errstr );
 		}
 
@@ -1746,8 +1724,8 @@ class Plugin {
 						$k ++;
 					}
 				}
-				tp_logger( 'updating! :)' );
-				tp_logger( $_POST );
+				LogService::legacy_log( 'updating! :)' );
+				LogService::legacy_log( $_POST );
 				$this->database->update_translation();
 			}
 		}
@@ -1770,11 +1748,11 @@ class Plugin {
 		if ( get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array() ) ) {
 			[ $sid, $timestamp ] = get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array() );
 		}
-		tp_logger( "yandex sid $sid", 1 );
+		LogService::legacy_log( "yandex sid $sid", 1 );
 		if ( ( $sid == '' ) && ( time() - TRANSPOSH_YANDEXPROXY_DELAY > $timestamp ) ) {
 			// attempt key refresh on error
 			$url = 'https://translate.yandex.com/';
-			tp_logger( $url, 1 );
+			LogService::legacy_log( $url, 1 );
 			$ch = curl_init();
 			// yandex wants a referer someimes
 			curl_setopt( $ch, CURLOPT_REFERER, "https://translate.yandex.com/" );
@@ -1782,21 +1760,21 @@ class Plugin {
 			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
 			//must set agent for google to respond with utf-8
 			$UA = Utilities::get_clean_server_var( "HTTP_USER_AGENT", FILTER_DEFAULT );
-//                BetterTransposh\Core\Logger($UA,1);
+//                BetterTransposh\Logging\Logger($UA,1);
 			curl_setopt( $ch, CURLOPT_USERAGENT, $UA );
 			$output = curl_exec( $ch );
-			//  BetterTransposh\Core\Logger($output,1);
+			//  BetterTransposh\Logging\Logger($output,1);
 			$sidpos = strpos( $output, "SID: '" ) + 6;
-//                BetterTransposh\Core\Logger($sidpos,1);
-//                BetterTransposh\Core\Logger(strlen($output),1);
+//                BetterTransposh\Logging\Logger($sidpos,1);
+//                BetterTransposh\Logging\Logger(strlen($output),1);
 			$newout = substr( $output, $sidpos );
-//                BetterTransposh\Core\Logger($newout,1);
-//                BetterTransposh\Core\Logger(strpos($newout, "',")-2);
+//                BetterTransposh\Logging\Logger($newout,1);
+//                BetterTransposh\Logging\Logger(strpos($newout, "',")-2);
 			$sid = substr( $newout, 0, strpos( $newout, "'," ) - 2 );
-			tp_logger( "new sid: $sid", 1 );
+			LogService::legacy_log( "new sid: $sid", 1 );
 			//$sid = strrev(substr($sid, 0, 8)) . '.' . strrev(substr($sid, 9, 8)) . '.' . strrev(substr($sid, 18, 8));
 			if ( $output === false ) {
-				tp_logger( 'Curl error: ' . curl_error( $ch ) );
+				LogService::legacy_log( 'Curl error: ' . curl_error( $ch ) );
 
 				return false;
 			}
@@ -1806,7 +1784,7 @@ class Plugin {
 		}
 
 		if ( ! $sid ) {
-			tp_logger( 'No SID, gotta bail:' . $timestamp, 1 );
+			LogService::legacy_log( 'No SID, gotta bail:' . $timestamp, 1 );
 
 			return false;
 		}
@@ -1823,8 +1801,8 @@ class Plugin {
 			$qstr = '&text=' . $q;
 		}
 		$url = 'https://translate.yandex.net/api/v1/tr.json/translate?lang=' . $sl . $tl . $qstr . '&srv=tr-url&id=' . $sid . '-0-0';
-		tp_logger( $url, 1 );
-//        BetterTransposh\Core\Logger($q, 1);
+		LogService::legacy_log( $url, 1 );
+//        BetterTransposh\Logging\Logger($q, 1);
 		$ch = curl_init();
 		// yandex wants a referer someimes
 		curl_setopt( $ch, CURLOPT_REFERER, "https://translate.yandex.com/" );
@@ -1834,23 +1812,23 @@ class Plugin {
 		curl_setopt( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0' );
 		$output = curl_exec( $ch );
 		if ( $output === false ) {
-			tp_logger( 'Curl error: ' . curl_error( $ch ), 1 );
+			LogService::legacy_log( 'Curl error: ' . curl_error( $ch ), 1 );
 
 			return false;
 		}
 		curl_close( $ch );
-		tp_logger( $output, 1 );
+		LogService::legacy_log( $output, 1 );
 		$jsonarr = json_decode( $output );
-		tp_logger( $jsonarr, 3 );
+		LogService::legacy_log( $jsonarr, 3 );
 		if ( ! $jsonarr ) {
-			tp_logger( 'No JSON here, failing', 1 );
-			tp_logger( $output, 3 );
+			LogService::legacy_log( 'No JSON here, failing', 1 );
+			LogService::legacy_log( $output, 3 );
 
 			return false;
 		}
 		if ( $jsonarr->code != 200 ) {
-			tp_logger( 'Some sort of error!', 1 );
-			tp_logger( $output, 1 );
+			LogService::legacy_log( 'Some sort of error!', 1 );
+			LogService::legacy_log( $output, 1 );
 			if ( $jsonarr->code == 406 || $jsonarr->code == 405 ) { //invalid session
 				update_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array( '', time() ) );
 			}
@@ -1876,8 +1854,8 @@ class Plugin {
 			$qstr .= $q;
 		}
 		$url = 'http://fanyi.baidu.com/v2transapi';
-		tp_logger( $url, 3 );
-		tp_logger( $q, 3 );
+		LogService::legacy_log( $url, 3 );
+		LogService::legacy_log( $q, 3 );
 		$ch = curl_init();
 		curl_setopt( $ch, CURLOPT_URL, $url );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
@@ -1887,17 +1865,17 @@ class Plugin {
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $qstr );
 		$output = curl_exec( $ch );
 		if ( $output === false ) {
-			tp_logger( 'Curl error: ' . curl_error( $ch ) );
+			LogService::legacy_log( 'Curl error: ' . curl_error( $ch ) );
 
 			return false;
 		}
 		curl_close( $ch );
-		tp_logger( $output, 3 );
+		LogService::legacy_log( $output, 3 );
 		$jsonarr = json_decode( $output );
-		tp_logger( $jsonarr, 3 );
+		LogService::legacy_log( $jsonarr, 3 );
 		if ( ! $jsonarr ) {
-			tp_logger( 'No JSON here, failing' );
-			tp_logger( $output, 3 );
+			LogService::legacy_log( 'No JSON here, failing' );
+			LogService::legacy_log( $output, 3 );
 
 			return false;
 		}
@@ -1953,16 +1931,18 @@ class Plugin {
 			[ $googlemethod, $timestamp ] = get_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, array() );
 			//$googlemethod = 0;
 			//$timestamp = 0;
-			tp_logger( "Google method $googlemethod, " . date( DATE_RFC2822, $timestamp ) . ", current:" . date( DATE_RFC2822, time() ) . " Delay:" . TRANSPOSH_GOOGLEPROXY_DELAY, 1 );
+			LogService::legacy_log( "Google method $googlemethod, " . date( DATE_RFC2822,
+					$timestamp ) . ", current:" . date( DATE_RFC2822,
+					time() ) . " Delay:" . TRANSPOSH_GOOGLEPROXY_DELAY, 1 );
 		} else {
-			tp_logger( "Google is clean", 1 );
+			LogService::legacy_log( "Google is clean", 1 );
 			$googlemethod = 0;
 		}
 		// we preserve the method, and will ignore lower methods for the given delay period
 		if ( isset( $timestamp ) && ( time() - TRANSPOSH_GOOGLEPROXY_DELAY > $timestamp ) ) {
 			delete_option( TRANSPOSH_OPTIONS_GOOGLEPROXY );
 		}
-		tp_logger( 'Google proxy initiated', 1 );
+		LogService::legacy_log( 'Google proxy initiated', 1 );
 		$qstr  = '';
 		$iqstr = '';
 		if ( is_array( $q ) ) {
@@ -1987,17 +1967,17 @@ class Plugin {
 		foreach ( $urls as $gurl ) {
 			if ( $googlemethod < $attempt && $failed ) {
 				$failed = false;
-				tp_logger( "Attempt: $attempt", 1 );
+				LogService::legacy_log( "Attempt: $attempt", 1 );
 				$url = $gurl . '/translate_a/t?client=te&v=1.0&tl=' . $tl . '&sl=' . $sl . '&tk=' . $this->iq( $iqstr, '406448.272554134' );
-				tp_logger( $url, 3 );
-				tp_logger( $q, 3 );
-				tp_logger( $iqstr, 3 );
+				LogService::legacy_log( $url, 3 );
+				LogService::legacy_log( $q, 3 );
+				LogService::legacy_log( $iqstr, 3 );
 				$ch = curl_init();
 				curl_setopt( $ch, CURLOPT_URL, $url );
 				curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
 				//must set agent for google to respond with utf-8
 				$UA = Utilities::get_clean_server_var( "HTTP_USER_AGENT" );
-				tp_logger( $UA, 1 );
+				LogService::legacy_log( $UA, 1 );
 				curl_setopt( $ch, CURLOPT_USERAGENT, $UA );
 				curl_setopt( $ch, CURLOPT_POST, true );
 				curl_setopt( $ch, CURLOPT_POSTFIELDS, $qstr );
@@ -2012,11 +1992,11 @@ class Plugin {
 				}
 				$output = curl_exec( $ch );
 				$info   = curl_getinfo( $ch );
-				tp_logger( 'Curl code is: ' . $info['http_code'], 1 );
+				LogService::legacy_log( 'Curl code is: ' . $info['http_code'], 1 );
 				curl_close( $ch );
-				tp_logger( $output, 3 );
+				LogService::legacy_log( $output, 3 );
 				if ( $info['http_code'] != 200 ) {
-					tp_logger( "method fail - $attempt", 1 );
+					LogService::legacy_log( "method fail - $attempt", 1 );
 					$failed = true;
 					update_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, array( $attempt, time() ) );
 				}
@@ -2028,33 +2008,33 @@ class Plugin {
 		// TODO - last attempt, with key
 
 		if ( $failed ) {
-			tp_logger( 'out of options, die for the day!', 1 );
+			LogService::legacy_log( 'out of options, die for the day!', 1 );
 
 			return false;
 		}
 
 		if ( $output === false ) {
-			tp_logger( 'Curl error: ' . curl_error( $ch ) );
+			LogService::legacy_log( 'Curl error: ' . curl_error( $ch ) );
 
 			return false;
 		}
 
-		tp_logger( $output, 3 );
+		LogService::legacy_log( $output, 3 );
 		// weird output that happens - $output='[[[[["Nnọọ"]],,"en"],[[["ụwa"]],,"en"],[[["Kedu ihe na-eme"]],,"en"]]]';
 		$jsonarr = json_decode( $output );
 		if ( ! $jsonarr ) {
-			tp_logger( "google didn't return Proper JSON, lets try to recover", 2 );
+			LogService::legacy_log( "google didn't return Proper JSON, lets try to recover", 2 );
 			$newout = str_replace( ',,', ',', $output );
-			tp_logger( $newout );
+			LogService::legacy_log( $newout );
 			$jsonarr = json_decode( $newout );
 			if ( ! $jsonarr ) {
-				tp_logger( 'No JSON here, failing' );
-				tp_logger( $output, 3 );
+				LogService::legacy_log( 'No JSON here, failing' );
+				LogService::legacy_log( $output, 3 );
 
 				return false;
 			}
 		}
-		tp_logger( $jsonarr );
+		LogService::legacy_log( $jsonarr );
 		if ( is_array( $jsonarr ) ) {
 			if ( is_array( $jsonarr[0] ) ) {
 				foreach ( $jsonarr as $val ) {
@@ -2097,7 +2077,7 @@ class Plugin {
 		$key = $_GET['token'] . '@' . $_GET['lang'] . '@' . $_GET['orglang'];
 		if ( isset( $oht[ $key ] ) ) {
 			unset( $oht[ $key ] );
-			tp_logger( 'oht false' );
+			LogService::legacy_log( 'oht false' );
 			echo json_encode( false );
 		} else {
 			$oht[ $key ] = array(
@@ -2106,7 +2086,7 @@ class Plugin {
 				'ol' => $_GET['orglang'],
 				't'  => $_GET['token']
 			);
-			tp_logger( 'oht true' );
+			LogService::legacy_log( 'oht true' );
 			echo json_encode( true );
 		}
 
@@ -2123,9 +2103,9 @@ class Plugin {
 	 * OHT event running
 	 */
 	public function run_oht() {
-		tp_logger( "oht should run", 2 );
+		LogService::legacy_log( "oht should run", 2 );
 		$oht = get_option( TRANSPOSH_OPTIONS_OHT, array() );
-		tp_logger( $oht, 3 );
+		LogService::legacy_log( $oht, 3 );
 		$ohtp      = get_option( TRANSPOSH_OPTIONS_OHT_PROJECTS, array() );
 		$projectid = time();
 		//send less data
@@ -2133,7 +2113,7 @@ class Plugin {
 		$pcount  = 0;
 		foreach ( $oht as $arr ) {
 			$pcount ++;
-			tp_logger( $arr );
+			LogService::legacy_log( $arr );
 			$ohtbody[ $arr['t'] ] = array( 'q' => $arr['q'], 'l' => $arr['l'], 'ol' => $arr['ol'] );
 		}
 		$ohtbody['pid']      = $projectid;
@@ -2141,7 +2121,7 @@ class Plugin {
 		$ohtbody['key']      = $this->options->oht_key;
 		$ohtbody['callback'] = admin_url( 'admin-ajax.php' );
 		$ohtbody['homeurl']  = $this->home_url;
-		tp_logger( $ohtbody );
+		LogService::legacy_log( $ohtbody );
 		// now we send this, add to log that it was sent to oht.. we'll also add a timer to make sure it gets back to us
 		$ret = wp_remote_post( 'http://svc.transposh.org/oht.php', array( 'body' => $ohtbody ) );
 		if ( $ret['response']['code'] == '200' ) {
@@ -2149,7 +2129,7 @@ class Plugin {
 			$ohtp[ $projectid ] = $pcount;
 			update_option( TRANSPOSH_OPTIONS_OHT_PROJECTS, $ohtp );
 		} else {
-			tp_logger( $ret, 1 );
+			LogService::legacy_log( $ret, 1 );
 		}
 	}
 
@@ -2179,16 +2159,16 @@ class Plugin {
 	 */
 	public function on_ajax_nopriv_tp_ohtcallback() {
 		$ohtp = get_option( TRANSPOSH_OPTIONS_OHT_PROJECTS, array() );
-		tp_logger( $ohtp );
+		LogService::legacy_log( $ohtp );
 		if ( $ohtp[ $_POST['projectid'] ] ) {
-			Logger( $_POST['projectid'] . " was found and will be processed" );
+			LogService::legacy_log( $_POST['projectid'] . " was found and will be processed" );
 			do_action( 'transposh_oht_callback' );
-			tp_logger( $_POST );
+			LogService::legacy_log( $_POST );
 			$ohtp[ $_POST['projectid'] ] -= $_POST['items'];
 			if ( $ohtp[ $_POST['projectid'] ] <= 0 ) {
 				unset( $ohtp[ $_POST['projectid'] ] );
 			}
-			tp_logger( $ohtp );
+			LogService::legacy_log( $ohtp );
 			update_option( TRANSPOSH_OPTIONS_OHT_PROJECTS, $ohtp );
 			$this->database->update_translation( "OHT" );
 		}
@@ -2205,7 +2185,8 @@ class Plugin {
 	// set the cookie with ajax, no redirect needed
 	public function on_ajax_nopriv_tp_cookie() {
 		setcookie( 'TR_LNG', Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url ), time() + 90 * 24 * 60 * 60, COOKIEPATH, COOKIE_DOMAIN );
-		tp_logger( 'Cookie ' . Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url ) );
+		LogService::legacy_log( 'Cookie ' . Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ),
+				$this->home_url ) );
 		die();
 	}
 
@@ -2223,7 +2204,7 @@ class Plugin {
 
 	// Catch the wordpress.org update post
 	public function filter_wordpress_org_update( $arr, $url ) {
-		tp_logger( $url, 5 );
+		LogService::legacy_log( $url, 5 );
 		if ( str_contains( $url, "api.wordpress.org/plugins/update-check/" ) ) {
 			$this->do_update_check = true;
 		}
@@ -2233,12 +2214,12 @@ class Plugin {
 
 	public function check_for_plugin_update( $checked_data ) {
 		global $wp_version;
-		tp_logger( 'should we check for upgrades?', 4 );
+		LogService::legacy_log( 'should we check for upgrades?', 4 );
 		if ( ! $this->do_update_check ) {
 			return $checked_data; // thanks wizzud (don't kill the transient)
 		}
 		$this->do_update_check = false; // for next time
-		tp_logger( 'yes, we should', 4 );
+		LogService::legacy_log( 'yes, we should', 4 );
 
 		$args           = array(
 			'slug'    => $this->transposh_plugin_basename,
@@ -2256,7 +2237,7 @@ class Plugin {
 		// Start checking for an update
 		$raw_response = wp_remote_post( TRANSPOSH_UPDATE_SERVICE_URL, $request_string );
 
-		tp_logger( $raw_response, 5 );
+		LogService::legacy_log( $raw_response, 5 );
 
 		if ( ! is_wp_error( $raw_response ) && ( $raw_response['response']['code'] == 200 ) ) {
 			$response = unserialize( $raw_response['body'] );
@@ -2322,10 +2303,16 @@ class Plugin {
 				$logger->set_remoteip( $this->options->debug_remoteip );
 			}
 
-			$GLOBALS['tp_logger'] = $logger;
+			$this->logger = $logger;
 		} else {
-			$GLOBALS['tp_logger'] = new NullLogger();
+			$this->logger = new NullLogger();
 		}
 	}
 
+	/**
+	 * @return Logger|Query_Monitor_Logger|NullLogger
+	 */
+	public function get_logger(): Query_Monitor_Logger|NullLogger|Logger {
+		return $this->logger;
+	}
 }
