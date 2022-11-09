@@ -292,7 +292,7 @@ class Utilities {
 
 		$uri = isset( $parsed['scheme'] ) ? $parsed['scheme'] . ':' . ( ( strtolower( $parsed['scheme'] ) == 'mailto' ) ? '' : '//' ) : '';
 		$uri .= isset( $parsed['user'] ) ? $parsed['user'] . ( isset( $parsed['pass'] ) ? ':' . $parsed['pass'] : '' ) . '@' : '';
-		$uri .= isset( $parsed['host'] ) ? $parsed['host'] : '';
+		$uri .= $parsed['host'] ?? '';
 		$uri .= isset( $parsed['port'] ) ? ':' . $parsed['port'] : '';
 
 		if ( isset( $parsed['path'] ) ) {
@@ -338,11 +338,11 @@ class Utilities {
 		$fragment  = '';
 		// todo - check query part/fragment... sanitize
 		if ( str_contains( $href, '#' ) ) {
-			list ( $href, $fragment ) = explode( '#', $href );
+			[ $href, $fragment ] = explode( '#', $href );
 			$fragment = '#' . $fragment;
 		}
 		if ( str_contains( $href, '?' ) ) {
-			list ( $href, $querypart ) = explode( '?', $href );
+			[ $href, $querypart ] = explode( '?', $href );
 			$querypart = '?' . $querypart;
 		}
 		$href  = substr( $href, strlen( $home_url ) );
@@ -354,7 +354,7 @@ class Utilities {
 			if ( is_numeric( $part ) ) {
 				$translated_text = $part;
 			} else {
-				list( $source, $translated_text ) = call_user_func_array( $fetch_translation_func, array(
+				[ $source, $translated_text ] = call_user_func_array( $fetch_translation_func, array(
 					$part,
 					$target_language
 				) );
@@ -366,7 +366,7 @@ class Utilities {
 				$url   .= '/' . $ttext;
 			} else {
 				// now the same attempt with '-' replaced to ' '
-				list( $source, $translated_text ) = call_user_func_array( $fetch_translation_func, array(
+				[ $source, $translated_text ] = call_user_func_array( $fetch_translation_func, array(
 					str_replace( '-', ' ', $part ),
 					$target_language
 				) );
@@ -545,7 +545,7 @@ class Utilities {
 			}
 			$qvalue = 1.0;
 			if ( ! empty( $arr[5] ) ) {
-				$qvalue = floatval( $arr[5] );
+				$qvalue = (float) $arr[5];
 			}
 
 			// find q-maximal language

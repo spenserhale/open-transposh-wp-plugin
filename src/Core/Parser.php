@@ -852,7 +852,7 @@ class Parser {
 		foreach ( $this->html->find( 'text' ) as $e ) {
 			$replace = array();
 			foreach ( $e->nodes as $ep ) {
-				list ( $source, $translated_text ) = call_user_func_array( $this->fetch_translate_func, array(
+				[ $source, $translated_text ] = call_user_func_array( $this->fetch_translate_func, array(
 					$ep->phrase,
 					$this->lang
 				) );
@@ -880,7 +880,7 @@ class Parser {
 			}
 			// do replacements in reverse
 			foreach ( array_reverse( $replace ) as $epag ) {
-				list( $replacetext, $epg ) = $epag;
+				[ $replacetext, $epg ] = $epag;
 				$e->outertext = substr_replace( $e->outertext, $replacetext, $epg->start, $epg->len );
 			}
 
@@ -905,7 +905,7 @@ class Parser {
 				if ( isset( $e->nodes ) ) {
 					foreach ( $e->nodes as $ep ) {
 						if ( $ep->tag == 'phrase' ) {
-							list ( $source, $translated_text ) = call_user_func_array( $this->fetch_translate_func, array(
+							[ $source, $translated_text ] = call_user_func_array( $this->fetch_translate_func, array(
 								$ep->phrase,
 								$this->lang
 							) );
@@ -968,7 +968,7 @@ class Parser {
 					// even more stats
 					$this->stats->total_phrases ++;
 					$this->stats->meta_phrases ++;
-					list ( $source, $translated_text ) = call_user_func_array( $this->fetch_translate_func, array(
+					[ $source, $translated_text ] = call_user_func_array( $this->fetch_translate_func, array(
 						$ep->phrase,
 						$this->lang
 					) );
@@ -978,7 +978,7 @@ class Parser {
 						if ( $source == 0 ) {
 							$this->stats->human_translated_phrases ++;
 						}
-						list ( $left, $right ) = explode( $ep->phrase, $e->content, 2 );
+						[ $left, $right ] = explode( $ep->phrase, $e->content, 2 );
 						$newtext    .= $left . $translated_text;
 						$e->content = $right;
 					}

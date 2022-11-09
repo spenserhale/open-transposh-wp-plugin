@@ -323,7 +323,7 @@ class Database {
 		// The translation is saved in db in its escaped form
 		$translation = esc_sql( html_entity_decode( $trans, ENT_NOQUOTES, 'UTF-8' ) );
 		// The translation might be cached (notice the additional postfix)
-		list( $rev, $cached ) = $this->cache_fetch( 'R_' . $translation, $lang );
+		[ $rev, $cached ] = $this->cache_fetch( 'R_' . $translation, $lang );
 		if ( $rev == 'r' ) {
 			tp_logger( "Exit from cache: $translation $cached", 4 );
 
@@ -441,7 +441,7 @@ class Database {
 			}
 
 			//Here we check we are not redoing stuff - and avoid escaping twice!!
-			list( $old_source, $translated_text ) = $this->fetch_translation( $orig, $lang );
+			[ $old_source, $translated_text ] = $this->fetch_translation( $orig, $lang );
 			if ( $translated_text ) {
 				if ( $source > 0 ) {
 					tp_logger( "Warning auto-translation for already translated: $original $lang, $old_source - $translated_text", 1 );
@@ -979,7 +979,7 @@ class Database {
 	 * @param int $days
 	 */
 	function cleanup( $days = 0 ) {
-		$days = intval( $days ); // some security
+		$days = (int) $days; // some security
 		if ( $days == 999 ) {
 			$cleanup = 'DELETE ' .
 			           ' FROM ' . $this->translation_table .
@@ -1090,7 +1090,7 @@ class Database {
 		foreach ( $rows as $row ) {
 			$row->original = esc_sql( $row->original );
 			$row->lang     = esc_sql( $row->lang );
-			list( $source, $translation ) = $this->fetch_translation( $row->original, $row->lang );
+			[ $source, $translation ] = $this->fetch_translation( $row->original, $row->lang );
 			if ( $source != null ) {
 				$delvalues = "(original ='{$row->original}' AND lang='{$row->lang}')";
 				$update    = "DELETE FROM " . $this->translation_table . " WHERE $delvalues";

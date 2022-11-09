@@ -132,7 +132,7 @@ class ChromePhp {
 	 * constructor
 	 */
 	private function __construct() {
-		$this->_php_version         = phpversion();
+		$this->_php_version         = PHP_VERSION;
 		$this->_timestamp           = $this->_php_version >= 5.1 ? $_SERVER['REQUEST_TIME'] : time();
 		$this->_json['request_uri'] = $_SERVER['REQUEST_URI'];
 	}
@@ -442,10 +442,6 @@ class ChromePhp {
 	 * @return mixed
 	 */
 	public function getSetting( $key ) {
-		if ( ! isset( $this->_settings[ $key ] ) ) {
-			return null;
-		}
-
-		return $this->_settings[ $key ];
+		return $this->_settings[ $key ] ?? null;
 	}
 }

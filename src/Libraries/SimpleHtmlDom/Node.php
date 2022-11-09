@@ -66,11 +66,8 @@ class Node {
 		if ( $idx === - 1 ) {
 			return $this->children;
 		}
-		if ( isset( $this->children[ $idx ] ) ) {
-			return $this->children[ $idx ];
-		}
 
-		return null;
+		return $this->children[ $idx ] ?? null;
 	}
 
 	// returns the first child of node
@@ -302,12 +299,12 @@ class Node {
 			$idx = count( $found ) + $idx;
 		}
 
-		return ( isset( $found[ $idx ] ) ) ? $found[ $idx ] : null;
+		return $found[ $idx ] ?? null;
 	}
 
 	// seek for given conditions
 	protected function seek( $selector, &$ret ) {
-		list( $tag, $key, $val, $exp, $no_key ) = $selector;
+		[ $tag, $key, $val, $exp, $no_key ] = $selector;
 
 		// xpath index
 		if ( $tag && $key && is_numeric( $key ) ) {
@@ -422,7 +419,7 @@ class Node {
 				continue;
 			}
 
-			list( $tag, $key, $val, $exp, $no_key ) = array( $m[1], null, null, '=', false );
+			[ $tag, $key, $val, $exp, $no_key ] = array( $m[1], null, null, '=', false );
 			if ( ! empty( $m[2] ) ) {
 				$key = 'id';
 				$val = $m[2];
@@ -466,11 +463,7 @@ class Node {
 	}
 
 	public function __get( $name ) {
-		if ( isset( $this->attr[ $name ] ) ) {
-			return $this->attr[ $name ];
-		}
-
-		return match ( $name ) {
+		return $this->attr[ $name ] ?? match ( $name ) {
 			'outertext' => $this->outertext(),
 			'innertext' => $this->innertext(),
 			'plaintext' => $this->text(),

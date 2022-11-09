@@ -128,7 +128,7 @@ class Plugin {
 		$this->home_url = get_option( 'home' );
 
 		// Handle windows ('C:\wordpress')
-		$local_dir = preg_replace( "/\\\\/", "/", dirname( __FILE__ ) );
+		$local_dir = preg_replace( "/\\\\/", "/", __DIR__ );
 		// Get last directory name
 		$local_dir                  = preg_replace( "/.*\//", "", $local_dir );
 		$this->transposh_plugin_url = preg_replace( '#^https?://#', '//', WP_PLUGIN_URL . '/' . $local_dir );
@@ -734,7 +734,7 @@ class Plugin {
 	 * Plugin activation
 	 */
 	public function plugin_activate() {
-		tp_logger( "plugin_activate enter: " . dirname( __FILE__ ), 1 );
+		tp_logger( "plugin_activate enter: " . __DIR__, 1 );
 
 		$this->database->setup_db();
 		// this handles the permalink rewrite
@@ -758,7 +758,7 @@ class Plugin {
 		}
 		//** FULLSTOP        
 
-		tp_logger( "plugin_activate exit: " . dirname( __FILE__ ), 1 );
+		tp_logger( "plugin_activate exit: " . __DIR__, 1 );
 		tp_logger( "testing name:" . plugin_basename( __FILE__ ), 4 );
 		// BetterTransposh\Core\Logger("testing name2:" . $this->get_plugin_name(), 4);
 		//activate_plugin($plugin);
@@ -768,12 +768,12 @@ class Plugin {
 	 * Plugin deactivation
 	 */
 	public function plugin_deactivate() {
-		tp_logger( "plugin_deactivate enter: " . dirname( __FILE__ ), 2 );
+		tp_logger( "plugin_deactivate enter: " . __DIR__, 2 );
 
 		// this handles the permalink rewrite
 		$GLOBALS['wp_rewrite']->flush_rules();
 
-		tp_logger( "plugin_deactivate exit: " . dirname( __FILE__ ), 2 );
+		tp_logger( "plugin_deactivate exit: " . __DIR__, 2 );
 	}
 
 	/**
@@ -1338,7 +1338,7 @@ class Plugin {
 			if ( str_contains( Utilities::get_clean_server_var( 'REQUEST_URI' ), 'wp-admin/edit' ) ) {
 				tp_logger( 'iamhere?' . strpos( Utilities::get_clean_server_var( 'REQUEST_URI' ), 'wp-admin/edit' ) );
 				$plugpath = @parse_url( $this->transposh_plugin_url, PHP_URL_PATH );
-				list( $langeng, $langorig, $langflag ) = explode( ',', Constants::$languages[ $lang ] );
+				[ $langeng, $langorig, $langflag ] = explode( ',', Constants::$languages[ $lang ] );
 				//$text = BetterTransposh\Core\transposh_utils::display_flag("$plugpath/img/flags", $langflag, $langorig, false) . ' ' . $text;
 				$text = "[$lang] " . $text;
 			} else {
@@ -1476,7 +1476,7 @@ class Plugin {
 		}
 		$locale = Constants::get_language_locale( $lang );
 
-		return ( $locale ) ? $locale : $lang;
+		return $locale ?: $lang;
 	}
 
 	/**
@@ -1646,11 +1646,7 @@ class Plugin {
 		if ( ! $this->options->is_active_language( $tl ) ) {
 			return;
 		}
-		if ( isset( $_GET['sl'] ) ) {
-			$sl = $_GET['sl'];
-		} else {
-			$sl = '';
-		}
+		$sl          = $_GET['sl'] ?? '';
 		$suggestmode = false; // the suggest mode takes one string only, and does not save to the database
 		if ( isset( $_GET['m'] ) && $_GET['m'] == 's' ) {
 			$suggestmode = true;
@@ -1665,7 +1661,7 @@ class Plugin {
 			$i = 0;
 			$q = array();
 			foreach ( $_GET['q'] as $p ) {
-				list( , $trans ) = $this->database->fetch_translation( stripslashes( $p ), $tl );
+				[ , $trans ] = $this->database->fetch_translation( stripslashes( $p ), $tl );
 				if ( ! $trans ) {
 					$q[] = urlencode( stripslashes( $p ) ); // fix for the + case?
 				} else {
@@ -1772,7 +1768,7 @@ class Plugin {
 		$sid       = '';
 		$timestamp = 0;
 		if ( get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array() ) ) {
-			list( $sid, $timestamp ) = get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array() );
+			[ $sid, $timestamp ] = get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array() );
 		}
 		tp_logger( "yandex sid $sid", 1 );
 		if ( ( $sid == '' ) && ( time() - TRANSPOSH_YANDEXPROXY_DELAY > $timestamp ) ) {
@@ -1867,7 +1863,7 @@ class Plugin {
 
 	// Proxied Baidu translate suggestions
 	public function get_baidu_translation( $tl, $sl, $q ) {
-		$qstr = 'to=' . ( ( isset( Constants::$engines['u']['langconv'][ $tl ] ) ) ? Constants::$engines['u']['langconv'][ $tl ] : $tl );
+		$qstr = 'to=' . ( Constants::$engines['u']['langconv'][ $tl ] ?? $tl );
 		if ( $sl ) {
 			$qstr .= '&from=' . ( ( isset( Constants::$engines['u']['langconv'][ $tl ] ) ) ? Constants::$engines['u']['langconv'][ $sl ] : $sl );
 		}
@@ -1923,7 +1919,7 @@ class Plugin {
 	public function hq( $a, $chunk ) {
 		for ( $offset = 0; $offset < strlen( $chunk ) - 2; $offset += 3 ) {
 			$b = $chunk[ $offset + 2 ];
-			$b = ( $b >= "a" ) ? ord( $b ) - 87 : intval( $b );
+			$b = ( $b >= "a" ) ? ord( $b ) - 87 : (int) $b;
 			$b = ( $chunk[ $offset + 1 ] == "+" ) ? $this->_bitwise_zfrs( $a, $b ) : $a << $b;
 			$a = ( $chunk[ $offset ] == "+" ) ? $a + $b & 4294967295 : $a ^ $b;
 		}
@@ -1936,13 +1932,13 @@ class Plugin {
 	 */
 	public function iq( $input, $error ) {
 		$e     = explode( ".", $error );
-		$value = intval( $e[0] );
+		$value = (int) $e[0];
 		for ( $i = 0; $i < strlen( $input ); $i ++ ) {
 			$value += ord( $input[ $i ] );
 			$value = $this->hq( $value, "+-a^+6" );
 		}
 		$value = $this->hq( $value, "+-3^+b+-f" );
-		$value ^= intval( $e[1] );
+		$value ^= (int) $e[1];
 		if ( 0 > $value ) {
 			$value = $value & 2147483647 + 2147483648;
 		}
@@ -1954,7 +1950,7 @@ class Plugin {
 // Proxied translation for google translate
 	public function get_google_translation( $tl, $sl, $q ) {
 		if ( get_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, array() ) ) {
-			list( $googlemethod, $timestamp ) = get_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, array() );
+			[ $googlemethod, $timestamp ] = get_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, array() );
 			//$googlemethod = 0;
 			//$timestamp = 0;
 			tp_logger( "Google method $googlemethod, " . date( DATE_RFC2822, $timestamp ) . ", current:" . date( DATE_RFC2822, time() ) . " Delay:" . TRANSPOSH_GOOGLEPROXY_DELAY, 1 );

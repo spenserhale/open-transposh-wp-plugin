@@ -175,7 +175,7 @@ class Post_Publish {
 					     in_array( $lang, Constants::$engines['g']['langs'] ) ||
 					     in_array( $lang, Constants::$engines['y']['langs'] ) ||
 					     in_array( $lang, Constants::$engines['a']['langs'] ) ) {
-						list( $source, $translation ) = $this->transposh->database->fetch_translation( $key, $lang );
+						[ $source, $translation ] = $this->transposh->database->fetch_translation( $key, $lang );
 						if ( ! $translation ) {
 							// p stands for phrases, l stands for languages, t is token
 							if ( ! @is_array( $json['p'][ $key ]['l'] ) ) {
@@ -225,7 +225,7 @@ class Post_Publish {
 		echo '<select name="transposh_tp_language">';
 		echo '<option value="">' . __( 'Default' ) . '</option>';
 		foreach ( $this->transposh->options->get_sorted_langs() as $langcode => $langrecord ) {
-			list ( $langname, $langorigname, $flag ) = explode( ",", $langrecord );
+			[ $langname, $langorigname, $flag ] = explode( ",", $langrecord );
 			echo '<option value="' . $langcode . ( $langcode == $lang ? '" selected="selected' : '' ) . '">' . $langname . ' - ' . $langorigname . '</option>';
 		}
 		echo '</select>';

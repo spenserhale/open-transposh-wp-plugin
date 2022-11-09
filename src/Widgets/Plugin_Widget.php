@@ -112,7 +112,7 @@ class Plugin_Widget extends WP_Widget {
 			return ""; // One dot should be enough for everyone - Bill Gates
 		}
 		if ( $slashcount == 1 ) {
-			list ( $dir, $filename ) = explode( "/", $file );
+			[ $dir, $filename ] = explode( "/", $file );
 			$newfile = sanitize_file_name( $dir ) . "/" . sanitize_file_name( $filename );
 		} else {
 			$newfile = sanitize_file_name( $file );
@@ -223,7 +223,7 @@ class Plugin_Widget extends WP_Widget {
 		}
 		// loop on the languages
 		foreach ( $this->transposh->options->get_sorted_langs() as $code => $langrecord ) {
-			list ( $langname, $language, $flag ) = explode( ',', $langrecord );
+			[ $langname, $language, $flag ] = explode( ',', $langrecord );
 
 			// Only send languages which are active
 			if ( $this->transposh->options->is_active_language( $code ) ||

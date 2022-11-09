@@ -91,7 +91,7 @@ class Simple_Html_Dom {
 	// load html from file
 	public function load_file() {
 		$args = func_get_args();
-		$this->load( call_user_func_array( 'file_get_contents', $args ), true );
+		$this->load( file_get_contents( ...$args ), true );
 	}
 
 	// set callback function
@@ -611,7 +611,7 @@ class Simple_Html_Dom {
 
 	public function loadFile() {
 		$args = func_get_args();
-		$this->load( call_user_func_array( 'file_get_contents', $args ), true );
+		$this->load( file_get_contents( ...$args ), true );
 	}
 
 }
