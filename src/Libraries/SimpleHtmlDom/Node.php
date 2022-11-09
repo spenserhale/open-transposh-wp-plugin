@@ -239,16 +239,11 @@ class Node {
 			if ( $val === true ) {
 				$ret .= $key;
 			} else {
-				switch ( $this->_[ Constants::HDOM_INFO_QUOTE ][ $i ] ) {
-					case Constants::HDOM_QUOTE_DOUBLE:
-						$quote = '"';
-						break;
-					case Constants::HDOM_QUOTE_SINGLE:
-						$quote = '\'';
-						break;
-					default:
-						$quote = '';
-				}
+				$quote = match ( $this->_[ Constants::HDOM_INFO_QUOTE ][ $i ] ) {
+					Constants::HDOM_QUOTE_DOUBLE => '"',
+					Constants::HDOM_QUOTE_SINGLE => '\'',
+					default => '',
+				};
 				$ret .= $key . $this->_[ Constants::HDOM_INFO_SPACE ][ $i ][1] . '=' . $this->_[ Constants::HDOM_INFO_SPACE ][ $i ][2] . $quote . $val . $quote;
 			}
 		}
@@ -475,30 +470,27 @@ class Node {
 		if ( isset( $this->attr[ $name ] ) ) {
 			return $this->attr[ $name ];
 		}
-		switch ( $name ) {
-			case 'outertext':
-				return $this->outertext();
-			case 'innertext':
-				return $this->innertext();
-			case 'plaintext':
-				return $this->text();
-			case 'xmltext':
-				return $this->xmltext();
-			default:
-				return array_key_exists( $name, $this->attr );
-		}
+
+		return match ( $name ) {
+			'outertext' => $this->outertext(),
+			'innertext' => $this->innertext(),
+			'plaintext' => $this->text(),
+			'xmltext' => $this->xmltext(),
+			default => array_key_exists( $name, $this->attr ),
+		};
 	}
 
 	function __set( $name, $value ) {
-		switch ( $name ) {
-			case 'outertext':
-				return $this->_[ Constants::HDOM_INFO_OUTER ] = $value;
-			case 'innertext':
-				if ( isset( $this->_[ Constants::HDOM_INFO_TEXT ] ) ) {
-					return $this->_[ Constants::HDOM_INFO_TEXT ] = $value;
-				}
+		if ( 'outertext' === $name ) {
+			return $this->_[ Constants::HDOM_INFO_OUTER ] = $value;
+		}
 
-				return $this->_[ Constants::HDOM_INFO_INNER ] = $value;
+		if ( 'innertext' === $name ) {
+			if ( isset( $this->_[ Constants::HDOM_INFO_TEXT ] ) ) {
+				return $this->_[ Constants::HDOM_INFO_TEXT ] = $value;
+			}
+
+			return $this->_[ Constants::HDOM_INFO_INNER ] = $value;
 		}
 		if ( ! isset( $this->attr[ $name ] ) ) {
 			$this->_[ Constants::HDOM_INFO_SPACE ][] = array(
@@ -511,18 +503,18 @@ class Node {
 		$this->attr[ $name ] = $value;
 	}
 
+	/**
+	 * If no value attr: nowrap, checked selected...
+	 *
+	 * @param $name
+	 *
+	 * @return bool
+	 */
 	function __isset( $name ) {
-		switch ( $name ) {
-			case 'outertext':
-				return true;
-			case 'innertext':
-				return true;
-			case 'plaintext':
-				return true;
-		}
-
-		//no value attr: nowrap, checked selected...
-		return ( array_key_exists( $name, $this->attr ) ) ? true : isset( $this->attr[ $name ] );
+		return match ( $name ) {
+			'outertext', 'innertext', 'plaintext' => true,
+			default => array_key_exists( $name, $this->attr ) || isset( $this->attr[ $name ] ),
+		};
 	}
 
 	function __unset( $name ) {

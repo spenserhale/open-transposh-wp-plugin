@@ -49,17 +49,10 @@ class Editor_Table extends WP_List_Table {
 	}
 
 	function column_default( $item, $column_name ) {
-		switch ( $column_name ) {
-			case 'original':
-			case 'lang':
-			case 'translated':
-			case 'translated_by':
-			case 'source':
-			case 'timestamp':
-				return $item[ $column_name ];
-			default:
-				return print_r( $item, true ); //Show the whole array for troubleshooting purposes
-		}
+		return match ( $column_name ) {
+			'original', 'lang', 'translated', 'translated_by', 'source', 'timestamp' => $item[ $column_name ],
+			default => print_r( $item, true ),
+		};
 	}
 
 	function get_sortable_columns() {
