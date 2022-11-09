@@ -346,23 +346,21 @@ class Plugin_Widget extends WP_Widget {
 		//** FULLSTOP
 		$plugpath = @parse_url( $this->transposh->transposh_plugin_url, PHP_URL_PATH );
 
-		if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
-			if ( ! $this->transposh->options->widget_remove_logo ) {
-				$tagline = esc_attr__( 'Transposh', TRANSPOSH_TEXT_DOMAIN ) . ' - ';
-				$tagline .= esc_attr__( 'translation plugin for wordpress', TRANSPOSH_TEXT_DOMAIN );
+		//** FULL VERSION
+		if ( defined( 'FULL_VERSION' ) && ! $this->transposh->options->widget_remove_logo ) {
+			$tagline = esc_attr__( 'Transposh', TRANSPOSH_TEXT_DOMAIN ) . ' - ';
+			$tagline .= esc_attr__( 'translation plugin for wordpress', TRANSPOSH_TEXT_DOMAIN );
 
-				$extralang = '';
-				if ( $this->transposh->target_language != 'en' ) {
-					$extralang = $this->transposh->target_language . '/';
-				}
+			$extralang = '';
+			if ( $this->transposh->target_language != 'en' ) {
+				$extralang = $this->transposh->target_language . '/';
 			}
 		} //** FULLSTOP
 		echo '<div id="' . SPAN_PREFIX . 'credit' . self::$draw_calls . '">';
-		if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
-			if ( ! $this->transposh->options->widget_remove_logo ) {
-				echo 'by <a href="http://tran' . 'sposh.org/' . $extralang . '"><img height="16" width="16" src="' .
-				     $plugpath . '/img/tplog' . 'o.png" style="padding:1px;border:0;box-shadow:0 0;border-radius:0" title="' . $tagline . '" alt="' . $tagline . '"/></a>';
-			}
+		//** FULL VERSION
+		if ( defined( 'FULL_VERSION' ) && ! $this->transposh->options->widget_remove_logo ) {
+			echo 'by <a href="http://tran' . 'sposh.org/' . $extralang . '"><img height="16" width="16" src="' .
+			     $plugpath . '/img/tplog' . 'o.png" style="padding:1px;border:0;box-shadow:0 0;border-radius:0" title="' . $tagline . '" alt="' . $tagline . '"/></a>';
 		} //** FULLSTOP
 		echo '</div>';
 		if ( isset( $after_widget ) ) {

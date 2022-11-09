@@ -95,12 +95,10 @@ class Logger {
 					ChromePhp::groupCollapsed( "$log_prefix: object/array" );
 					ChromePhp::log( $msg );
 					ChromePhp::groupEnd();
+				} else if ( is_array( $msg ) || is_object( $msg ) ) {
+					ChromePhp::log( $msg );
 				} else {
-					if ( is_array( $msg ) || is_object( $msg ) ) {
-						ChromePhp::log( $msg );
-					} else {
-						ChromePhp::log( "$log_prefix:$msg" );
-					}
+					ChromePhp::log( "$log_prefix:$msg" );
 				}
 			}
 		}

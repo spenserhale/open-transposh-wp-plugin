@@ -460,11 +460,9 @@ class Plugin {
 		tp_logger( 'init ' . Utilities::get_clean_server_var( 'REQUEST_URI' ), 4 );
 
 		// the wp_rewrite is not available earlier so we can only set the enable_permalinks here
-		if ( is_object( $GLOBALS['wp_rewrite'] ) ) {
-			if ( $GLOBALS['wp_rewrite']->using_permalinks() && $this->options->enable_permalinks ) {
-				tp_logger( "enabling permalinks" );
-				$this->enable_permalinks_rewrite = true;
-			}
+		if ( is_object( $GLOBALS['wp_rewrite'] ) && $GLOBALS['wp_rewrite']->using_permalinks() && $this->options->enable_permalinks ) {
+			tp_logger( "enabling permalinks" );
+			$this->enable_permalinks_rewrite = true;
 		}
 
 		// this is an ajax special case, currently crafted and tested on buddy press, lets hope this won't make hell break loose.
@@ -1502,10 +1500,8 @@ class Plugin {
 		tp_logger( $atts );
 		tp_logger( $content );
 
-		if ( isset( $atts['not_in'] ) && $this->target_language ) {
-			if ( stripos( $atts['not_in'], $this->target_language ) !== false ) {
-				return;
-			}
+		if ( isset( $atts['not_in'] ) && $this->target_language && stripos( $atts['not_in'], $this->target_language ) !== false ) {
+			return;
 		}
 
 		if ( isset( $atts['locale'] ) || in_array( 'locale', $atts ) ) {
@@ -1729,13 +1725,11 @@ class Plugin {
 			for ( $j = 0; $j < $i; $j ++ ) {
 				if ( isset( $r[ $j ] ) ) {
 					$jsonout->results[] = $r[ $j ];
-				} else {
+				} else if ( isset( $result[ $k ] ) ) {
 					// TODO: no value - original?
 					// There are no results? need to check!
-					if ( isset( $result[ $k ] ) ) {
-						$jsonout->results[] = $result[ $k ];
-						$k ++;
-					}
+					$jsonout->results[] = $result[ $k ];
+					$k ++;
 				}
 			}
 
@@ -1750,12 +1744,10 @@ class Plugin {
 				$_POST['sr0']   = $source; // according to used engine
 				$k              = 0;
 				for ( $j = 0; $j < $i; $j ++ ) {
-					if ( ! isset( $r[ $j ] ) ) {
-						if ( isset( $jsonout->results[ $j ] ) ) {
-							$_POST["tk$k"] = stripslashes( $_GET['q'][ $j ] ); // stupid, but should work
-							$_POST["tr$k"] = $jsonout->results[ $j ];
-							$k ++;
-						}
+					if ( ! isset( $r[ $j ] ) && isset( $jsonout->results[ $j ] ) ) {
+						$_POST["tk$k"] = stripslashes( $_GET['q'][ $j ] ); // stupid, but should work
+						$_POST["tr$k"] = $jsonout->results[ $j ];
+						$k ++;
 					}
 				}
 				tp_logger( 'updating! :)' );
@@ -1783,40 +1775,38 @@ class Plugin {
 			list( $sid, $timestamp ) = get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array() );
 		}
 		tp_logger( "yandex sid $sid", 1 );
-		if ( $sid == '' ) {
-			if ( ( time() - TRANSPOSH_YANDEXPROXY_DELAY > $timestamp ) ) {
-				// attempt key refresh on error
-				$url = 'https://translate.yandex.com/';
-				tp_logger( $url, 1 );
-				$ch = curl_init();
-				// yandex wants a referer someimes
-				curl_setopt( $ch, CURLOPT_REFERER, "https://translate.yandex.com/" );
-				curl_setopt( $ch, CURLOPT_URL, $url );
-				curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-				//must set agent for google to respond with utf-8
-				$UA = Utilities::get_clean_server_var( "HTTP_USER_AGENT", FILTER_DEFAULT );
+		if ( ( $sid == '' ) && ( time() - TRANSPOSH_YANDEXPROXY_DELAY > $timestamp ) ) {
+			// attempt key refresh on error
+			$url = 'https://translate.yandex.com/';
+			tp_logger( $url, 1 );
+			$ch = curl_init();
+			// yandex wants a referer someimes
+			curl_setopt( $ch, CURLOPT_REFERER, "https://translate.yandex.com/" );
+			curl_setopt( $ch, CURLOPT_URL, $url );
+			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+			//must set agent for google to respond with utf-8
+			$UA = Utilities::get_clean_server_var( "HTTP_USER_AGENT", FILTER_DEFAULT );
 //                BetterTransposh\Core\Logger($UA,1);
-				curl_setopt( $ch, CURLOPT_USERAGENT, $UA );
-				$output = curl_exec( $ch );
-				//  BetterTransposh\Core\Logger($output,1);
-				$sidpos = strpos( $output, "SID: '" ) + 6;
+			curl_setopt( $ch, CURLOPT_USERAGENT, $UA );
+			$output = curl_exec( $ch );
+			//  BetterTransposh\Core\Logger($output,1);
+			$sidpos = strpos( $output, "SID: '" ) + 6;
 //                BetterTransposh\Core\Logger($sidpos,1);
 //                BetterTransposh\Core\Logger(strlen($output),1);
-				$newout = substr( $output, $sidpos );
+			$newout = substr( $output, $sidpos );
 //                BetterTransposh\Core\Logger($newout,1);
 //                BetterTransposh\Core\Logger(strpos($newout, "',")-2);
-				$sid = substr( $newout, 0, strpos( $newout, "'," ) - 2 );
-				tp_logger( "new sid: $sid", 1 );
-				//$sid = strrev(substr($sid, 0, 8)) . '.' . strrev(substr($sid, 9, 8)) . '.' . strrev(substr($sid, 18, 8));
-				if ( $output === false ) {
-					tp_logger( 'Curl error: ' . curl_error( $ch ) );
+			$sid = substr( $newout, 0, strpos( $newout, "'," ) - 2 );
+			tp_logger( "new sid: $sid", 1 );
+			//$sid = strrev(substr($sid, 0, 8)) . '.' . strrev(substr($sid, 9, 8)) . '.' . strrev(substr($sid, 18, 8));
+			if ( $output === false ) {
+				tp_logger( 'Curl error: ' . curl_error( $ch ) );
 
-					return false;
-				}
-				//return false;
-				update_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array( $sid, time() ) );
-				curl_close( $ch );
+				return false;
 			}
+			//return false;
+			update_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array( $sid, time() ) );
+			curl_close( $ch );
 		}
 
 		if ( ! $sid ) {

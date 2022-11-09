@@ -398,11 +398,9 @@ class Simple_Html_Dom {
 		if ( $this->copy_until_char_escape( '>' ) === '/' ) {
 			$node->_[ Constants::HDOM_INFO_ENDSPACE ] .= '/';
 			$node->_[ Constants::HDOM_INFO_END ]      = 0;
-		} else {
+		} else if ( ! isset( $this->self_closing_tags[ strtolower( $node->tag ) ] ) ) {
 			// reset parent
-			if ( ! isset( $this->self_closing_tags[ strtolower( $node->tag ) ] ) ) {
-				$this->parent = $node;
-			}
+			$this->parent = $node;
 		}
 		$this->char = ( ++ $this->pos < $this->size ) ? $this->doc[ $this->pos ] : null; // next
 

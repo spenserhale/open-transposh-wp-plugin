@@ -208,13 +208,11 @@ class Utilities {
 
 		if ( $use_params_only && $lang ) {
 			$params['lang'] = LANG_PARAM . "=$lang";
-		} else {
-			if ( $lang ) {
-				if ( ! isset( $parsedurl['path'] ) ) {
-					$parsedurl['path'] = "/"; //wait for it
-				}
-				$parsedurl['path'] = "/" . $lang . $parsedurl['path'];
+		} else if ( $lang ) {
+			if ( ! isset( $parsedurl['path'] ) ) {
+				$parsedurl['path'] = "/"; //wait for it
 			}
+			$parsedurl['path'] = "/" . $lang . $parsedurl['path'];
 		}
 		if ( $gluebackhome ) {
 			$parsedurl['path'] = $home_path . $parsedurl['path'];

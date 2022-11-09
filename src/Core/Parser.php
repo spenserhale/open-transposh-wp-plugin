@@ -349,11 +349,9 @@ class Parser {
 		$pos = 0;
 		//	$pos = skip_white_space($string, $pos);
 		// skip CDATA in feed_fix mode
-		if ( $this->feed_fix ) {
-			if ( str_starts_with( $string, '<![CDATA[' ) ) {
-				$pos    = 9; // CDATA length
-				$string = substr( $string, 0, - 3 ); // chop the last ]]>;
-			}
+		if ( $this->feed_fix && str_starts_with( $string, '<![CDATA[' ) ) {
+			$pos    = 9; // CDATA length
+			$string = substr( $string, 0, - 3 ); // chop the last ]]>;
 		}
 
 		$start = $pos;
@@ -676,30 +674,28 @@ class Parser {
 		// ready our stats
 		$this->stats = new Parser_Stats();
 		// handler for possible json (buddypress)
-		if ( $this->might_json ) {
-			if ( $string[0] == '{' ) {
-				$jsoner = json_decode( $string );
-				if ( $jsoner != null ) {
-					tp_logger( "json detected (buddypress?)", 4 );
-					// currently we only handle contents (which buddypress heavily use)
-					if ( $jsoner->contents ) {
-						$jsoner->contents = $this->fix_html( $jsoner->contents );
-					}
-					$fragments = [
-						'div.widget_shopping_cart_content',
-						'div.kt-header-mini-cart-refreash',
-						'a.cart-contents',
-						'.woocommerce-checkout-review-order-table',
-						'.woocommerce-checkout-payment'
-					];
-					foreach ( $fragments as $fragment ) {
-						if ( $jsoner->fragments->{$fragment} ) {
-							$jsoner->fragments->{$fragment} = $this->fix_html( $jsoner->fragments->{$fragment} );
-						}
-					}
-
-					return json_encode( $jsoner ); // now any attempted json will actually return a json
+		if ( $this->might_json && $string[0] == '{' ) {
+			$jsoner = json_decode( $string );
+			if ( $jsoner != null ) {
+				tp_logger( "json detected (buddypress?)", 4 );
+				// currently we only handle contents (which buddypress heavily use)
+				if ( $jsoner->contents ) {
+					$jsoner->contents = $this->fix_html( $jsoner->contents );
 				}
+				$fragments = [
+					'div.widget_shopping_cart_content',
+					'div.kt-header-mini-cart-refreash',
+					'a.cart-contents',
+					'.woocommerce-checkout-review-order-table',
+					'.woocommerce-checkout-payment'
+				];
+				foreach ( $fragments as $fragment ) {
+					if ( $jsoner->fragments->{$fragment} ) {
+						$jsoner->fragments->{$fragment} = $this->fix_html( $jsoner->fragments->{$fragment} );
+					}
+				}
+
+				return json_encode( $jsoner ); // now any attempted json will actually return a json
 			}
 		}
 
@@ -931,18 +927,14 @@ class Parser {
 									$this->stats->human_translated_phrases ++;
 								}
 							}
-							if ( ( $this->is_edit_mode || ( $this->is_auto_translate && $translated_text == null ) ) && $ep->inbody ) {
+							if ( ( $this->is_edit_mode || ( $this->is_auto_translate && $translated_text == null ) ) && $ep->inbody && ! str_contains( $e->innertext, $ep->phrase ) && ! in_array( $ep->phrase, $hidden_phrases ) ) {
 								// prevent duplicate translation (title = text)
-								if ( ! str_contains( $e->innertext, $ep->phrase ) ) {
-//                                if (strpos($e->innertext, BetterTransposh\Core\transposh_utils::base64_url_encode($ep->phrase)) === false) {
-									//no need to translate span the same hidden phrase more than once
-									if ( ! in_array( $ep->phrase, $hidden_phrases ) ) {
-										$this->stats->hidden_translateable_phrases ++;
-										$span .= $this->create_edit_span( $ep->phrase, $translated_text, $source, true, $ep->srclang );
-										//    logger ($span);
-										$hidden_phrases[] = $ep->phrase;
-									}
-								}
+								// if (strpos($e->innertext, BetterTransposh\Core\transposh_utils::base64_url_encode($ep->phrase)) === false) {
+								// no need to translate span the same hidden phrase more than once
+								$this->stats->hidden_translateable_phrases ++;
+								$span .= $this->create_edit_span( $ep->phrase, $translated_text, $source, true, $ep->srclang );
+								//    logger ($span);
+								$hidden_phrases[] = $ep->phrase;
 							}
 							// if we need to replace, we store this
 							if ( $translated_text ) {
@@ -1026,10 +1018,8 @@ class Parser {
 //        Log::info("Stats Done:" . $this->stats->time);
 
 		$head = $this->html->find( 'head', 0 );
-		if ( $this->edit_span_created ) {
-			if ( $head != null ) {
-				$head->lastChild()->outertext .= $this->added_header;
-			}
+		if ( $this->edit_span_created && $head != null ) {
+			$head->lastChild()->outertext .= $this->added_header;
 		}
 		//exit;
 		if ( $head != null ) {
