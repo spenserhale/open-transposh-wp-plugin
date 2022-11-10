@@ -150,8 +150,6 @@ class Plugin {
 		add_action( 'wp_ajax_nopriv_tp_oht', array( &$this, 'on_ajax_nopriv_tp_oht' ) );
 		// ajax actions in editor
 		// TODO - remove some for non translators
-		add_action( 'wp_ajax_tp_history', array( &$this, 'on_ajax_nopriv_tp_history' ) );
-		add_action( 'wp_ajax_nopriv_tp_history', array( &$this, 'on_ajax_nopriv_tp_history' ) );
 		add_action( 'wp_ajax_tp_translation', array( &$this, 'on_ajax_nopriv_tp_translation' ) );
 		add_action( 'wp_ajax_nopriv_tp_translation', array( &$this, 'on_ajax_nopriv_tp_translation' ) );
 		add_action( 'wp_ajax_tp_ohtcallback', array( &$this, 'on_ajax_nopriv_tp_ohtcallback' ) );
@@ -2124,19 +2122,6 @@ class Plugin {
 		} else {
 			LogService::legacy_log( $ret, 1 );
 		}
-	}
-
-	// getting translation history
-	public function on_ajax_nopriv_tp_history() {
-		// deleting
-		Ajax_Controller::allow_cors();
-		if ( isset( $_POST['timestamp'] ) ) {
-			$result = $this->database->del_translation_history( stripslashes( $_POST['token'] ), $_POST['lang'], $_POST['timestamp'] );
-			echo json_encode( $result );
-			die();
-		}
-		$this->database->get_translation_history( stripslashes( $_POST['token'] ), $_POST['lang'] );
-		die();
 	}
 
 	// the case of posted translation

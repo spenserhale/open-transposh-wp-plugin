@@ -531,61 +531,39 @@ class Database {
 	/*
 	 * Get translation history for some translation.
 	 */
-
-	function get_translation_history( $token, $lang ) {
-
-		$ref = getenv( 'HTTP_REFERER' );
-		//$original = BetterTransposh\Core\transposh_utils::base64_url_decode($token);
-		LogService::legacy_log( "Inside history for ($token)", 4 );
-
-		// check params
-		LogService::legacy_log( "Enter " . __FILE__ . " Params:  $token, $lang, $ref", 3 );
-		if ( ! isset( $token ) || ! isset( $lang ) ) {
-			LogService::legacy_log( "Enter " . __FILE__ . " missing params: $token, $lang," . $ref, 1 );
-
-			return;
-		}
-		LogService::legacy_log( "Passed check for $lang", 4 );
-
-		// Check permissions, first the lanugage must be on the edit list. Then either the user
-		// is a translator or automatic translation if it is enabled.
-		if ( ! ( $this->transposh->options->is_active_language( $lang ) && $this->transposh->is_translator() ) ) {
-			LogService::legacy_log( "Unauthorized history request " . Utilities::get_clean_server_var( 'REMOTE_ADDR' ),
-				1 );
-			header( 'HTTP/1.0 401 Unauthorized history' );
-			exit;
-		}
-		LogService::legacy_log( 'Passed check for editable and translator', 4 );
+	public function get_translation_history( $token, $lang ): array {
+		global $wpdb;
 
 		// The original content is encoded as base64 before it is sent (i.e. token), after we
 		// decode it should just the same after it was parsed.
 		$original = esc_sql( html_entity_decode( $token, ENT_NOQUOTES, 'UTF-8' ) );
+		$lang     = esc_sql( $lang );
 
-		// add our own custom header - so we will know that we got here
-		header( 'Transposh: v-' . TRANSPOSH_PLUGIN_VER . ' db_version-' . DB_VERSION );
-
-		$query = "SELECT translated, translated_by, timestamp, source, user_login " .
-		         "FROM {$this->translation_log_table} " .
-		         "LEFT JOIN {$GLOBALS['wpdb']->prefix}users ON translated_by = {$GLOBALS['wpdb']->prefix}users.id " .
-		         "WHERE original='$original' AND lang='$lang' " .
-		         "UNION " .
-		         "SELECT translated, translated_by, timestamp, source, user_login " .
-		         "FROM {$this->translation_table} " .
-		         "LEFT JOIN {$GLOBALS['wpdb']->prefix}users ON translated_by = {$GLOBALS['wpdb']->prefix}users.id " .
-		         "WHERE original='$original' AND lang='$lang' " .
-		         "ORDER BY timestamp DESC";
+		$query = <<<SQL
+SELECT translated, translated_by, timestamp, source, user_login
+FROM {$this->translation_log_table}
+	LEFT JOIN {$wpdb->prefix}users ON translated_by = {$wpdb->prefix}users.id
+	WHERE original='$original' AND lang='$lang'
+	UNION SELECT translated, translated_by, timestamp, source, user_login 
+    FROM {$this->translation_table} 
+    	LEFT JOIN {$wpdb->prefix}users ON translated_by = {$wpdb->prefix}users.id
+    	WHERE original='$original' AND lang='$lang'
+ORDER BY timestamp DESC
+SQL;
 		LogService::legacy_log( "query is $query" );
 
-		$rows = $GLOBALS['wpdb']->get_results( $query );
-		for ( $i = 0; $i < count( $rows ); $i ++ ) {
-			if ( ( $rows[ $i ]->translated_by == Utilities::get_clean_server_var( 'REMOTE_ADDR' ) && $rows[ $i ]->source == '0' ) || ( is_user_logged_in() && current_user_can( TRANSLATOR ) ) || current_user_can( 'manage_options' ) ) {
-				$rows[ $i ]->can_delete = true;
+		$rows = $wpdb->get_results( $query );
+		foreach ( $rows as $row ) {
+			if (
+				( $row->translated_by == Utilities::get_clean_server_var( 'REMOTE_ADDR' ) && $row->source == '0' ) ||
+				( is_user_logged_in() && current_user_can( TRANSLATOR ) ) ||
+				current_user_can( 'manage_options' )
+			) {
+				$row->can_delete = true;
 			}
 		}
-		// sending as json
-		// CHECK!!! header("Content-type: application/json");
-		echo json_encode( $rows );
-		exit;
+
+		return $rows;
 	}
 
 	/**
@@ -596,81 +574,100 @@ class Database {
 	 * @param string $timestamp
 	 */
 	//TODO: post this action to backup
-	function del_translation_history( $token, $langp, $timestampp ) {
-		// $original = BetterTransposh\Core\transposh_utils::base64_url_decode($token);
+	public function del_translation_history( $token, $langp, $timestampp ): bool {
+		global $wpdb;
 		$original  = esc_sql( html_entity_decode( $token, ENT_NOQUOTES, 'UTF-8' ) );
 		$lang      = esc_sql( $langp );
 		$timestamp = esc_sql( $timestampp );
-		header( 'Transposh: v-' . TRANSPOSH_PLUGIN_VER . ' db_version-' . DB_VERSION );
 		// first we look in the log table
-		$inlogtable = false;
-		$query      = "SELECT translated, translated_by, timestamp, source " .
-		              "FROM {$this->translation_log_table} " .
-		              "WHERE original='$original' AND lang='$lang' AND timestamp='$timestamp' " .
-		              "ORDER BY timestamp DESC";
-		$rows       = $GLOBALS['wpdb']->get_results( $query );
+		$in_log_table = false;
+		$query        = <<<SQL
+SELECT translated, translated_by, timestamp, source
+FROM {$this->translation_log_table}
+WHERE original='$original' AND lang='$lang' AND timestamp='$timestamp'
+ORDER BY timestamp DESC
+SQL;
+		$rows         = $wpdb->get_results( $query );
 		if ( ! empty( $rows ) ) {
 			LogService::legacy_log( 'found in log' );
-			$inlogtable = true;
+			$in_log_table = true;
 		}
 		// than we look in the main table, if its not found
-		$inmaintable = false;
-		if ( ! $inlogtable ) {
-			$query = "SELECT translated, translated_by, timestamp, source " .
-			         "FROM {$this->translation_table} " .
-			         "WHERE original='$original' AND lang='$lang' AND timestamp='$timestamp' " .
-			         "ORDER BY timestamp DESC";
-			$rows  = $GLOBALS['wpdb']->get_results( $query );
+		$in_main_table = false;
+		if ( ! $in_log_table ) {
+			$query = <<<SQL
+SELECT translated, translated_by, timestamp, source
+FROM {$this->translation_table}
+WHERE original='$original' AND lang='$lang' AND timestamp='$timestamp'
+ORDER BY timestamp DESC
+SQL;
+			$rows  = $wpdb->get_results( $query );
 			if ( ! empty( $rows ) ) {
 				LogService::legacy_log( 'found in mains' );
-				$inmaintable = true;
+				$in_main_table = true;
 			}
 		}
 
 		LogService::legacy_log( $query, 3 );
 		// We only delete if we found something to delete and it is allowed to delete it (user either did that - by ip, has the translator role or is an admin)
-		if ( ( $inmaintable || $inlogtable ) && ( ( $rows[0]->translated_by == Utilities::get_clean_server_var( 'REMOTE_ADDR' ) && $rows[0]->source == '0' ) || ( is_user_logged_in() && current_user_can( TRANSLATOR ) ) || current_user_can( 'manage_options' ) ) ) {
+		if (
+			( $in_main_table || $in_log_table ) &&
+			(
+				( $rows[0]->translated_by == Utilities::get_clean_server_var( 'REMOTE_ADDR' ) &&
+				  $rows[0]->source == '0' ) ||
+				( is_user_logged_in() && current_user_can( TRANSLATOR ) ) ||
+				current_user_can( 'manage_options' )
+			)
+		) {
 			// delete faulty record, if in log
-			if ( $inlogtable ) {
-				$query = "DELETE " .
-				         "FROM {$this->translation_log_table} " .
-				         "WHERE original='$original' AND lang='$lang' AND timestamp='$timestamp'";
-				$GLOBALS['wpdb']->query( $query );
+			if ( $in_log_table ) {
+				$query = <<<SQL
+DELETE FROM {$this->translation_log_table}
+WHERE original='$original' AND lang='$lang' AND timestamp='$timestamp'
+SQL;
+				$wpdb->query( $query );
 				LogService::legacy_log( $query, 3 );
 			} else {
 				// delete from main table
-				$query = "DELETE " .
-				         "FROM {$this->translation_table} " .
-				         "WHERE original='$original' AND lang='$lang'"; // AND timestamp='$timestamp'";
-				$GLOBALS['wpdb']->query( $query );
+				$query = <<<SQL
+DELETE FROM {$this->translation_table}
+WHERE original='$original' AND lang='$lang'
+SQL;
+				$wpdb->query( $query );
 				LogService::legacy_log( $query, 3 );
 
 				// clear cache!
 				$this->cache_delete( $original, $lang );
 				// copy from log if possible.
-				$query = "INSERT INTO {$this->translation_table} (original, translated, lang, translated_by, source, timestamp) " .
-				         "SELECT original, translated, lang, translated_by, source, timestamp " .
-				         "FROM {$this->translation_log_table} " .
-				         "WHERE original='$original' AND lang='$lang' " .
-				         "ORDER BY timestamp DESC LIMIT 1";
-				$GLOBALS['wpdb']->query( $query );
+				$query = <<<SQL
+INSERT INTO {$this->translation_table} (original, translated, lang, translated_by, source, timestamp)
+SELECT original, translated, lang, translated_by, source, timestamp
+FROM {$this->translation_log_table}
+WHERE original='$original' AND lang='$lang'
+ORDER BY timestamp DESC LIMIT 1
+SQL;
+				$wpdb->query( $query );
 				LogService::legacy_log( $query, 3 );
 
 				//need to remove last from log now...
-				$removelastfromlog = "DELETE {$this->translation_log_table} FROM {$this->translation_log_table} INNER JOIN {$this->translation_table} ON " .
-				                     "{$this->translation_table}.original = {$this->translation_log_table}.original AND " .
-				                     "{$this->translation_table}.lang = {$this->translation_log_table}.lang AND " .
-				                     "{$this->translation_table}.translated = {$this->translation_log_table}.translated AND " .
-				                     "{$this->translation_table}.timestamp = {$this->translation_log_table}.timestamp " .
-				                     "WHERE {$this->translation_log_table}.original='$original' AND {$this->translation_log_table}.lang='$lang'";
-				LogService::legacy_log( $removelastfromlog, 3 );
-				$GLOBALS['wpdb']->query( $removelastfromlog );
+				$query = <<<SQL
+DELETE {$this->translation_log_table}
+FROM {$this->translation_log_table}
+INNER JOIN {$this->translation_table}
+ON {$this->translation_table}.original = {$this->translation_log_table}.original
+AND {$this->translation_table}.lang = {$this->translation_log_table}.lang
+AND {$this->translation_table}.translated = {$this->translation_log_table}.translated
+AND {$this->translation_table}.timestamp = {$this->translation_log_table}.timestamp
+WHERE {$this->translation_log_table}.original='$original' AND {$this->translation_log_table}.lang='$lang'
+SQL;
+				LogService::legacy_log( $query, 3 );
+				$wpdb->query( $query );
 			}
 
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 
 	/**
