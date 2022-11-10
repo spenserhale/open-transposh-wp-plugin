@@ -277,7 +277,7 @@ class Plugin_Admin {
 			'manage_options',
 			'tp_main',
 			'',
-			$this->transposh->transposh_plugin_url . "img/tplogo.png"
+			'dashicons-translation'
 		);
 
 		$submenu_pages = array();
