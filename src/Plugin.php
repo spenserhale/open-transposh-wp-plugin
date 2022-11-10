@@ -1605,7 +1605,6 @@ class Plugin {
 	// transposh translation proxy ajax wrapper
 
 	public function on_ajax_nopriv_tp_tp() {
-		$GLOBALS['tp_logger']->set_global_log( 3 );
 		// we need curl for this proxy
 		if ( ! function_exists( 'curl_init' ) ) {
 			return;
@@ -1678,11 +1677,10 @@ class Plugin {
 			}
 
 			if ( $result === false ) {
-				echo 'Proxy attempt failed<br>' . $GLOBALS['tp_logger']->get_logstr();
+				echo 'Proxy attempt failed<br>';
 				die();
 			}
 		}
-		$GLOBALS['tp_logger']->set_global_log( 0 );
 
 		// encode results 
 		$jsonout = new stdClass();
