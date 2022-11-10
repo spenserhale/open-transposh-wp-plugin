@@ -1,6 +1,6 @@
 <?php
 
-namespace BetterTransposh\Logging;
+namespace OpenTransposh\Logging;
 
 use Psr\Log\LoggerTrait;
 use Stringable;

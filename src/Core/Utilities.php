@@ -8,9 +8,9 @@
  *
  */
 
-namespace BetterTransposh\Core;
+namespace OpenTransposh\Core;
 
-use BetterTransposh\Logging\LogService;
+use OpenTransposh\Logging\LogService;
 
 /**
  * This is a static class to reduce chance of namespace collisions with other plugins
@@ -433,10 +433,10 @@ class Utilities {
 		}
 		// TODO: Consider sanitize_title_with_dashes
 		// TODO : need to handle params....
-		//BetterTransposh\Logging\Logger(substr($url,strlen($url)-1));
+		//OpenTransposh\Logging\Logger(substr($url,strlen($url)-1));
 		//if (substr($url,strlen($url)-1) == '/') $url2 .= '/';
 		//$url2 = rtrim($url2,'/');
-		// BetterTransposh\Logging\Logger("h $home_url hr $href ur $url ur2 $url2");
+		// OpenTransposh\Logging\Logger("h $home_url hr $href ur $url ur2 $url2");
 		//$href = $this->home_url.$url2;
 		if ( str_ends_with( $href, '/' ) ) {
 			$url2 .= '/';

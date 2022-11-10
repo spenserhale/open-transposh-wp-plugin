@@ -1,6 +1,6 @@
 <?php
 
-namespace BetterTransposh\Traits;
+namespace OpenTransposh\Traits;
 
 trait Static_Instance_Trait {
 	public static function get_instance( ...$arguments ): static {

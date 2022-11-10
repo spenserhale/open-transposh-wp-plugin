@@ -1,10 +1,10 @@
 <?php
 
-namespace BetterTransposh\Widgets;
+namespace OpenTransposh\Widgets;
 
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Logging\LogService;
-use BetterTransposh\Plugin;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Logging\LogService;
+use OpenTransposh\Plugin;
 use WP_Widget;
 
 /**

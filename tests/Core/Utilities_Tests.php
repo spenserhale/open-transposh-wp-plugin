@@ -2,8 +2,8 @@
 
 namespace Tests\Core;
 
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Logging\Logger;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Logging\Logger;
 use WP_UnitTestCase;
 
 ini_set( "include_path", "../core" . PATH_SEPARATOR . "../../core" . PATH_SEPARATOR . ini_get( "include_path" ) );

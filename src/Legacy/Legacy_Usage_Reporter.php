@@ -1,6 +1,6 @@
 <?php
 
-namespace BetterTransposh\Legacy;
+namespace OpenTransposh\Legacy;
 
 class Legacy_Usage_Reporter {
 	public function __isset( string $name ): bool {

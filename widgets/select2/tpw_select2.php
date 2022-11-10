@@ -12,7 +12,7 @@
 
 
 
-use BetterTransposh\Widgets\Base_Widget;
+use OpenTransposh\Widgets\Base_Widget;
 
 class tpw_select2 extends Base_Widget {
 

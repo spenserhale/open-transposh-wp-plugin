@@ -1,6 +1,6 @@
 <?php
 
-namespace BetterTransposh\Core;
+namespace OpenTransposh\Core;
 
 /**
  * Holds our arrays staticly to reduce chance of namespace collision

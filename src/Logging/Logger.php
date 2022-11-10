@@ -1,10 +1,10 @@
 <?php
 
-namespace BetterTransposh\Logging;
+namespace OpenTransposh\Logging;
 
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Libraries\ChromePhp;
-use BetterTransposh\Traits\Static_Instance_Trait;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Libraries\ChromePhp;
+use OpenTransposh\Traits\Static_Instance_Trait;
 
 class Logger {
 	use Static_Instance_Trait;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace BetterTransposh\Libraries;
+namespace OpenTransposh\Libraries;
 
 /**
  * Server Side Chrome PHP debugger class

@@ -3,11 +3,11 @@
 
 
 // This magic value will cause the option to be set from post
-namespace BetterTransposh;
+namespace OpenTransposh;
 
-use BetterTransposh;
-use BetterTransposh\Core\Constants;
-use BetterTransposh\Logging\LogService;
+use OpenTransposh;
+use OpenTransposh\Core\Constants;
+use OpenTransposh\Logging\LogService;
 use ip;
 use transposh_option;
 
@@ -157,8 +157,8 @@ class Plugin_Options {
 		if ( ! isset( $this->options[ $name ] ) ) {
 			$this->options[ $name ] = $default_value;
 		}
-		// can't log...     BetterTransposh\Logging\Logger($name . ' ' . $this->options[$name]);
-		$this->vars[ $name ] = new BetterTransposh\Option( $name, $this->options[ $name ], $type );
+		// can't log...     OpenTransposh\Logging\Logger($name . ' ' . $this->options[$name]);
+		$this->vars[ $name ] = new OpenTransposh\Option( $name, $this->options[ $name ], $type );
 	}
 
 	public function __get( $name ) {
@@ -166,7 +166,7 @@ class Plugin_Options {
 			return $this->vars[ substr( $name, 0, - 2 ) ];
 		}
 
-		// can't!? BetterTransposh\Logging\Logger($this->vars[$name]->get_value(), 5);
+		// can't!? OpenTransposh\Logging\Logger($this->vars[$name]->get_value(), 5);
 		return $this->vars[ $name ]->get_value();
 	}
 
@@ -188,10 +188,10 @@ class Plugin_Options {
 
 	public function __construct() {
 
-		// can't      BetterTransposh\Logging\Logger("creating options");
+		// can't      OpenTransposh\Logging\Logger("creating options");
 		// load them here
 		$this->options = get_option( TRANSPOSH_OPTIONS );
-//        BetterTransposh\Logging\Logger($this->options);
+//        OpenTransposh\Logging\Logger($this->options);
 
 		$this->register_option( 'default_language', TP_OPT_STRING ); // default?
 		$this->register_option( 'viewable_languages', TP_OPT_STRING );
@@ -263,7 +263,7 @@ class Plugin_Options {
 
 
 		// Fix default language if needed, only done once now, and since this was being done constantly, we gain
-		//BetterTransposh\Logging\Logger($this->default_language->get_value());
+		//OpenTransposh\Logging\Logger($this->default_language->get_value());
 
 		if ( ! isset( Constants::$languages[ $this->default_language ] ) ) {
 			if ( defined( 'WPLANG' ) && isset( Constants::$languages[ WPLANG ] ) ) {
@@ -273,7 +273,7 @@ class Plugin_Options {
 			}
 		}
 
-		// can't log...   BetterTransposh\Logging\Logger($this->options, 4);
+		// can't log...   OpenTransposh\Logging\Logger($this->options, 4);
 	}
 
 	/**

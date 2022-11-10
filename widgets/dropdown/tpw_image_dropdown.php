@@ -12,8 +12,8 @@
 
 
 
-use BetterTransposh\Plugin;
-use BetterTransposh\Widgets\Base_Widget;
+use OpenTransposh\Plugin;
+use OpenTransposh\Widgets\Base_Widget;
 
 class tpw_image_dropdown extends Base_Widget {
 

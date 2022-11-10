@@ -1,6 +1,6 @@
 <?php
 
-namespace BetterTransposh;
+namespace OpenTransposh;
 
 /**
  * @property string $desc Description

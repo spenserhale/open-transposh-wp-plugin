@@ -1,8 +1,8 @@
 <?php
 
-namespace BetterTransposh\Widgets;
+namespace OpenTransposh\Widgets;
 
-use BetterTransposh\Logging\LogService;
+use OpenTransposh\Logging\LogService;
 
 /**
  * Class for subwidgets to inherit from

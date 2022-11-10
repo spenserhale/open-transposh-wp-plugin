@@ -1,6 +1,6 @@
 <?php
 
-namespace BetterTransposh\Core;
+namespace OpenTransposh\Core;
 
 /**
  * parserstats class - holds parser statistics

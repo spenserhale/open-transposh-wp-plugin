@@ -7,7 +7,7 @@
  */
 
 //class that reperesent the admin page
-namespace BetterTransposh;
+namespace OpenTransposh;
 
 class Backup {
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace BetterTransposh;
+namespace OpenTransposh;
 
-use BetterTransposh\Core\Constants;
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Logging\LogService;
+use OpenTransposh\Core\Constants;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Logging\LogService;
 use WP_List_Table;
 
 if ( ! class_exists( 'WP_List_Table' ) ) {

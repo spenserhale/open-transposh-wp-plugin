@@ -8,10 +8,10 @@
  *
  */
 
-namespace BetterTransposh;
+namespace OpenTransposh;
 
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Logging\LogService;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Logging\LogService;
 
 /**
  * Table name in database for storing translations
@@ -58,7 +58,7 @@ class Database {
 		}
 		// I have space in keys issues...
 		/* elseif (class_exists('Memcached')) {
-		  BetterTransposh\Logging\Logger('I am using pecl-Memcached!', 3);
+		  OpenTransposh\Logging\Logger('I am using pecl-Memcached!', 3);
 		  $this->memcache_working = true;
 		  $this->memcache = new Memcached();
 		  //if (!count($this->memcache->getServerList())) {
@@ -66,7 +66,7 @@ class Database {
 		  // }
 		  //@$this->memcache->connect(TP_MEMCACHED_SRV, TP_MEMCACHED_PORT) or $this->memcache_working = false;
 		  } */
-		//BetterTransposh\Logging\Logger($this->memcache_working); // TODO!! make sure it does something
+		//OpenTransposh\Logging\Logger($this->memcache_working); // TODO!! make sure it does something
 	}
 
 	/**
@@ -407,7 +407,7 @@ class Database {
 		// We are now processing all posted items
 		for ( $i = 0; $i < $items; $i ++ ) {
 			if ( isset( $_POST["tk$i"] ) ) {
-//                $original = BetterTransposh\Core\transposh_utils::base64_url_decode($_POST["tk$i"]);
+//                $original = OpenTransposh\Core\transposh_utils::base64_url_decode($_POST["tk$i"]);
 				$orig = stripslashes( $_POST["tk$i"] );
 				// The original content is encoded as base64 before it is sent (i.e. token), after we
 				// decode it should just the same after it was parsed.
@@ -670,7 +670,7 @@ SQL;
 	function get_translation_alt( $token ) {
 
 		//$ref = getenv('HTTP_REFERER');
-		//  $original = BetterTransposh\Core\transposh_utils::base64_url_decode($token);
+		//  $original = OpenTransposh\Core\transposh_utils::base64_url_decode($token);
 		$original = $token;
 		LogService::legacy_log( "Inside alt for $original ($token)", 4 );
 

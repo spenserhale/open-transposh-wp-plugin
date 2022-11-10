@@ -20,7 +20,7 @@
  * This widget is the default langauge list widget, the one which provides a drop down select box which allows to choose a new target language
  */
 
-use BetterTransposh\Widgets\Base_Widget;
+use OpenTransposh\Widgets\Base_Widget;
 
 /**
  * This function does the actual HTML for the widget

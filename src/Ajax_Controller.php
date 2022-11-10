@@ -1,9 +1,9 @@
 <?php
 
-namespace BetterTransposh;
+namespace OpenTransposh;
 
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Logging\LogService;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Logging\LogService;
 
 class Ajax_Controller {
 	public static function allow_cors() {
@@ -46,7 +46,7 @@ class Ajax_Controller {
 	
 	private function get_translation_history($token, $lang): void {
 		$ref = getenv( 'HTTP_REFERER' );
-		//$original = BetterTransposh\Core\transposh_utils::base64_url_decode($token);
+		//$original = OpenTransposh\Core\transposh_utils::base64_url_decode($token);
 		LogService::legacy_log( "Inside history for ($token)", 4 );
 
 		// check params

@@ -1,11 +1,11 @@
 <?php
 
-namespace BetterTransposh\Core;
+namespace OpenTransposh\Core;
 
-use BetterTransposh\Libraries\SimpleHtmlDom\Constants;
-use BetterTransposh\Libraries\SimpleHtmlDom\Node;
-use BetterTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom;
-use BetterTransposh\Logging\LogService;
+use OpenTransposh\Libraries\SimpleHtmlDom\Constants;
+use OpenTransposh\Libraries\SimpleHtmlDom\Node;
+use OpenTransposh\Libraries\SimpleHtmlDom\Simple_Html_Dom;
+use OpenTransposh\Logging\LogService;
 
 /**
  * Parser class - allows phrase marking and translation with callback functions
@@ -310,7 +310,7 @@ class Parser {
 		$phrase      = trim( substr( $string, $start, $end - $start ) );
 		$phrasefixed = trim( str_replace( '&nbsp;', ' ', $phrase ) );
 //        $logstr = str_replace(array(chr(1),chr(2),chr(3),chr(4)), array('[1]','[2]','[3]','[4]'), $string);
-//        BetterTransposh\Logging\Logger ("p:$phrasefixed, s:$logstr, st:$start, en:$end, gt:{$this->in_get_text}, gti:{$this->in_get_text_inner}");
+//        OpenTransposh\Logging\Logger ("p:$phrasefixed, s:$logstr, st:$start, en:$end, gt:{$this->in_get_text}, gti:{$this->in_get_text_inner}");
 		if ( $this->in_get_text > $this->in_get_text_inner ) {
 			LogService::legacy_log( 'not tagging ' . $phrase . ' assumed gettext translated', 4 );
 
@@ -382,7 +382,7 @@ class Parser {
 			} elseif ( $string[ $pos ] == TP_GTXT_BRK || $string[ $pos ] == TP_GTXT_BRK_CLOSER ) {
 //                $logstr = str_replace(array(chr(1),chr(2),chr(3),chr(4)), array('[1]','[2]','[3]','[4]'), $string);
 //                $closers = ($string[$pos] == TP_GTXT_BRK) ? '': 'closer';
-//                BetterTransposh\Logging\Logger(" $closers TEXT breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text, 3);
+//                OpenTransposh\Logging\Logger(" $closers TEXT breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text, 3);
 				$this->tag_phrase( $string, $start, $pos );
 				( $string[ $pos ] == TP_GTXT_BRK ) ? $this->in_get_text += 1 : $this->in_get_text -= 1;
 				$pos ++;
@@ -393,8 +393,8 @@ class Parser {
 			} elseif ( $string[ $pos ] == TP_GTXT_IBRK || $string[ $pos ] == TP_GTXT_IBRK_CLOSER ) {
 //                $logstr = str_replace(array(chr(1),chr(2),chr(3),chr(4)), array('[1]','[2]','[3]','[4]'), $string);
 //                $closers = ($string[$pos] == TP_GTXT_IBRK) ? '': 'closer';
-//                BetterTransposh\Logging\Logger("   $closers INNER text breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text_inner, 3);
-				//BetterTransposh\Logging\Logger("inner text breaker $start $pos $string " . (($this->in_get_text_inner) ? 'true' : 'false'), 5);
+//                OpenTransposh\Logging\Logger("   $closers INNER text breaker $logstr start:$start pos:$pos gt:" . $this->in_get_text_inner, 3);
+				//OpenTransposh\Logging\Logger("inner text breaker $start $pos $string " . (($this->in_get_text_inner) ? 'true' : 'false'), 5);
 				$this->tag_phrase( $string, $start, $pos );
 				if ( $this->in_get_text ) {
 					( $string[ $pos ] == TP_GTXT_IBRK ) ? $this->in_get_text_inner += 1 : $this->in_get_text_inner -= 1;
@@ -554,7 +554,7 @@ class Parser {
 			$this->parsetext( $node->alt );
 		}
 		if ( $node->{'data-quickview'} ) {
-			//    BetterTransposh\Logging\Logger("in DQV " . $node->{'data-quickview'}, 2);
+			//    OpenTransposh\Logging\Logger("in DQV " . $node->{'data-quickview'}, 2);
 			$this->parsetext( $node->{'data-quickview'} );
 		}
 
@@ -591,7 +591,7 @@ class Parser {
 		// get back exactlly the same string without having the client decode/encode it in anyway.
 		$this->edit_span_created = true;
 		$span                    = '<span class ="' . SPAN_PREFIX . '" id="' . SPAN_PREFIX . $this->span_id . '" data-source="' . $source . '"';
-		//$span = '<span class ="' . SPAN_PREFIX . '" id="' . SPAN_PREFIX . $this->span_id . '" data-token="' . BetterTransposh\Core\transposh_utils::base64_url_encode($original_text) . '" data-source="' . $source . '"';
+		//$span = '<span class ="' . SPAN_PREFIX . '" id="' . SPAN_PREFIX . $this->span_id . '" data-token="' . OpenTransposh\Core\transposh_utils::base64_url_encode($original_text) . '" data-source="' . $source . '"';
 		// if we have a source language
 		if ( $src_lang ) {
 			$span .= ' data-srclang="' . $src_lang . '"';
@@ -901,7 +901,7 @@ class Parser {
 							}
 							if ( ( $this->is_edit_mode || ( $this->is_auto_translate && $translated_text == null ) ) && $ep->inbody && ! str_contains( $e->innertext, $ep->phrase ) && ! in_array( $ep->phrase, $hidden_phrases ) ) {
 								// prevent duplicate translation (title = text)
-								// if (strpos($e->innertext, BetterTransposh\Core\transposh_utils::base64_url_encode($ep->phrase)) === false) {
+								// if (strpos($e->innertext, OpenTransposh\Core\transposh_utils::base64_url_encode($ep->phrase)) === false) {
 								// no need to translate span the same hidden phrase more than once
 								$this->stats->hidden_translateable_phrases ++;
 								$span .= $this->create_edit_span( $ep->phrase, $translated_text, $source, true, $ep->srclang );

@@ -12,9 +12,9 @@
 
 
 
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Plugin;
-use BetterTransposh\Widgets\Base_Widget;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Plugin;
+use OpenTransposh\Widgets\Base_Widget;
 
 class tpw_list_with_flags_css extends Base_Widget {
 

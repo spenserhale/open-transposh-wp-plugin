@@ -1,14 +1,14 @@
 <?php
 
-namespace BetterTransposh;
+namespace OpenTransposh;
 
-use BetterTransposh\Core\Constants;
-use BetterTransposh\Core\Parser;
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Logging\Logger;
-use BetterTransposh\Logging\LogService;
-use BetterTransposh\Logging\Query_Monitor_Logger;
-use BetterTransposh\Widgets\Plugin_Widget;
+use OpenTransposh\Core\Constants;
+use OpenTransposh\Core\Parser;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Logging\Logger;
+use OpenTransposh\Logging\LogService;
+use OpenTransposh\Logging\Query_Monitor_Logger;
+use OpenTransposh\Widgets\Plugin_Widget;
 use Psr\Log\NullLogger;
 use stdClass;
 use WP;
@@ -232,8 +232,8 @@ class Plugin {
 		}
 		LogService::legacy_log( $status . ' ' . $location );
 		// $trace = debug_backtrace();
-		// BetterTransposh\Logging\Logger($trace);
-		// BetterTransposh\Logging\Logger($this->target_language);
+		// OpenTransposh\Logging\Logger($trace);
+		// OpenTransposh\Logging\Logger($this->target_language);
 		return $this->rewrite_url( $location );
 	}
 
@@ -412,7 +412,7 @@ class Plugin {
 	}
 
 //    function on_admin_init() {
-//        BetterTransposh\Logging\Logger("admin init called");
+//        OpenTransposh\Logging\Logger("admin init called");
 //    }
 
 	/**
@@ -578,7 +578,7 @@ class Plugin {
 		/*        $this->target_language = (isset($wp->query_vars[LANG_PARAM])) ? $wp->query_vars[LANG_PARAM] : '';
           if (!$this->target_language)
           $this->target_language = $this->options->default_language;
-          BetterTransposh\Logging\Logger("requested language: {$this->target_language}"); */
+          OpenTransposh\Logging\Logger("requested language: {$this->target_language}"); */
 		// TODO TOCHECK!!!!!!!!!!!!!!!!!!!!!!!!!!1
 		$this->target_language = $this->tgl;
 		if ( ! $this->target_language ) {
@@ -715,7 +715,7 @@ class Plugin {
 
 		LogService::legacy_log( "plugin_activate exit: " . __DIR__, 1 );
 		LogService::legacy_log( "testing name:" . plugin_basename( __FILE__ ), 4 );
-		// BetterTransposh\Logging\Logger("testing name2:" . $this->get_plugin_name(), 4);
+		// OpenTransposh\Logging\Logger("testing name2:" . $this->get_plugin_name(), 4);
 		//activate_plugin($plugin);
 	}
 
@@ -799,7 +799,7 @@ class Plugin {
       $file = preg_replace('|/+|', '/', $file); // remove any duplicate slash
       //keep only the file name and its parent directory
       $file = preg_replace('/.*\/([^\/]+\/[^\/]+)$/', '$1', $file);
-      BetterTransposh\Logging\Logger("Plugin path - $file", 4);
+      OpenTransposh\Logging\Logger("Plugin path - $file", 4);
       return $file;
       } */
 
@@ -1297,7 +1297,7 @@ class Plugin {
 						'wp-admin/edit' ) );
 				$plugpath = @parse_url( $this->transposh_plugin_url, PHP_URL_PATH );
 				[ $langeng, $langorig, $langflag ] = explode( ',', Constants::$languages[ $lang ] );
-				//$text = BetterTransposh\Core\transposh_utils::display_flag("$plugpath/img/flags", $langflag, $langorig, false) . ' ' . $text;
+				//$text = OpenTransposh\Core\transposh_utils::display_flag("$plugpath/img/flags", $langflag, $langorig, false) . ' ' . $text;
 				$text = "[$lang] " . $text;
 			} else {
 				$text = "<span lang =\"$lang\">" . $text . "</span>";
@@ -1553,18 +1553,18 @@ class Plugin {
 
 		// Send the headers we got
 		$reqheaders = getallheaders();
-		//BetterTransposh\Logging\Logger($reqheaders);
+		//OpenTransposh\Logging\Logger($reqheaders);
 		unset( $reqheaders['Host'], $reqheaders['Content-Length'] );
 		$headers = array();
 		foreach ( $reqheaders as $name => $value ) {
 			$headers[] = "$name: $value";
 		}
-		//BetterTransposh\Logging\Logger($headers);
+		//OpenTransposh\Logging\Logger($headers);
 		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 
 		// Handle POST method
 		if ( Utilities::get_clean_server_var( 'REQUEST_METHOD' ) === 'POST' ) {
-			//BetterTransposh\Logging\Logger($_POST);
+			//OpenTransposh\Logging\Logger($_POST);
 			curl_setopt( $ch, CURLOPT_POST, true );
 			foreach ( $_POST as $key => $value ) {
 				$post .= $amp . $key . "=" . urlencode( $value );
@@ -1738,16 +1738,16 @@ class Plugin {
 			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
 			//must set agent for google to respond with utf-8
 			$UA = Utilities::get_clean_server_var( "HTTP_USER_AGENT", FILTER_DEFAULT );
-//                BetterTransposh\Logging\Logger($UA,1);
+//                OpenTransposh\Logging\Logger($UA,1);
 			curl_setopt( $ch, CURLOPT_USERAGENT, $UA );
 			$output = curl_exec( $ch );
-			//  BetterTransposh\Logging\Logger($output,1);
+			//  OpenTransposh\Logging\Logger($output,1);
 			$sidpos = strpos( $output, "SID: '" ) + 6;
-//                BetterTransposh\Logging\Logger($sidpos,1);
-//                BetterTransposh\Logging\Logger(strlen($output),1);
+//                OpenTransposh\Logging\Logger($sidpos,1);
+//                OpenTransposh\Logging\Logger(strlen($output),1);
 			$newout = substr( $output, $sidpos );
-//                BetterTransposh\Logging\Logger($newout,1);
-//                BetterTransposh\Logging\Logger(strpos($newout, "',")-2);
+//                OpenTransposh\Logging\Logger($newout,1);
+//                OpenTransposh\Logging\Logger(strpos($newout, "',")-2);
 			$sid = substr( $newout, 0, strpos( $newout, "'," ) - 2 );
 			LogService::legacy_log( "new sid: $sid", 1 );
 			//$sid = strrev(substr($sid, 0, 8)) . '.' . strrev(substr($sid, 9, 8)) . '.' . strrev(substr($sid, 18, 8));
@@ -1780,7 +1780,7 @@ class Plugin {
 		}
 		$url = 'https://translate.yandex.net/api/v1/tr.json/translate?lang=' . $sl . $tl . $qstr . '&srv=tr-url&id=' . $sid . '-0-0';
 		LogService::legacy_log( $url, 1 );
-//        BetterTransposh\Logging\Logger($q, 1);
+//        OpenTransposh\Logging\Logger($q, 1);
 		$ch = curl_init();
 		// yandex wants a referer someimes
 		curl_setopt( $ch, CURLOPT_REFERER, "https://translate.yandex.com/" );

@@ -1,8 +1,8 @@
 <?php
 
-namespace BetterTransposh\Logging;
+namespace OpenTransposh\Logging;
 
-use BetterTransposh\Plugin;
+use OpenTransposh\Plugin;
 
 class LogService {
 	public static function legacy_log( $message, $severity = 3 ) {

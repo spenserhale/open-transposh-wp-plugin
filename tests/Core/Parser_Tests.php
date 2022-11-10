@@ -2,9 +2,9 @@
 
 namespace Tests\Core;
 
-use BetterTransposh\Core\Parser;
-use BetterTransposh\Logging\Logger;
-use BetterTransposh\Logging\LogService;
+use OpenTransposh\Core\Parser;
+use OpenTransposh\Logging\Logger;
+use OpenTransposh\Logging\LogService;
 use WP_UnitTestCase;
 
 /**

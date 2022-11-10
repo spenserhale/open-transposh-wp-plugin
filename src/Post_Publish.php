@@ -6,11 +6,11 @@
  * Provides the side widget in the page/edit pages which will do translations
  */
 
-namespace BetterTransposh;
+namespace OpenTransposh;
 
-use BetterTransposh\Core\Constants;
-use BetterTransposh\Core\Parser;
-use BetterTransposh\Logging\LogService;
+use OpenTransposh\Core\Constants;
+use OpenTransposh\Core\Parser;
+use OpenTransposh\Logging\LogService;
 
 /**
  * class that makes changed to the edit page and post page, adding our change to the side ba
@@ -183,7 +183,7 @@ class Post_Publish {
 			}
 			// only if a languages list was created we'll need to translate this
 			if ( @is_array( $json['p'][ $key ]['l'] ) ) {
-				//$json['p'][$key]['t'] = $key;//BetterTransposh\Core\transposh_utils::base64_url_encode($key);
+				//$json['p'][$key]['t'] = $key;//OpenTransposh\Core\transposh_utils::base64_url_encode($key);
 				@$json['length'] ++;
 			}
 		}

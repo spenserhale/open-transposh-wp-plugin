@@ -1,6 +1,6 @@
 <?php
 
-use BetterTransposh\Legacy\Legacy_Usage_Reporter;
+use OpenTransposh\Legacy\Legacy_Usage_Reporter;
 
 /**
  * Legacy Transposh Names for Backwards Compatibility

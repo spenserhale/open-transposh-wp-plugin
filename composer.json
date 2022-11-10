@@ -1,5 +1,5 @@
 {
-    "name": "spenserhale/better-transposh",
+    "name": "spenserhale/open-transposh",
     "description": "Translation filter for WordPress",
     "type": "wordpress-plugin",
     "require-dev": {
@@ -11,7 +11,7 @@
     "license": "GPL",
     "autoload": {
         "psr-4": {
-            "BetterTransposh\\": "src/",
+            "OpenTransposh\\": "src/",
             "Tests\\": "tests/"
         }
     },

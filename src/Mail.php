@@ -6,10 +6,10 @@
  * This file handles functions relevant to specific third party plugins
  */
 
-namespace BetterTransposh;
+namespace OpenTransposh;
 
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Logging\LogService;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Logging\LogService;
 use WP_User;
 
 class Mail {

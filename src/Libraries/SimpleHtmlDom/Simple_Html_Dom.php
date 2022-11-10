@@ -1,6 +1,6 @@
 <?php
 
-namespace BetterTransposh\Libraries\SimpleHtmlDom;
+namespace OpenTransposh\Libraries\SimpleHtmlDom;
 
 class Simple_Html_Dom {
 

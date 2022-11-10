@@ -12,8 +12,8 @@
 
 
 
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Widgets\Base_Widget;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Widgets\Base_Widget;
 
 class tpw_flags_css extends Base_Widget {
 

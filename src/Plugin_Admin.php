@@ -9,11 +9,11 @@
  * adapted metabox sample code from http://www.code-styling.de/
  */
 
-namespace BetterTransposh;
+namespace OpenTransposh;
 
-use BetterTransposh\Core\Constants;
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Logging\LogService;
+use OpenTransposh\Core\Constants;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Logging\LogService;
 
 
 // class that reperesent the admin page
@@ -529,7 +529,7 @@ class Plugin_Admin {
 			if ( in_array( $langcode, Constants::$rtl_languages ) ) {
 				echo '<img width="16" height="16" alt="r" class="logoicon" title="' . esc_attr__( 'Language is written from right to left', TRANSPOSH_TEXT_DOMAIN ) . '" src="' . $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_IMG . '/rtlicon.png"/>';
 			}
-			/* if ($this->does_mo_exist(BetterTransposh\Core\transposh_consts::get_language_locale($langcode)))
+			/* if ($this->does_mo_exist(OpenTransposh\Core\transposh_consts::get_language_locale($langcode)))
 			  echo 'BLBL<img width="16" height="16" alt="r" class="logoicon" title="' . esc_attr__('Language is written from right to left', TRANSPOSH_TEXT_DOMAIN) . '" src="' . $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_IMG . '/rtlicon.png"/>'; */
 			echo '</li>';
 		}
@@ -1150,13 +1150,13 @@ class Plugin_Admin {
 //	foreach ( $transients as $transient => $type ) {
 //            delete_site_transient($transient);
 //        };
-//        BetterTransposh\Logging\Logger('site transient removed');
-//        BetterTransposh\Logging\Logger(wp_get_translation_updates());*/
+//        OpenTransposh\Logging\Logger('site transient removed');
+//        OpenTransposh\Logging\Logger(wp_get_translation_updates());*/
 //        $currentlangs = wp_get_installed_translations('core');
 //        
 //        /** Load WordPress Translation Install API */
 //        require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
-//       // BetterTransposh\Logging\Logger(wp_can_install_language_pack());
+//       // OpenTransposh\Logging\Logger(wp_can_install_language_pack());
 //        $translations = wp_get_available_translations();
 //        
 //        //con
@@ -1164,7 +1164,7 @@ class Plugin_Admin {
 //        
 //        set_time_limit(600);
 //        foreach (explode(',', $this->transposh->options->viewable_languages) as $lang) {
-//            $locale = BetterTransposh\Core\transposh_consts::get_language_locale($lang);
+//            $locale = OpenTransposh\Core\transposh_consts::get_language_locale($lang);
 //            $getme = false;
 //            foreach ( $translations as $translation ) {
 ///*		if ( $translation['language'] === $download ) {
@@ -1172,20 +1172,20 @@ class Plugin_Admin {
 //			break;
 //		}*/
 //                if ($translation['language'] == $locale) {
-//                  //   BetterTransposh\Logging\Logger($translation);
-//                     BetterTransposh\Logging\Logger("$translation[version] $translation[updated]");
+//                  //   OpenTransposh\Logging\Logger($translation);
+//                     OpenTransposh\Logging\Logger("$translation[version] $translation[updated]");
 //                     $getme = true;
 //                }
 //            }
 //            if ($locale != 'en_US' && $getme) {
-//                BetterTransposh\Logging\Logger("fetching $locale");
-//                BetterTransposh\Logging\Logger($currentlangs['default'][$locale]);
-//                BetterTransposh\Logging\Logger(wp_download_language_pack($locale));
+//                OpenTransposh\Logging\Logger("fetching $locale");
+//                OpenTransposh\Logging\Logger($currentlangs['default'][$locale]);
+//                OpenTransposh\Logging\Logger(wp_download_language_pack($locale));
 //            } else {
-//                BetterTransposh\Logging\Logger("NOT fetching $locale");                
+//                OpenTransposh\Logging\Logger("NOT fetching $locale");                
 //            }
 //        }
-//        //BetterTransposh\Logging\Logger(wp_download_language_pack('he_IL'));
+//        //OpenTransposh\Logging\Logger(wp_download_language_pack('he_IL'));
 //        die();
 //    }
 	// Start full translation

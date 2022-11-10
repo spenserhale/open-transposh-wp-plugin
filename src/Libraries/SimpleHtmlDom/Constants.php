@@ -1,6 +1,6 @@
 <?php
 
-namespace BetterTransposh\Libraries\SimpleHtmlDom;
+namespace OpenTransposh\Libraries\SimpleHtmlDom;
 
 class Constants {
 	public const HDOM_TYPE_ELEMENT = 1;

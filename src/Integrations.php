@@ -6,11 +6,11 @@
  * This file handles functions relevant to specific third party plugins
  */
 
-namespace BetterTransposh;
+namespace OpenTransposh;
 
-use BetterTransposh\Core\Constants;
-use BetterTransposh\Core\Utilities;
-use BetterTransposh\Logging\LogService;
+use OpenTransposh\Core\Constants;
+use OpenTransposh\Core\Utilities;
+use OpenTransposh\Logging\LogService;
 
 class Integrations {
 
