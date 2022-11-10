@@ -29,10 +29,10 @@ class Plugin_Widget extends WP_Widget {
 		// Widget control defenitions
 		$widget_ops  = array(
 			'classname'   => 'widget_transposh',
-			'description' => __( 'Transposh language selection widget', TRANSPOSH_TEXT_DOMAIN )
+			'description' => __( 'Open Transposh language selection widget', TRANSPOSH_TEXT_DOMAIN )
 		);
 		$control_ops = array( 'width' => 200, 'height' => 300 );
-		parent::__construct( 'transposh', __( 'Transposh' ), $widget_ops, $control_ops );
+		parent::__construct( 'transposh', __( 'Open Transposh' ), $widget_ops, $control_ops );
 
 		add_action( 'widgets_init', static function () {
 			register_widget( Plugin_Widget::class );
@@ -270,7 +270,7 @@ class Plugin_Widget extends WP_Widget {
 			$class = $this->load_widget();
 		}
 		if ( ! class_exists( $class ) ) {
-			echo __( 'Transposh subwidget was not loaded correctly', TRANSPOSH_TEXT_DOMAIN ) . ": $class";
+			echo __( 'Open Transposh subwidget was not loaded correctly', TRANSPOSH_TEXT_DOMAIN ) . ": $class";
 
 			return;
 		}
@@ -330,7 +330,7 @@ class Plugin_Widget extends WP_Widget {
 			}
 		} else {
 			//no languages configured - error message
-			echo '<p>No languages available for display. Check the Transposh settings (Admin).</p>';
+			echo '<p>No languages available for display. Check the Open Transposh settings (Admin).</p>';
 		}
 
 		//** FULL VERSION
@@ -348,7 +348,7 @@ class Plugin_Widget extends WP_Widget {
 
 		//** FULL VERSION
 		if ( defined( 'FULL_VERSION' ) && ! $this->transposh->options->widget_remove_logo ) {
-			$tagline = esc_attr__( 'Transposh', TRANSPOSH_TEXT_DOMAIN ) . ' - ';
+			$tagline = esc_attr__( 'Open Transposh', TRANSPOSH_TEXT_DOMAIN ) . ' - ';
 			$tagline .= esc_attr__( 'translation plugin for wordpress', TRANSPOSH_TEXT_DOMAIN );
 
 			$extralang = '';

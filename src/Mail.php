@@ -107,7 +107,7 @@ class Mail {
 		           . __( 'Translated by', TRANSPOSH_TEXT_DOMAIN ) . ": " . Utilities::wordpress_user_by_by( $translated_by ) . "\n\n<br/><br/>"
 		           . '<a href="' . admin_url( "admin.php?page=tp_editor" ) . '">'
 		           . __( 'If you believe that those translations are not good, use the translation editor to modify it', TRANSPOSH_TEXT_DOMAIN ) . "</a>\n\n<br/><br/>"
-		           . "<h2>" . __( 'Team Transposh', TRANSPOSH_TEXT_DOMAIN ) . "</h2>\n\n<br/>";
+		           . "<h2>" . __( 'Open Team Transposh', TRANSPOSH_TEXT_DOMAIN ) . "</h2>\n\n<br/>";
 		wp_mail( $to, wp_specialchars_decode( $subject ), $body, $headers );
 	}
 
@@ -192,7 +192,7 @@ class Mail {
 		           . $buffered_mail
 		           . '<a href="' . admin_url( "admin.php?page=tp_editor" ) . '">'
 		           . __( 'If you believe that those translations are not good, use the translation editor to modify it', TRANSPOSH_TEXT_DOMAIN ) . "</a>\n\n<br/><br/>"
-		           . "<h2>" . __( 'Team Transposh', TRANSPOSH_TEXT_DOMAIN ) . "</h2>\n\n<br/>";
+		           . "<h2>" . __( 'Open Team Transposh', TRANSPOSH_TEXT_DOMAIN ) . "</h2>\n\n<br/>";
 		wp_mail( $to, wp_specialchars_decode( $subject ), $body, $headers );
 		del_transient( 'transposh_buffered_mail' );
 	}

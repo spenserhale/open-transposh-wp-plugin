@@ -363,7 +363,7 @@ class Database {
 	 * TODO - return some info?
 	 * @global <type> $user_ID - TODO
 	 */
-	function update_translation( $by = "" ) {
+	function update_translation( $by = "" ): ?array {
 
 		$ref    = getenv( 'HTTP_REFERER' );
 		$items  = $_POST['items'];
@@ -374,7 +374,7 @@ class Database {
 		if ( ! isset( $items ) || ! isset( $lang ) ) {
 			LogService::legacy_log( "Enter " . __FILE__ . " missing Params: $items, $lang, $ref", 1 );
 
-			return;
+			return null;
 		}
 
 		//Check permissions, first the lanugage must be on the edit list. Then either the user
@@ -396,7 +396,7 @@ class Database {
 		}
 
 		//add our own custom header - so we will know that we got here
-		header( "Transposh: v-" . TRANSPOSH_PLUGIN_VER . " db_version-" . DB_VERSION );
+		header( "Open Transposh: v-" . TRANSPOSH_PLUGIN_VER . " db_version-" . DB_VERSION );
 
 		// translation log stuff, log either by param, user id, or ip
 		$loguser = $by;
@@ -474,7 +474,7 @@ class Database {
 
 		// avoid empty database work
 		if ( ! $values ) {
-			return;
+			return null;
 		}
 		// First we copy what we will overwrite to the log
 		$copytolog = "INSERT INTO {$this->translation_log_table} (original, translated, lang, translated_by, source, timestamp) " .
@@ -522,10 +522,11 @@ class Database {
 		// TODO: move this to an action
 		// Should we backup now?
 		if ( $backup_immidiate_possible && $this->transposh->options->transposh_backup_schedule == 2 ) {
-			$this->transposh->run_backup();
+			return $this->transposh->run_backup();
 		}
 		// this is a termination for the ajax sequence
 		//exit;
+		return null;
 	}
 
 	/*
@@ -702,7 +703,7 @@ SQL;
 
 		// add our own custom header - so we will know that we got here
 		// TODO - move to ajax file?
-		header( 'Transposh: v-' . TRANSPOSH_PLUGIN_VER . ' db_version-' . DB_VERSION );
+		header( 'Open Transposh: v-' . TRANSPOSH_PLUGIN_VER . ' db_version-' . DB_VERSION );
 
 		$query = "SELECT translated, lang " .
 		         "FROM {$this->translation_table} " .

@@ -58,7 +58,7 @@ class Post_Publish {
 			}
 			LogService::legacy_log( $post_type, 5 );
 			if ( $this->transposh->options->enable_autoposttranslate ) {
-				add_meta_box( 'transposh_postpublish', __( 'Transposh', TRANSPOSH_TEXT_DOMAIN ), array(
+				add_meta_box( 'transposh_postpublish', __( 'Open Transposh', TRANSPOSH_TEXT_DOMAIN ), array(
 					&$this,
 					"transposh_postpublish_box"
 				), $post_type, 'side', 'core' );

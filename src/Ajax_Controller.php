@@ -13,6 +13,11 @@ class Ajax_Controller {
 		header( 'Access-Control-Max-Age: 86400' );
 	}
 
+	private static function send_headers() {
+		header( 'Open Transposh: v-' . TRANSPOSH_PLUGIN_VER . ' db_version-' . DB_VERSION );
+		self::allow_cors();
+	}
+
 	public function __construct(private readonly Plugin $plugin) {
 		add_action( 'wp_ajax_tp_history', [ $this, 'handle_translation_history' ] );
 		add_action( 'wp_ajax_tp_translation', [ $this, 'handle_translation' ] );
@@ -24,8 +29,7 @@ class Ajax_Controller {
 	 * @return void
 	 */
 	public function handle_translation_history() {
-		header( 'Transposh: v-' . TRANSPOSH_PLUGIN_VER . ' db_version-' . DB_VERSION );
-		self::allow_cors();
+		self::send_headers();
 		if ( isset( $_POST['timestamp'] ) ) {
 			$result = $this->plugin->database->del_translation_history(
 				stripslashes( $_POST['token'] ), $_POST['lang'], $_POST['timestamp']
@@ -74,10 +78,14 @@ class Ajax_Controller {
 	 * @return void
 	 */
 	public function handle_translation(): void {
-		header( 'Transposh: v-' . TRANSPOSH_PLUGIN_VER . ' db_version-' . DB_VERSION );
-		self::allow_cors();
+		self::send_headers();
 		do_action( 'transposh_translation_posted' );
-		$this->plugin->database->update_translation();
-		wp_send_json_success();
+		$result = $this->plugin->database->update_translation();
+		if ( is_array( $result ) ) {
+			[ 'repsonse' => $response, 'status_code' => $status_code ] = $result;
+			wp_send_json( $response, $status_code );
+		} else {
+			wp_send_json_success();
+		}
 	}
 }

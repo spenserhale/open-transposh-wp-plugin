@@ -1159,10 +1159,10 @@ class Plugin {
 	/**
 	 * Runs a scheduled backup
 	 */
-	public function run_backup() {
+	public function run_backup(): array {
 		LogService::legacy_log( 'backup run..', 2 );
-		$my_transposh_backup = new Backup( $this );
-		$my_transposh_backup->do_backup();
+
+		return ( new Backup( $this ) )->do_backup();
 	}
 
 	//** FULL VERSION

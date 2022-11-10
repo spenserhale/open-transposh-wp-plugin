@@ -271,17 +271,30 @@ class Plugin_Admin {
 		}
 
 		// First param is page title, second is menu title
-		add_menu_page( __( 'Transposh', TRANSPOSH_TEXT_DOMAIN ), __( 'Transposh', TRANSPOSH_TEXT_DOMAIN ), 'manage_options', 'tp_main', '', $this->transposh->transposh_plugin_url . "img/tplogo.png" );
+		add_menu_page(
+			__( 'Open Transposh', TRANSPOSH_TEXT_DOMAIN ),
+			__( 'Open Transposh', TRANSPOSH_TEXT_DOMAIN ),
+			'manage_options',
+			'tp_main',
+			'',
+			$this->transposh->transposh_plugin_url . "img/tplogo.png"
+		);
 
 		$submenu_pages = array();
 		foreach ( $this->pages as $slug => $titles ) {
 			if ( ! isset( $titles[1] ) || ! $titles[1] ) {
 				$titles[1] = $titles[0];
 			}
-			$submenu_pages[] = add_submenu_page( 'tp_main', $titles[0] . ' | ' . __( 'Transposh', TRANSPOSH_TEXT_DOMAIN ), $titles[1], 'manage_options', $slug, array(
-				&$this,
-				'options'
-			) );
+			$submenu_pages[] = add_submenu_page(
+				'tp_main',
+				$titles[0] . ' | ' . __( 'Open Transposh', TRANSPOSH_TEXT_DOMAIN ), $titles[1],
+				'manage_options',
+				$slug,
+				array(
+					&$this,
+					'options'
+				)
+			);
 		}
 
 		if ( current_user_can( 'manage_options' ) ) {
@@ -369,9 +382,9 @@ class Plugin_Admin {
 		$screen = get_current_screen();
 		$screen->add_help_tab( array(
 			'id'      => 'transposh-help', // This should be unique for the screen.
-			'title'   => __( 'Transposh Help', TRANSPOSH_TEXT_DOMAIN ),
+			'title'   => __( 'Open Transposh Help', TRANSPOSH_TEXT_DOMAIN ),
 			// retrieve the function output and set it as tab content
-			'content' => '<h3>' . __( 'Transposh makes your blog translatable', TRANSPOSH_TEXT_DOMAIN ) . '</h3>' .
+			'content' => '<h3>' . __( 'Open Transposh makes your blog translatable', TRANSPOSH_TEXT_DOMAIN ) . '</h3>' .
 			             '<p>' . __( 'For further help and assistance, please look at the following resources:', TRANSPOSH_TEXT_DOMAIN ) . '</p>' .
 			             '<a href="http://transposh.org/">' . __( 'Plugin homepage', TRANSPOSH_TEXT_DOMAIN ) . '</a><br/>' .
 			             '<a href="http://transposh.org/faq/">' . __( 'Frequently asked questions', TRANSPOSH_TEXT_DOMAIN ) . '</a><br/>' .
@@ -381,7 +394,7 @@ class Plugin_Admin {
 			'id'      => 'languages', // This should be unique for the screen.
 			'title'   => __( 'Languages', TRANSPOSH_TEXT_DOMAIN ),
 			// retrieve the function output and set it as tab content
-			'content' => '<h3>' . __( 'Language selection in Transposh', TRANSPOSH_TEXT_DOMAIN ) . '</h3>' .
+			'content' => '<h3>' . __( 'Language selection in Open Transposh', TRANSPOSH_TEXT_DOMAIN ) . '</h3>' .
 			             '<p>' . __( 'This tab allows you to select the languages your site will be translated into. The default language is the language most of your site is written in, and serve as the base for translation. It won\t be translated normally.', TRANSPOSH_TEXT_DOMAIN ) . '</p>' .
 			             '<p>' . __( 'You may select the languages you want to appear in your site by clicking them (their background will turn green). You may also drag those around to set the order of the languages in the widget.', TRANSPOSH_TEXT_DOMAIN ) . '</p>'
 		) );
@@ -587,7 +600,7 @@ class Plugin_Admin {
 			, __( 'Allow search of translated languages (and the original language)', TRANSPOSH_TEXT_DOMAIN ) );
 		$this->checkbox( $this->transposh->options->transposh_gettext_integration_o
 			, __( 'Enable gettext integration', TRANSPOSH_TEXT_DOMAIN )
-			, __( 'Enable integration of Transposh with existing gettext interface (.po/.mo files)', TRANSPOSH_TEXT_DOMAIN ) );
+			, __( 'Enable integration of Open Transposh with existing gettext interface (.po/.mo files)', TRANSPOSH_TEXT_DOMAIN ) );
 
 		$this->checkbox( $this->transposh->options->transposh_locale_override_o
 			, __( 'Enable override for default locale', TRANSPOSH_TEXT_DOMAIN )
@@ -601,7 +614,7 @@ class Plugin_Admin {
 			      'Requires that permalinks will be enabled.', TRANSPOSH_TEXT_DOMAIN ) );
 		$this->checkbox( $this->transposh->options->enable_footer_scripts_o
 			, __( 'Add scripts to footer', TRANSPOSH_TEXT_DOMAIN )
-			, __( 'Push transposh scripts to footer of page instead of header, makes pages load faster. ' .
+			, __( 'Push Open Transposh scripts to footer of page instead of header, makes pages load faster. ' .
 			      'Requires that your theme should have proper footer support.', TRANSPOSH_TEXT_DOMAIN ) );
 		$this->checkbox( $this->transposh->options->enable_detect_redirect_o
 			, __( 'Detect language based on the ACCEPT_LANGUAGES http header', TRANSPOSH_TEXT_DOMAIN )
@@ -624,7 +637,7 @@ class Plugin_Admin {
 		}
 		$this->checkbox( $this->transposh->options->transposh_collect_stats_o
 			, __( 'Allow collecting usage statistics', TRANSPOSH_TEXT_DOMAIN )
-			, __( 'This option enables collection of statistics by transposh that will be used to improve the product.', TRANSPOSH_TEXT_DOMAIN ) );
+			, __( 'This option enables collection of statistics by Open Transposh that will be used to improve the product.', TRANSPOSH_TEXT_DOMAIN ) );
 
 		/* WIP2
 		  echo '<a href="http://transposh.org/services/index.php?flags='.$flags.'">Gen sprites</a>'; */
@@ -766,7 +779,7 @@ class Plugin_Admin {
 
 		if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
 			$this->checkbox( $this->transposh->options->widget_remove_logo_o, __( 'Remove transposh logo (see <a href="http://transposh.org/logoterms">terms</a>)', TRANSPOSH_TEXT_DOMAIN )
-				, __( 'Transposh logo will not appear on widget', TRANSPOSH_TEXT_DOMAIN ) );
+				, __( 'Open Transposh logo will not appear on widget', TRANSPOSH_TEXT_DOMAIN ) );
 		} //** FULLSTOP
 		$this->select( $this->transposh->options->widget_theme_o, __( 'Edit interface theme:', TRANSPOSH_TEXT_DOMAIN ), __( 'Edit interface (and progress bar) theme:', TRANSPOSH_TEXT_DOMAIN ), Constants::$jqueryui_themes, false );
 		$this->sectionstop();
@@ -791,7 +804,7 @@ class Plugin_Admin {
 		$this->section( __( 'Debug settings', TRANSPOSH_TEXT_DOMAIN )
 			, __( 'This is extremely dangerous, will break your current translations, and might cause severe hickups, only proceed if you really know what you are doing.', TRANSPOSH_TEXT_DOMAIN ) );
 		$this->checkbox( $this->transposh->options->debug_enable_o, __( 'Enable debugging', TRANSPOSH_TEXT_DOMAIN )
-			, __( 'Enable running of Transposh internal debug functions', TRANSPOSH_TEXT_DOMAIN ) );
+			, __( 'Enable running of Open Transposh internal debug functions', TRANSPOSH_TEXT_DOMAIN ) );
 		$this->textinput( $this->transposh->options->debug_logfile_o, '', __( 'Log file name', TRANSPOSH_TEXT_DOMAIN ) );
 		$this->select( $this->transposh->options->debug_loglevel_o, __( 'Level of logging', TRANSPOSH_TEXT_DOMAIN ), __( 'Level of logging', TRANSPOSH_TEXT_DOMAIN ), array(
 			1 => __( 'Critical', TRANSPOSH_TEXT_DOMAIN ),
@@ -835,8 +848,8 @@ class Plugin_Admin {
 
 	function tp_about() {
 
-		$this->section( __( 'About Transposh', TRANSPOSH_TEXT_DOMAIN ) );
-		echo __( 'Transposh was started at 2008 and is dedicated to provide tools to ease website translation.', TRANSPOSH_TEXT_DOMAIN );
+		$this->section( __( 'About Open Transposh', TRANSPOSH_TEXT_DOMAIN ) );
+		echo __( 'Open Transposh was started at 2008 and is dedicated to provide tools to ease website translation.', TRANSPOSH_TEXT_DOMAIN );
 		echo '<br/>';
 		echo __( 'Learn more about us in the following online presenses', TRANSPOSH_TEXT_DOMAIN );
 		echo '<ul style="list-style-type:disc;margin-' . $this->localeleft . ':20px;">';
@@ -857,7 +870,7 @@ class Plugin_Admin {
 
 	function tp_support() {
 		echo '<p>';
-		$this->section( __( 'Transposh support', TRANSPOSH_TEXT_DOMAIN )
+		$this->section( __( 'Open Transposh support', TRANSPOSH_TEXT_DOMAIN )
 			, __( 'Have you encountered any problem with our plugin and need our help?', TRANSPOSH_TEXT_DOMAIN ) . '<br>' .
 			  __( 'Do you need to ask us any question?', TRANSPOSH_TEXT_DOMAIN ) . '<br>' .
 			  __( 'You have two options:', TRANSPOSH_TEXT_DOMAIN ) . '<br>' );
@@ -1015,7 +1028,7 @@ class Plugin_Admin {
 	/** UTILITY FUNCTIONS  END * */
 	function tp_notices() {
 		if ( (int) ini_get( 'memory_limit' ) < 64 && strpos( strtolower( ini_get( 'memory_limit' ) ), 'g' ) == false ) {
-			$this->add_warning( 'tp_mem_warning', sprintf( __( 'Your current PHP memory limit of %s is quite low, if you experience blank pages please consider increasing it.', TRANSPOSH_TEXT_DOMAIN ), ini_get( 'memory_limit' ) ) . ' <a href="http://transposh.org/faq#blankpages">' . __( 'Check Transposh FAQs', TRANSPOSH_TEXT_DOMAIN ) . '</a>' );
+			$this->add_warning( 'tp_mem_warning', sprintf( __( 'Your current PHP memory limit of %s is quite low, if you experience blank pages please consider increasing it.', TRANSPOSH_TEXT_DOMAIN ), ini_get( 'memory_limit' ) ) . ' <a href="http://transposh.org/faq#blankpages">' . __( 'Check Open Transposh FAQs', TRANSPOSH_TEXT_DOMAIN ) . '</a>' );
 		}
 
 		if ( $this->page &&
@@ -1024,7 +1037,7 @@ class Plugin_Admin {
 		     ! function_exists( 'apcu_fetch' ) &&
 		     ! function_exists( 'xcache_get' ) &&
 		     ! function_exists( 'eaccelerator_get' ) ) {
-			$this->add_warning( 'tp_cache_warning', __( 'We were not able to find a supported in-memory caching engine, installing one can improve performance.', TRANSPOSH_TEXT_DOMAIN ) . ' <a href="http://transposh.org/faq#performance">' . __( 'Check Transposh FAQs', TRANSPOSH_TEXT_DOMAIN ) . '</a>', 'updated' );
+			$this->add_warning( 'tp_cache_warning', __( 'We were not able to find a supported in-memory caching engine, installing one can improve performance.', TRANSPOSH_TEXT_DOMAIN ) . ' <a href="http://transposh.org/faq#performance">' . __( 'Check Open Transposh FAQs', TRANSPOSH_TEXT_DOMAIN ) . '</a>', 'updated' );
 		}
 	}
 
@@ -1111,8 +1124,13 @@ class Plugin_Admin {
 
 	function on_ajax_tp_backup() {
 		$this->admins_only();
-		$this->transposh->run_backup();
-		die( "" );
+		$result = $this->transposh->run_backup();
+		if ( is_array( $result ) ) {
+			[ 'repsonse' => $response, 'status_code' => $status_code ] = $result;
+			wp_send_json( $response, $status_code );
+		} else {
+			wp_send_json_success();
+		}
 	}
 
 	// Start restore on demand

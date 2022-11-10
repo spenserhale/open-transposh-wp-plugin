@@ -1,7 +1,7 @@
 <?php
 
 /*
-  Plugin Name: Transposh Translation Filter
+  Plugin Name: Open Transposh Translation Filter
   Plugin URI: https://transposh.org/
   Description: Translation filter for WordPress, After enabling please set languages at the <a href="admin.php?page=tp_main">the options page</a> Want to help? visit our development site at <a href="https://github.com/oferwald/transposh">github</a>.
   Author: Team Transposh

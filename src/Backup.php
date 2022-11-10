@@ -38,27 +38,21 @@ class Backup {
 		return $body;
 	}
 
-	public function do_backup() {
+	public function do_backup(): array {
 		$body = $this->init_body();
 		//Check if there are thing to backup, before even accessing the service
 		$rowstosend = $this->transposh->database->get_all_human_translation_history( 'null', 1 );
 		if ( empty( $rowstosend ) ) {
-			echo "500 - No human translations to backup.";
-
-			return;
+			return [ 'response' => 'No human translations to backup', 'status_code' => 500 ];
 		}
 
 		// this one is for getting the key
 		$result = wp_remote_post( TRANSPOSH_BACKUP_SERVICE_URL, array( 'body' => $body ) );
 		if ( is_wp_error( $result ) ) {
-			echo '500 - ' . $result->get_error_message();
-
-			return;
+			return [ 'response' => $result->get_error_message(), 'status_code' => 500 ];
 		}
 		if ( isset( $result['headers']['fail'] ) ) {
-			echo '500 - ' . $result['headers']['fail'];
-
-			return;
+			return [ 'response' => $result['headers']['fail'], 'status_code' => 500 ];
 		}
 		if ( $this->transposh->options->transposh_key == "" ) {
 			$this->transposh->options->transposh_key = $result['headers']['transposh-key'];
@@ -101,23 +95,20 @@ class Backup {
 				$body['items'] = $item;
 				// no need to post 0 items
 				if ( $item == 0 ) {
-					return;
+					return [ 'response' => 'success', 'status_code' => 200 ];
 				}
 				$result = wp_remote_post( TRANSPOSH_BACKUP_SERVICE_URL, array( 'body' => $body ) );
 				if ( is_wp_error( $result ) ) {
-					echo "500 - " . $result->get_error_message();
-
-					return;
+					return [ 'response' => $result->get_error_message(), 'status_code' => 500 ];
 				}
 				if ( isset( $result['headers']['fail'] ) ) {
-					echo "500 - " . $result['headers']['fail'];
-
-					return;
+					return [ 'response' => $result['headers']['fail'], 'status_code' => 500 ];
 				}
 				$rowstosend = $this->transposh->database->get_all_human_translation_history( $row->timestamp, 100 );
 			}
 		}
-		echo '200 - backup in sync';
+
+		return [ 'response' => 'success', 'status_code' => 200 ];
 	}
 
 	public function do_restore() {
