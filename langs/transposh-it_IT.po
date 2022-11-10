@@ -318,11 +318,6 @@ msgstr "Permette all'utente di scegliere la lingua attuale come predefinita"
 msgid "Transposh logo will not appear on widget"
 msgstr "Il logo Transposh non apparirà nel widget"
 
-#: wp/transposh_admin.php:737
-#@ transposh
-msgid "Remove transposh logo (see <a href=\"http://transposh.org/logoterms\">terms</a>)"
-msgstr "Rimuovere il logo Transposh (leggere attentamente <a href=\"http://transposh.org/logoterms\">i termini</a>)"
-
 #. translators: plugin header field 'Name'
 #: transposh.php:0
 #@ transposh

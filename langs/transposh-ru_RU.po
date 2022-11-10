@@ -310,11 +310,6 @@ msgstr "Разрешить пользователю установить тек�
 msgid "Transposh logo will not appear on widget"
 msgstr "логотип Transposh не будет отображаться в виджете"
 
-#: wp/transposh_admin.php:737
-#@ transposh
-msgid "Remove transposh logo (see <a href=\"http://transposh.org/logoterms\">terms</a>)"
-msgstr "Убрать логотип Transposh (смотрите <a href=\"http://transposh.org/logoterms\">условия</a>)"
-
 #. translators: plugin header field 'Name'
 #: transposh.php:0
 #@ transposh

@@ -430,11 +430,6 @@ msgstr "Autoriser un utilisateur à définir la langue en cours comme étant sa 
 msgid "Widget will allow setting this language as user default"
 msgstr "Widget permettra que cette langue soit celle de l'utilisateur"
 
-#: wp/transposh_admin.php:737
-#@ transposh
-msgid "Remove transposh logo (see <a href=\"http://transposh.org/logoterms\">terms</a>)"
-msgstr "Supprimer le logo de transposh (voir les <a href=\"http://transposh.org/logoterms\">termes</a>)"
-
 #: wp/transposh_admin.php:738
 #@ transposh
 msgid "Transposh logo will not appear on widget"

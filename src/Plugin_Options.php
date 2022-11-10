@@ -107,10 +107,6 @@ use transposh_option;
  * @property $widget_progressbar_o
  * @property boolean $widget_allow_set_deflang      Allows user to set his default language per #63 @since 0.3.8
  * @property $widget_allow_set_deflang_o
- * //** FULL VERSION
- * @property boolean $widget_remove_logo            Allows removing of transposh logo in exchange for an ad @since 0.6.0
- * @property $widget_remove_logo_o
- * //** FULLSTOP
  * @property string $widget_theme                  Allows theming of the progressbar and edit window @since 0.7.0
  * @property $widget_theme_o
  *
@@ -253,9 +249,6 @@ class Plugin_Options {
 
 		$this->register_option( 'widget_progressbar', TP_OPT_BOOLEAN, 0 );
 		$this->register_option( 'widget_allow_set_deflang', TP_OPT_BOOLEAN, 0 );
-		if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
-			$this->register_option( 'widget_remove_logo', TP_OPT_BOOLEAN, 0 );
-		} //** FULLSTOP
 		$this->register_option( 'widget_theme', TP_OPT_STRING, 'ui-lightness' );
 		$this->register_option( 'enable_url_translate', TP_OPT_BOOLEAN, 0 );
 		$this->register_option( 'jqueryui_override', TP_OPT_STRING );

@@ -948,11 +948,6 @@ msgstr ""
 msgid "See node status"
 msgstr ""
 
-#: wp/transposh_admin.php:737
-#@ transposh
-msgid "Remove transposh logo (see <a href=\"http://transposh.org/logoterms\">terms</a>)"
-msgstr ""
-
 #: wp/transposh_admin.php:738
 #@ transposh
 msgid "Transposh logo will not appear on widget"

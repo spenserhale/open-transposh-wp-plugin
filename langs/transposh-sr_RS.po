@@ -313,11 +313,6 @@ msgstr "Dozvoliti korisniku da namesti trenutni jezik kao default"
 msgid "Transposh logo will not appear on widget"
 msgstr "Transposh logo se neće pojaviti na widget-u"
 
-#: wp/transposh_admin.php:737
-#@ transposh
-msgid "Remove transposh logo (see <a href=\"http://transposh.org/logoterms\">terms</a>)"
-msgstr " Ukloniti transposh logo (pogledati<a href=\"http://transposh.org/logoterms\">terms</a>)"
-
 #: wp/transposh_admin.php:740
 #@ transposh
 msgid "Edit interface (and progress bar) theme:"

@@ -298,11 +298,6 @@ msgstr "אפשר למשתמש לבחור את השפה הנוכחית כבריר
 msgid "Transposh logo will not appear on widget"
 msgstr "הלוגו של טרנספוש לא יופיע בישומון"
 
-#: wp/transposh_admin.php:737
-#@ transposh
-msgid "Remove transposh logo (see <a href=\"http://transposh.org/logoterms\">terms</a>)"
-msgstr "הסרת הלוגו של טרנספוש (ראה <a href=\"http://transposh.org/logoterms\">תנאים</a>)"
-
 #: wp/transposh_widget.php:326
 #@ transposh
 msgid "Set as default language"

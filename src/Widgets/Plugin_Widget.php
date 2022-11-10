@@ -333,35 +333,8 @@ class Plugin_Widget extends WP_Widget {
 			echo '<p>No languages available for display. Check the Open Transposh settings (Admin).</p>';
 		}
 
-		//** FULL VERSION
-		// Now this is a comment for those wishing to remove our logo (tplogo.png) and link (transposh.org) from the widget
-		// first - according to the gpl, you may do so - but since the code has changed - please make in available under the gpl
-		// second - we did invest a lot of time and effort into this, and the link is a way to help us grow and show your appreciation, if it
-		// upsets you, feel more than free to move this link somewhere else on your page, such as the footer etc.
-		// third - feel free to write your own widget, the translation core will work
-		// forth - you can ask for permission, with a good reason, if you contributed to the code - it's a good enough reason :)
-		// fifth - if you just delete the following line, it means that you have little respect to the whole copyright thing, which as far as we
-		// understand means that by doing so - you are giving everybody else the right to do the same and use your work without any attribution
-		// last - you can now remove the logo in exchange to a few percentage of ad and affiliate revenues on your pages, isn't that better?
-		//** FULLSTOP
-		$plugpath = @parse_url( $this->transposh->transposh_plugin_url, PHP_URL_PATH );
-
-		//** FULL VERSION
-		if ( defined( 'FULL_VERSION' ) && ! $this->transposh->options->widget_remove_logo ) {
-			$tagline = esc_attr__( 'Open Transposh', TRANSPOSH_TEXT_DOMAIN ) . ' - ';
-			$tagline .= esc_attr__( 'translation plugin for wordpress', TRANSPOSH_TEXT_DOMAIN );
-
-			$extralang = '';
-			if ( $this->transposh->target_language != 'en' ) {
-				$extralang = $this->transposh->target_language . '/';
-			}
-		} //** FULLSTOP
 		echo '<div id="' . SPAN_PREFIX . 'credit' . self::$draw_calls . '">';
-		//** FULL VERSION
-		if ( defined( 'FULL_VERSION' ) && ! $this->transposh->options->widget_remove_logo ) {
-			echo 'by <a href="http://tran' . 'sposh.org/' . $extralang . '"><img height="16" width="16" src="' .
-			     $plugpath . '/img/tplog' . 'o.png" style="padding:1px;border:0;box-shadow:0 0;border-radius:0" title="' . $tagline . '" alt="' . $tagline . '"/></a>';
-		} //** FULLSTOP
+
 		echo '</div>';
 		if ( isset( $after_widget ) ) {
 			echo $after_widget;

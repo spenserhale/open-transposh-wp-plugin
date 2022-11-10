@@ -313,11 +313,6 @@ msgstr "Benutzer erlauben aktuelle Sprache als standard festzulegen"
 msgid "Transposh logo will not appear on widget"
 msgstr "Transposh-Logo erscheint nicht im Widget"
 
-#: wp/transposh_admin.php:737
-#@ transposh
-msgid "Remove transposh logo (see <a href=\"http://transposh.org/logoterms\">terms</a>)"
-msgstr "Transposh-Logo entfernen (siehe <a href=\"http://transposh.org/logoterms\">Bedingungen</a>)"
-
 #: wp/transposh_admin.php:740
 #@ transposh
 msgid "Edit interface (and progress bar) theme:"

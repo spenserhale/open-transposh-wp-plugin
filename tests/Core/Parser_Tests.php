@@ -182,7 +182,6 @@ class Parser_Tests extends WP_UnitTestCase {
 		$parse->default_lang      = false;
 		$parse->is_edit_mode      = false;
 		$parse->is_auto_translate = false;
-		$parse->allow_ad          = false;
 		//$this->expectOutputString('blah');
 		//echo $parse->fix_html('<html><body>hello, world</body></html>');
 		$this->assertEquals( '<html lang="he" dir="rtl"></html>', $parse->fix_html( '<html></html>' ) );
@@ -199,26 +198,6 @@ class Parser_Tests extends WP_UnitTestCase {
 		//$this->assertEquals('<html lang="he" dir="rtl"><body><span class ="tr_" id="tr_2" data-token="aGVsbG8," data-source="0" data-orig="hello">z-hello-z</span>, <span class ="tr_" id="tr_1" data-token="d29ybGQ," data-source="0" data-orig="world">z-world-z</span>, <span class ="tr_" id="tr_0" data-token="aGVsbG8gd29ybGQ," data-source="0" data-orig="hello world">z-hello world-z</span></body></html>', $parse->fix_html('<html><body>hello, world, hello world</body></html>'));
 		$this->assertEquals( '<html lang="he" dir="rtl"><body><span class ="tr_" id="tr_3" data-source="0" data-orig="hello">z-hello-z</span>, <span class ="tr_" id="tr_4" data-source="0" data-orig="world">z-world-z</span>,<a title="z-hi-z" href="b"><span class ="tr_" id="tr_5" data-source="0" data-orig="ho">z-ho-z</span></a><span class ="tr_" id="tr_7" data-source="0" data-orig="hi" data-hidden="y" data-trans="z-hi-z"></span> <span class ="tr_" id="tr_6" data-source="0" data-orig="hello world">z-hello world-z</span></body></html>', $parse->fix_html( '<html><body>hello, world,<a title="hi" href="b">ho</a> hello world</body></html>' ) );
 		//$this->assertEquals('<html lang="he" dir="rtl"><body><span class ="tr_" id="tr_4" data-token="aGVsbG8," data-source="0" data-orig="hello">z-hello-z</span>, <span class ="tr_" id="tr_3" data-token="d29ybGQ," data-source="0" data-orig="world">z-world-z</span>,<a title="z-hi-z" href="b"><span class ="tr_" id="tr_5" data-token="aG8," data-source="0" data-orig="ho">z-ho-z</span></a><span class ="tr_" id="tr_7" data-token="aGk," data-source="0" data-orig="hi" data-hidden="y" data-trans="z-hi-z"></span> <span class ="tr_" id="tr_6" data-token="aGVsbG8gd29ybGQ," data-source="0" data-orig="hello world">z-hello world-z</span></body></html>', $parse->fix_html('<html><body>hello, world,<a title="hi" href="b">ho</a> hello world</body></html>'));
-	}
-
-	public function testADReplace_html() {
-		// Remove the following lines when you implement this test.
-		$parse                       = $this->object;
-		$parse->fetch_translate_func = array( &$this, 'fetch_translation' );
-		//$parse->prefetch_translate_func = array(&$this->database, 'prefetch_translations');
-		$parse->url_rewrite_func  = array( &$this, 'rewrite' );
-		$parse->dir_rtl           = true;
-		$parse->lang              = 'he';
-		$parse->default_lang      = false;
-		$parse->is_edit_mode      = false;
-		$parse->is_auto_translate = false;
-		$parse->allow_ad          = true;
-		$testhtml                 = '<html><ins class="adsbygoogle" data-ad-format="auto" data-ad-slot="7652439345" data-ad-client="ca-pub-7523823497771676" style="display:block"></ins></html>';
-		$testoutput               = '<html lang="he" dir="rtl"><ins class="adsbygoogle" data-ad-format="auto" data-ad-slot="7652439345" data-ad-client="ca-pub-7523823497771676" style="display:block"></ins></html>';
-		for ( $i = 0; $i < 100; $i ++ ) {
-			echo $i . "\n";
-			$this->assertEquals( $parse->fix_html( $testhtml ), $testoutput );
-		}
 	}
 
 	/**

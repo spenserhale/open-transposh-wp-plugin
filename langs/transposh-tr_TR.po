@@ -298,11 +298,6 @@ msgstr "Kullanıcının varsayılan olarak geçerli dilini ayarlamak için izin 
 msgid "Transposh logo will not appear on widget"
 msgstr "Transposh logosu bileşende görünmez"
 
-#: wp/transposh_admin.php:737
-#@ transposh
-msgid "Remove transposh logo (see <a href=\"http://transposh.org/logoterms\">terms</a>)"
-msgstr "Transhposh logosunu sil  (bkz. <a href=\"http://transposh.org/logoterms\">şartlar</a>)"
-
 #: wp/transposh_widget.php:326
 #@ transposh
 msgid "Set as default language"

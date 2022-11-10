@@ -394,9 +394,6 @@ class Plugin {
 			$parse->is_edit_mode            = $this->edit_mode;
 			$parse->might_json              = $this->attempt_json;
 			$parse->is_auto_translate       = $this->is_auto_translate_permitted();
-			//** FULL VERSION
-			$parse->allow_ad = $this->options->widget_remove_logo;
-			//** FULLSTOP
 			// TODO - check this!
 			if ( stripos( Utilities::get_clean_server_var( 'REQUEST_URI' ), '/feed/' ) !== false ) {
 				LogService::legacy_log( "in rss feed!", 2 );

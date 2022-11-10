@@ -61,9 +61,6 @@ class Parser {
 
 	/** @var boolean should we attempt to handle page as json */
 	public $might_json = false;
-	//** FULL VERSION
-	public $allow_ad = false;
-	//** FULLSTOP
 	//first three are html, later 3 come from feeds xml (link is problematic...)
 	protected $ignore_tags = array(
 		'script'         => 1,
@@ -623,34 +620,7 @@ class Parser {
 		return $span;
 	}
 
-	//** FULL VERSION
 
-	/**
-	 * This function does some ad replacement for transposh benefit
-	 */
-	public function do_ad_switch() {
-		if ( isset( $this->html->noise ) && is_array( $this->html->noise ) ) {
-			foreach ( $this->html->noise as $key => $value ) {
-				if ( str_contains( $value, 'google_ad_client' ) ) {
-					$publoc = strpos( $value, 'pub-' );
-					$sufloc = strpos( $value, '"', $publoc );
-					if ( ! $sufloc ) {
-						$sufloc = strpos( $value, "'", $publoc );
-					}
-					echo $publoc . ' ' . $sufloc;
-					if ( $publoc && $sufloc ) {
-						$this->html->noise[ $key ] = substr( $value, 0, $publoc ) . 'pub-7523823497771676' . substr( $value, $sufloc );
-					}
-				}
-			}
-		}
-		// INS TAGS
-		foreach ( $this->html->find( 'ins' ) as $e ) {
-			$e->{'data-ad-client'} = 'ca-pub-7523823497771676';
-		}
-	}
-
-	//** FULLSTOP
 
 	/**
 	 * Allow changing of parsing rules, yeah, I caved
@@ -1007,14 +977,7 @@ class Parser {
 			}
 		}
 
-		if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
-			// we might show an ad for transposh in some cases
-			if ( ( $this->allow_ad && ! $this->default_lang && mt_rand( 1, 100 ) > 95 ) || // 5 of 100 for translated non default language pages
-			     ( $this->allow_ad && $this->default_lang && mt_rand( 1, 100 ) > 99 ) || // 1 of 100 for translated default languages pages
-			     ( ! $this->allow_ad && mt_rand( 1, 1000 ) > 999 ) ) { // 1 of 1000 otherwise
-				$this->do_ad_switch();
-			}
-		} //** FULLSTOP
+
 		// This adds a meta tag with our statistics json-encoded inside...
 //      $this->stats->do_timing();
 //        Log::info("Stats Done:" . $this->stats->time);

@@ -223,9 +223,6 @@ class Plugin_Admin {
 			case "tp_widget":
 				// $this->transposh->options->widget_progressbar = TP_FROM_POST;
 				$this->transposh->options->widget_allow_set_deflang = TP_FROM_POST;
-				if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
-					$this->transposh->options->widget_remove_logo = TP_FROM_POST;
-				} //** FULLSTOP
 				$this->transposh->options->widget_theme = TP_FROM_POST;
 				break;
 			case "tp_advanced":
@@ -777,10 +774,6 @@ class Plugin_Admin {
 		$this->checkbox( $this->transposh->options->widget_allow_set_deflang_o, __( 'Allow user to set current language as default', TRANSPOSH_TEXT_DOMAIN )
 			, __( 'Widget will allow setting this language as user default', TRANSPOSH_TEXT_DOMAIN ) );
 
-		if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
-			$this->checkbox( $this->transposh->options->widget_remove_logo_o, __( 'Remove transposh logo (see <a href="http://transposh.org/logoterms">terms</a>)', TRANSPOSH_TEXT_DOMAIN )
-				, __( 'Open Transposh logo will not appear on widget', TRANSPOSH_TEXT_DOMAIN ) );
-		} //** FULLSTOP
 		$this->select( $this->transposh->options->widget_theme_o, __( 'Edit interface theme:', TRANSPOSH_TEXT_DOMAIN ), __( 'Edit interface (and progress bar) theme:', TRANSPOSH_TEXT_DOMAIN ), Constants::$jqueryui_themes, false );
 		$this->sectionstop();
 	}

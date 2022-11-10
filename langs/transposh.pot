@@ -522,12 +522,6 @@ msgstr ""
 msgid "Widget will allow setting this language as user default"
 msgstr ""
 
-#: wp/transposh_admin.php:738
-msgid ""
-"Remove transposh logo (see <a href=\"http://transposh.org/logoterms\">terms</"
-"a>)"
-msgstr ""
-
 #: wp/transposh_admin.php:739
 msgid "Transposh logo will not appear on widget"
 msgstr ""
