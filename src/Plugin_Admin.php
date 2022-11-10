@@ -85,14 +85,14 @@ class Plugin_Admin {
 	 * Return either "checked" or ""
 	 */
 	function can_translate( $role_name ) {
-		if ( $role_name != 'anonymous' ) {
+		if ( 'anonymous' !== $role_name ) {
 			$role = $GLOBALS['wp_roles']->get_role( $role_name );
 			if ( isset( $role ) && $role->has_cap( TRANSLATOR ) ) {
 				return true;
 			}
-		} else {
-			return $this->transposh->options->allow_anonymous_translation;
 		}
+
+		return false;
 	}
 
 	/**
@@ -146,9 +146,6 @@ class Plugin_Admin {
 				if ( ! defined( 'FULL_VERSION' ) ) { //** WPORG VERSION
 					$this->transposh->options->allow_full_version_upgrade = TP_FROM_POST;
 				} //** WPORGSTOP
-				// anonymous needs to be handled differently as it does not have a role
-				LogService::legacy_log( $_POST['anonymous'] );
-				$this->transposh->options->allow_anonymous_translation = $_POST['anonymous'];
 
 				$this->transposh->options->enable_default_translate      = TP_FROM_POST;
 				$this->transposh->options->enable_search_translate       = TP_FROM_POST;
@@ -577,12 +574,10 @@ class Plugin_Admin {
 		 */
 		$this->header( __( 'Who can translate ?', TRANSPOSH_TEXT_DOMAIN ) );
 		//display known roles and their permission to translate
-		foreach ( $GLOBALS['wp_roles']->get_names() as $role_name => $something ) {
+		foreach ( array_keys( $GLOBALS['wp_roles']->get_names() ) as $role_name ) {
 			echo '<input type="checkbox" value="1" name="' . $role_name . '" ' . checked( $this->can_translate( $role_name ), true, false ) .
 			     '/> ' . _x( ucfirst( $role_name ), 'User role' ) . '&nbsp;&nbsp;&nbsp;';
 		}
-		//Add our own custom role
-		echo '<input id="tr_anon" type="checkbox" value="1" name="anonymous" ' . checked( $this->can_translate( 'anonymous' ), true, false ) . '/> ' . __( 'Anonymous', TRANSPOSH_TEXT_DOMAIN );
 
 		$this->checkbox( $this->transposh->options->enable_default_translate_o
 			, __( 'Enable default language translation', TRANSPOSH_TEXT_DOMAIN )

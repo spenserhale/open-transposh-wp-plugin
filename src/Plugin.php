@@ -685,15 +685,7 @@ class Plugin {
 	 * @return boolean Is allowed to translate?
 	 */
 	public function is_translator() {
-		//if anonymous translation is allowed - let anyone enjoy it
-		if ( $this->options->allow_anonymous_translation ) {
-			return true;
-		}
-		if ( is_user_logged_in() && current_user_can( TRANSLATOR ) ) {
-			return true;
-		}
-
-		return false;
+		return is_user_logged_in() && current_user_can( TRANSLATOR );
 	}
 
 	/**

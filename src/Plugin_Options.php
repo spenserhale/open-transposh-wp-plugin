@@ -37,8 +37,6 @@ use transposh_option;
  * @property boolean $allow_full_version_upgrade    Option to allow to upgrade to full version
  * @property $allow_full_version_upgrade_o
  * //** WPORGSTOP
- * @property boolean $allow_anonymous_translation   Option defining whether anonymous translation is allowed
- * @property $allow_anonymous_translation_o
  * @property boolean $enable_default_translate      Option to enable/disable default language translation
  * @property $enable_default_translate_o
  * @property boolean $enable_search_translate       Option to enable/disable default language translation @since 0.3.6
@@ -215,7 +213,6 @@ class Plugin_Options {
 		if ( ! defined( 'FULL_VERSION' ) ) { //** WPORG VERSION
 			$this->register_option( 'allow_full_version_upgrade', TP_OPT_BOOLEAN, 0 );
 		} //** WPORGSTOP
-		$this->register_option( 'allow_anonymous_translation', TP_OPT_BOOLEAN, 1 );
 		$this->register_option( 'enable_default_translate', TP_OPT_BOOLEAN, 0 );
 		$this->register_option( 'enable_search_translate', TP_OPT_BOOLEAN, 1 );
 		$this->register_option( 'transposh_gettext_integration', TP_OPT_BOOLEAN, 1 );
