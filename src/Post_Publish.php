@@ -1,15 +1,6 @@
 <?php
 
-/*
- * Transposh v%VERSION%
- * http://transposh.org/
- *
- * Copyright %YEAR%, Team Transposh
- * Licensed under the GPL Version 2 or higher.
- * http://transposh.org/license
- *
- * Date: %DATE%
- */
+
 
 /*
  * Provides the side widget in the page/edit pages which will do translations

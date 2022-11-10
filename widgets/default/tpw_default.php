@@ -10,16 +10,7 @@
   License: GPL (http://www.gnu.org/licenses/gpl.txt)
  */
 
-/*
- * Transposh v%VERSION%
- * http://transposh.org/
- *
- * Copyright %YEAR%, Team Transposh
- * Licensed under the GPL Version 2 or higher.
- * http://transposh.org/license
- *
- * Date: %DATE%
- */
+
 
 /*
  * Want to write your own widget? - visit the wiki page on widgets http://trac.transposh.org/wiki/WidgetWritingGuide
