@@ -15,6 +15,7 @@ class Ajax_Controller {
 
 	public function __construct(private readonly Plugin $plugin) {
 		add_action( 'wp_ajax_tp_history', [ $this, 'handle_translation_history' ] );
+		add_action( 'wp_ajax_tp_translation', [ $this, 'handle_translation' ] );
 	}
 
 	/**
@@ -65,5 +66,18 @@ class Ajax_Controller {
 		LogService::legacy_log( 'Passed check for editable and translator', 4 );
 
 		wp_send_json($this->plugin->database->get_translation_history( $token, $lang ));
+	}
+
+	/**
+	 * the case of posted translation
+	 *
+	 * @return void
+	 */
+	public function handle_translation(): void {
+		header( 'Transposh: v-' . TRANSPOSH_PLUGIN_VER . ' db_version-' . DB_VERSION );
+		self::allow_cors();
+		do_action( 'transposh_translation_posted' );
+		$this->plugin->database->update_translation();
+		wp_send_json_success();
 	}
 }
