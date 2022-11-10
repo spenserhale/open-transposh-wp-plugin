@@ -99,7 +99,7 @@ class Plugin {
 	/**
 	 * class constructor
 	 */
-	public function __construct() {
+	public function __construct(string $plugin_file) {
 		// create and initialize sub-objects
 		$this->options         = new Plugin_Options();
 		$this->database        = new Database( $this );
@@ -110,21 +110,12 @@ class Plugin {
 		$this->mail            = new Mail( $this );
 		$this->ajax_controller = new Ajax_Controller( $this );
 
-		$this->initialize_logger();
-
 		// "global" vars
 		$this->home_url = get_option( 'home' );
 
-		// Handle windows ('C:\wordpress')
-		$local_dir = preg_replace( "/\\\\/", "/", __DIR__ );
-		// Get last directory name
-		$local_dir                  = preg_replace( "/.*\//", "", $local_dir );
-		$this->transposh_plugin_url = preg_replace( '#^https?://#', '//', WP_PLUGIN_URL . '/' . $local_dir );
-		// TODO - test on more platforms - this failed in 2.7.1 so I am reverting for now...
-		//$tr_plugin_url= plugins_url('', __FILE__);
-
-		$this->transposh_plugin_dir = plugin_dir_path( __FILE__ );
-		$this->transposh_plugin_basename = plugin_basename( __FILE__ );
+		$this->transposh_plugin_url = plugin_dir_url( $plugin_file );
+		$this->transposh_plugin_dir = plugin_dir_path( $plugin_file );
+		$this->transposh_plugin_basename = plugin_basename( $plugin_file );
 
 
 		// TODO: get_class_methods to replace said mess, other way?
@@ -139,7 +130,7 @@ class Plugin {
 		add_action( 'init', array( &$this, 'on_init' ), 0 ); // really high priority
 //        add_action('admin_init', array(&$this, 'on_admin_init')); might use to mark where not to work?
 		add_action( 'parse_request', array( &$this, 'on_parse_request' ), 0 ); // should have high enough priority
-		add_action( 'plugins_loaded', array( &$this, 'plugin_loaded' ), 11 );
+		add_action( 'plugins_loaded', array( &$this, 'plugin_loaded' ) );
 		add_action( 'shutdown', array( &$this, 'on_shutdown' ) );
 		add_action( 'wp_print_styles', array( &$this, 'add_transposh_css' ) );
 		add_action( 'wp_print_scripts', array( &$this, 'add_transposh_js' ) );
@@ -782,6 +773,8 @@ class Plugin {
 	 * TODO - needs revisiting!
 	 */
 	public function plugin_loaded() {
+		$this->initialize_logger();
+
 		LogService::legacy_log( "Enter", 4 );
 
 		//TODO: fix this...
@@ -839,7 +832,7 @@ class Plugin {
 		}
 
 		//include the transposh.css
-		wp_enqueue_style( 'transposh', $this->transposh_plugin_url . '/' . TRANSPOSH_DIR_CSS . '/transposh.css', array(), TRANSPOSH_PLUGIN_VER );
+		wp_enqueue_style( 'transposh', $this->transposh_plugin_url . TRANSPOSH_DIR_CSS . '/transposh.css', array(), TRANSPOSH_PLUGIN_VER );
 
 		LogService::legacy_log( 'Added transposh_css', 4 );
 	}
@@ -853,11 +846,11 @@ class Plugin {
 		{
 			return;
 		} // TODO, check just for settings page admin and pages with our translate
-		wp_register_script( 'transposh', $this->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/transposh.js', array( 'jquery' ), TRANSPOSH_PLUGIN_VER, $this->options->enable_footer_scripts );
+		wp_register_script( 'transposh', $this->transposh_plugin_url . TRANSPOSH_DIR_JS . '/transposh.js', array( 'jquery' ), TRANSPOSH_PLUGIN_VER, $this->options->enable_footer_scripts );
 		// true -> 1, false -> nothing
 		$script_params = array(
 			'ajaxurl'    => admin_url( 'admin-ajax.php' ),
-			'plugin_url' => $this->transposh_plugin_url,
+			'plugin_url' => rtrim($this->transposh_plugin_url, '/'),
 			'lang'       => $this->target_language,
 			'olang'      => $this->options->default_language,
 			// those two options show if the script can support said engines

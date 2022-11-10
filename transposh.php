@@ -48,4 +48,4 @@ require __DIR__ . '/functions.php';
 $my_transposh_plugin = new transposh_plugin();
 $tp_logger = new tp_logger();
 
-add_action('plugins_loaded', [BetterTransposh\Plugin::class, 'init']);
+$better_transposh_plugin = BetterTransposh\Plugin::get_instance(__FILE__);

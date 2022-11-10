@@ -28,7 +28,7 @@ class Base_Widget {
 		$basefile   = substr( $file, 0, - 4 );
 		$widget_css = TRANSPOSH_DIR_WIDGETS . '/' . $basefile . ".css";
 		if ( file_exists( $plugin_dir . $widget_css ) ) {
-			wp_enqueue_style( str_replace( '/', '_', $basefile ), $plugin_url . '/' . $widget_css, '', TRANSPOSH_PLUGIN_VER );
+			wp_enqueue_style( str_replace( '/', '_', $basefile ), $plugin_url . $widget_css, '', TRANSPOSH_PLUGIN_VER );
 		}
 	}
 
@@ -44,7 +44,7 @@ class Base_Widget {
 		$basefile  = substr( $file, 0, - 4 );
 		$widget_js = TRANSPOSH_DIR_WIDGETS . '/' . $basefile . ".js";
 		if ( file_exists( $plugin_dir . $widget_js ) ) {
-			wp_enqueue_script( 'transposh_widget', $plugin_url . '/' . $widget_js, '', TRANSPOSH_PLUGIN_VER );
+			wp_enqueue_script( 'transposh_widget', $plugin_url . $widget_js, '', TRANSPOSH_PLUGIN_VER );
 		}
 	}
 

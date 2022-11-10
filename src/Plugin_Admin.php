@@ -274,7 +274,7 @@ class Plugin_Admin {
 		}
 
 		// First param is page title, second is menu title
-		add_menu_page( __( 'Transposh', TRANSPOSH_TEXT_DOMAIN ), __( 'Transposh', TRANSPOSH_TEXT_DOMAIN ), 'manage_options', 'tp_main', '', $this->transposh->transposh_plugin_url . "/img/tplogo.png" );
+		add_menu_page( __( 'Transposh', TRANSPOSH_TEXT_DOMAIN ), __( 'Transposh', TRANSPOSH_TEXT_DOMAIN ), 'manage_options', 'tp_main', '', $this->transposh->transposh_plugin_url . "img/tplogo.png" );
 
 		$submenu_pages = array();
 		foreach ( $this->pages as $slug => $titles ) {
@@ -329,21 +329,21 @@ class Plugin_Admin {
 				wp_enqueue_script( 'jquery-ui-droppable' );
 				wp_enqueue_script( 'jquery-ui-sortable' );
 				wp_enqueue_script( 'jquery-touch-punch' );
-				wp_enqueue_script( 'transposh_admin_languages', $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/admin/languages.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
+				wp_enqueue_script( 'transposh_admin_languages', $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . '/admin/languages.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
 			case 'tp_engines': // engines riding on languages
 				wp_enqueue_script( 'jquery-ui-droppable' );
 				wp_enqueue_script( 'jquery-ui-sortable' );
 				wp_enqueue_script( 'jquery-touch-punch' );
-				wp_enqueue_script( 'transposh_admin_languages', $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/admin/engines.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
+				wp_enqueue_script( 'transposh_admin_languages', $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . '/admin/engines.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
 				break;
 			case 'tp_utils':
-				wp_enqueue_script( 'transposh_admin_utils', $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/admin/utils.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
+				wp_enqueue_script( 'transposh_admin_utils', $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . '/admin/utils.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
 				// NOTE: When wordpress will have .css for the jQueryUI we'll be able to use the built-in jqueryui
 				// wp_enqueue_script('jquery-ui-progressbar');
 
 				wp_enqueue_style( 'jqueryui', '//ajax.googleapis.com/ajax/libs/jqueryui/' . JQUERYUI_VER . '/themes/ui-lightness/jquery-ui.css', array(), JQUERYUI_VER );
 				wp_enqueue_script( 'jqueryui', '//ajax.googleapis.com/ajax/libs/jqueryui/' . JQUERYUI_VER . '/jquery-ui.min.js', array( 'jquery' ), JQUERYUI_VER, true );
-				wp_enqueue_script( 'transposh_backend', $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/admin/backendtranslate.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
+				wp_enqueue_script( 'transposh_backend', $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . '/admin/backendtranslate.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
 				$script_params = array(
 					'l10n_print_after' =>
 						't_be.a_langs = ' . json_encode( Constants::$engines['a']['langs'] ) . ';' .
@@ -353,10 +353,10 @@ class Plugin_Admin {
 				);
 				wp_localize_script( "transposh_backend", "t_be", $script_params );
 			case 'tp_editor':
-				wp_enqueue_script( 'transposh_backend', $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/admin/backendeditor.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
+				wp_enqueue_script( 'transposh_backend', $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . '/admin/backendeditor.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
 		}
-		wp_enqueue_script( 'transposh_context_help', $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/admin/contexthelp.js', array( 'jquery' ), TRANSPOSH_PLUGIN_VER, true );
-		wp_enqueue_style( 'transposh_admin', $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_CSS . '/admin.css' ); ///, array('transposh'), TRANSPOSH_PLUGIN_VER, true)
+		wp_enqueue_script( 'transposh_context_help', $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . '/admin/contexthelp.js', array( 'jquery' ), TRANSPOSH_PLUGIN_VER, true );
+		wp_enqueue_style( 'transposh_admin', $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_CSS . '/admin.css' ); ///, array('transposh'), TRANSPOSH_PLUGIN_VER, true)
 	}
 
 	function load() {
@@ -456,7 +456,7 @@ class Plugin_Admin {
 
 	// not sure if this is the best place for this function, but heck
 	function on_load_comments_page() {
-		wp_enqueue_script( 'transposhcomments', $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/admin/commentslang.js', array( 'jquery' ), TRANSPOSH_PLUGIN_VER );
+		wp_enqueue_script( 'transposhcomments', $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . '/admin/commentslang.js', array( 'jquery' ), TRANSPOSH_PLUGIN_VER );
 		wp_nonce_field( - 1, self::TR_NONCE );
 	}
 
@@ -498,7 +498,7 @@ class Plugin_Admin {
 		echo '<div id="default_lang" style="overflow:auto;padding-bottom:10px;">';
 		$this->header( __( 'Default Language (drag another language here to make it default)', TRANSPOSH_TEXT_DOMAIN ), 'languages' );
 		echo '<ul id="default_list"><li id="' . $this->transposh->options->default_language . '" class="languages">'
-		     . Utilities::display_flag( "{$this->transposh->transposh_plugin_url}/img/flags", $flag, $langorigname, false/* $this->transposh->options->get_widget_css_flags() */ )
+		     . Utilities::display_flag( "{$this->transposh->transposh_plugin_url}img/flags", $flag, $langorigname, false/* $this->transposh->options->get_widget_css_flags() */ )
 		     . '<input type="hidden" name="languages[]" value="' . $this->transposh->options->default_language . '" />'
 		     . '&nbsp;<span class="langname">' . $langorigname . '</span><span class="langname hidden">' . $langname . '</span></li>';
 		echo '</ul></div>';
@@ -514,25 +514,25 @@ class Plugin_Admin {
 			list ( $langname, $langorigname, $flag ) = explode( ",", $langrecord );
 			echo '<li id="' . $langcode . '" class="languages ' . ( $this->transposh->options->is_active_language( $langcode ) || $this->transposh->options->is_default_language( $langcode ) ? "lng_active" : "" )
 			     . '"><div style="float:' . $this->localeleft . '">'
-			     . Utilities::display_flag( "{$this->transposh->transposh_plugin_url}/img/flags", $flag, false /* $langorigname,$this->transposh->options->get_widget_css_flags() */ )
+			     . Utilities::display_flag( "{$this->transposh->transposh_plugin_url}img/flags", $flag, false /* $langorigname,$this->transposh->options->get_widget_css_flags() */ )
 			     // DOC THIS BUGBUG fix!
 			     . '<input type="hidden" name="languages[]" value="' . $langcode . ( $this->transposh->options->is_active_language( $langcode ) ? ",v" : "," ) . '" />'
 			     . '&nbsp;<span class="langname">' . $langorigname . '</span><span class="langname hidden">' . $langname . '</span></div>';
 			foreach ( Constants::$engines as $enginecode => $enginerecord ) {
 				if ( in_array( $langcode, $enginerecord['langs'] ) ) {
-					echo '<img width="16" height="16" alt="' . $enginecode . '" class="logoicon" title="' . esc_attr( sprintf( __( 'Language supported by %s translate', TRANSPOSH_TEXT_DOMAIN ), $enginerecord['name'] ) ) . '" src="' . $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_IMG . '/' . $enginerecord['icon'] . '"/>';
+					echo '<img width="16" height="16" alt="' . $enginecode . '" class="logoicon" title="' . esc_attr( sprintf( __( 'Language supported by %s translate', TRANSPOSH_TEXT_DOMAIN ), $enginerecord['name'] ) ) . '" src="' . $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_IMG . '/' . $enginerecord['icon'] . '"/>';
 				} else {
 					echo '<div class="logoicon" style="margin:9px"></div>';
 				}
 			}
 			if ( in_array( $langcode, Constants::$oht_languages ) ) {
-				echo '<img width="16" height="16" alt="o" class="logoicon" title="' . esc_attr__( 'Language supported by one hour translation', TRANSPOSH_TEXT_DOMAIN ) . '" src="' . $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_IMG . '/ohticon.png"/>';
+				echo '<img width="16" height="16" alt="o" class="logoicon" title="' . esc_attr__( 'Language supported by one hour translation', TRANSPOSH_TEXT_DOMAIN ) . '" src="' . $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_IMG . '/ohticon.png"/>';
 			}
 			if ( in_array( $langcode, Constants::$rtl_languages ) ) {
-				echo '<img width="16" height="16" alt="r" class="logoicon" title="' . esc_attr__( 'Language is written from right to left', TRANSPOSH_TEXT_DOMAIN ) . '" src="' . $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_IMG . '/rtlicon.png"/>';
+				echo '<img width="16" height="16" alt="r" class="logoicon" title="' . esc_attr__( 'Language is written from right to left', TRANSPOSH_TEXT_DOMAIN ) . '" src="' . $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_IMG . '/rtlicon.png"/>';
 			}
 			/* if ($this->does_mo_exist(BetterTransposh\Core\transposh_consts::get_language_locale($langcode)))
-			  echo 'BLBL<img width="16" height="16" alt="r" class="logoicon" title="' . esc_attr__('Language is written from right to left', TRANSPOSH_TEXT_DOMAIN) . '" src="' . $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_IMG . '/rtlicon.png"/>'; */
+			  echo 'BLBL<img width="16" height="16" alt="r" class="logoicon" title="' . esc_attr__('Language is written from right to left', TRANSPOSH_TEXT_DOMAIN) . '" src="' . $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_IMG . '/rtlicon.png"/>'; */
 			echo '</li>';
 		}
 		echo "</ul></div>";
@@ -966,7 +966,7 @@ class Plugin_Admin {
 			$help = ' <a class="tp_help" href="#" rel="' . $help . '">[?]</a>';
 		}
 		if ( is_array( $head ) ) {
-			echo "<h3><img width=\"16\" height=\"16\" src=\"{$this->transposh->transposh_plugin_url}/img/{$head[0]}\"> {$head[1]}$help</h3>";
+			echo "<h3><img width=\"16\" height=\"16\" src=\"{$this->transposh->transposh_plugin_url}img/{$head[0]}\"> {$head[1]}$help</h3>";
 		} else {
 			echo "<h3>$head $help</h3>";
 		}
@@ -1061,7 +1061,7 @@ class Plugin_Admin {
 	function add_warning( $id, $message, $level = 'error' ) {
 		if ( ! $this->transposh->options->get_transposh_admin_hide_warning( $id ) ) {
 			//$this->add_warning_script();
-			wp_enqueue_script( 'transposh_warningclose', $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/admin/warningclose.js', array( 'jquery' ), TRANSPOSH_PLUGIN_VER, true );
+			wp_enqueue_script( 'transposh_warningclose', $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . '/admin/warningclose.js', array( 'jquery' ), TRANSPOSH_PLUGIN_VER, true );
 			echo '<div class="' . $level . '"><p>&#9888;&nbsp;' .
 			     $message .
 			     '<a id="' . $id . '" href="#" class="warning-close" style="float:' . $this->localeright . '; margin-' . $this->localeleft . ': .3em;">' . __( 'Hide Notice', TRANSPOSH_TEXT_DOMAIN ) . '</a>' .

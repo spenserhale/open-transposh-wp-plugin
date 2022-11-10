@@ -73,7 +73,7 @@ class Post_Publish {
 		}
 		if ( get_post_meta( $_GET['post'], 'transposh_can_translate', true ) ) { // do isdefined stuff
 			$this->just_published = true; // this is later used in the meta boxes //XXXXXXXXXXXXXXXXXXXXXXXXXXXX
-			wp_enqueue_script( "transposh_backend", $this->transposh->transposh_plugin_url . '/' . TRANSPOSH_DIR_JS . '/admin/backendtranslate.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
+			wp_enqueue_script( "transposh_backend", $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . '/admin/backendtranslate.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
 			$script_params = array(
 				'post'             => $_GET['post'],
 				'l10n_print_after' =>
