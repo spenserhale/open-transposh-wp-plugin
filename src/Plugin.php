@@ -90,12 +90,6 @@ class Plugin {
 	private $do_update_check = false;
 	private Logger|NullLogger|Query_Monitor_Logger $logger;
 
-	public static function init() {
-		global $better_transposh;
-
-		$better_transposh = self::get_instance();
-	}
-
 	/**
 	 * class constructor
 	 */

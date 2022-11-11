@@ -48,5 +48,5 @@ require __DIR__ . '/functions.php';
 $my_transposh_plugin = new transposh_plugin();
 $tp_logger = new tp_logger();
 
-$better_transposh_plugin = OpenTransposh\Plugin::get_instance(__FILE__);
+$open_transposh_plugin = OpenTransposh\Plugin::get_instance(__FILE__);
 
