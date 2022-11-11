@@ -1,138 +1,132 @@
 <?php
 
-
-
-// This magic value will cause the option to be set from post
 namespace OpenTransposh;
 
 use OpenTransposh;
 use OpenTransposh\Core\Constants;
 use OpenTransposh\Logging\LogService;
-use ip;
-use transposh_option;
-
 
 /**
  * Used properties for code completion - we'll try to keep them in same order as admin screens
  *
  * Language tab
  * @property string $default_language      Option defining the default language
- * @property $default_language_o
+ * @property Option $default_language_o
  * @property string $viewable_languages    Option defining the list of currently viewable languages
- * @property $viewable_languages_o
+ * @property Option $viewable_languages_o
  * @property string $sorted_languages      Option defining the ordered list of languages @since 0.3.9
- * @property $sorted_languages_o
+ * @property Option $sorted_languages_o
  *
  * Settings
  * //** WPORG VERSION
  * @property boolean $allow_full_version_upgrade    Option to allow to upgrade to full version
- * @property $allow_full_version_upgrade_o
+ * @property Option $allow_full_version_upgrade_o
  * //** WPORGSTOP
  * @property boolean $enable_default_translate      Option to enable/disable default language translation
- * @property $enable_default_translate_o
+ * @property Option $enable_default_translate_o
  * @property boolean $enable_search_translate       Option to enable/disable default language translation @since 0.3.6
- * @property $enable_search_translate_o
+ * @property Option $enable_search_translate_o
  * @property boolean $transposh_gettext_integration Make the gettext interface optional (@since 0.6.4)
- * @property $transposh_gettext_integration_o
+ * @property Option $transposh_gettext_integration_o
  * @property boolean $transposh_locale_override     Allow override for default locale (@since 0.7.5)
- * @property $transposh_locale_override_o
+ * @property Option $transposh_locale_override_o
  *
  * @property boolean $enable_permalinks             Option to enable/disable rewrite of permalinks
- * @property $enable_permalinks_o
+ * @property Option $enable_permalinks_o
  * @property boolean $enable_footer_scripts         Option to enable/disable footer scripts (2.8 and up)
- * @property $enable_footer_scripts_o
+ * @property Option $enable_footer_scripts_o
  * @property boolean $enable_detect_redirect        Option to enable detect and redirect language @since 0.3.8
- * @property $enable_detect_redirect_o
+ * @property Option $enable_detect_redirect_o
  * @property boolean $enable_geoip_redirect         Option to enable language redirection based on geoip detection @since 1.0.2
- * @property $enable_geoip_redirect_o
+ * @property Option $enable_geoip_redirect_o
  * @property boolean $transposh_collect_stats       Should I allow collecting of anonymous stats (@since 0.7.6)
- * @property $transposh_collect_stats_o
+ * @property Option $transposh_collect_stats_o
  * @property string $mail_to                    Option defining recipient (Admin if empty) (@since 1.0.3)
- * @property $mail_to_o
+ * @property Option $mail_to_o
  * @property boolean $mail_ontranslate           Should I send mail immediately on human translation (@since 1.0.3)
- * @property $mail_ontranslate_o
+ * @property Option $mail_ontranslate_o
  * //** FULL VERSION
  * @property boolean $mail_ontranslate_buffer    Should I buffer immediate human translation (@since 1.0.3)
- * @property $mail_ontranslate_buffer_o
+ * @property Option $mail_ontranslate_buffer_o
  * @property boolean $mail_digest                Should I send a daily digest of translations today (@since 1.0.3)
- * @property $mail_digest_o
+ * @property Option $mail_digest_o
  * @property boolean $mail_ignore_admin          Ignore translations made by the admin (@since 1.0.3)
- * @property $mail_ignore_admin_o
+ * @property Option $mail_ignore_admin_o
  * //** FULLSTOP
  *
  * @property int $transposh_backup_schedule     Stores the schedule for the backup service, 0-none, 1-daily, 2-live (backup @since 0.5.0)
- * @property $transposh_backup_schedule_o
+ * @property Option $transposh_backup_schedule_o
  * @property string $transposh_key                 Stores the site key to transposh services (backup @since 0.5.0)
- * @property $transposh_key_o
+ * @property Option $transposh_key_o
  * //** FULL VERSION
  * @property boolean $enable_superproxy             Enable superproxy
- * @property $enable_superproxy_o
+ * @property Option $enable_superproxy_o
  * @property string $superproxy_key                Stores the superproxy key
- * @property $superproxy_key_o
+ * @property Option $superproxy_key_o
  * @property string $superproxy_ips                Stores the site allow proxy ips
- * @property $superproxy_ips_o
+ * @property Option $superproxy_ips_o
  * //** FULLSTOP
  *
  *  Engines
  *
  * @property boolean $enable_autotranslate          Option to enable/disable auto translation
- * @property $enable_autotranslate_o
+ * @property Option $enable_autotranslate_o
  * @property boolean $enable_autoposttranslate      Option to enable/disable auto translation of posts
- * @property $enable_autoposttranslate_o
+ * @property Option $enable_autoposttranslate_o
  * @property string $msn_key                       Option to store the msn API key
- * @property $msn_key_o
+ * @property Option $msn_key_o
  * @property string $google_key                    Option to store the Google API key
- * @property $google_key_o
+ * @property Option $google_key_o
  * @property string $yandex_key                    Option to store the Yandex API key
- * @property $yandex_key_o
+ * @property Option $yandex_key_o
  * @property string $preferred_translators         Option to store translator preference @since 0.4.2 (changed to string and plural @since 0.9.8)
- * @property $preferred_translators_o
+ * @property Option $preferred_translators_o
  * @property string $oht_id                        Option to store the oht ID
- * @property $oht_id_o
+ * @property Option $oht_id_o
  * @property string $oht_key                       Option to store the oht key;
- * @property $oht_key_o
+ * @property Option $oht_key_o
  *
  * Widget
  *
  * @property boolean $widget_progressbar            Option allowing progress bar display
- * @property $widget_progressbar_o
+ * @property Option $widget_progressbar_o
  * @property boolean $widget_allow_set_deflang      Allows user to set his default language per #63 @since 0.3.8
- * @property $widget_allow_set_deflang_o
+ * @property Option $widget_allow_set_deflang_o
  * @property string $widget_theme                  Allows theming of the progressbar and edit window @since 0.7.0
- * @property $widget_theme_o
+ * @property Option $widget_theme_o
  *
  * Advanced
  *
  * @property boolean $enable_url_translate          Option to enable/disable url translation @since 0.5.3
- * @property $enable_url_translate_o
+ * @property Option $enable_url_translate_o
  * @property string $jqueryui_override             Option to override the jQueryUI version @since 0.9.1
- * @property $jqueryui_override_o
+ * @property Option $jqueryui_override_o
  * @property boolean $dont_add_rel_alternate        Option to disable the rel=alternate adding to the page @since 0.9.2
- * @property $dont_add_rel_alternate_o
+ * @property Option $dont_add_rel_alternate_o
  * //** FULL VERSION
  * @property boolean $full_rel_alternate            Option to create fully qualified rel=alternate @since 1.0.1
- * @property $full_rel_alternate_o
+ * @property Option $full_rel_alternate_o
  * //** FULLSTOP
  * @property boolean $parser_dont_break_puncts      Option to allow punctuations such as , . ( not to break @since 0.9.0
- * @property $parser_dont_break_puncts_o
+ * @property Option $parser_dont_break_puncts_o
  * @property boolean $parser_dont_break_numbers     Option to allow numbers not to break @since 0.9.0
- * @property $parser_dont_break_numbers_o
+ * @property Option $parser_dont_break_numbers_o
  * @property boolean $parser_dont_break_entities    Option to allow html entities not to break @since 0.9.0
- * @property $parser_dont_break_entities_o
+ * @property Option $parser_dont_break_entities_o
  * @property boolean $debug_enable Option to enable debug
- * @property $debug_enable_o
+ * @property Option $debug_enable_o
  * @property int $debug_loglevel Option holding the level of logging
- * @property $debug_loglevel_o
+ * @property Option $debug_loglevel_o
  * @property string $debug_logfile Option holding a filename to store debugging into
- * @property $debug_logfile_o
- * @property ip $debug_remoteip Option that limits remote firePhp debug to a certain IP
- * @property $debug_remoteip_o
+ * @property Option $debug_logfile_o
+ * @property string $debug_remoteip Option that limits remote firePhp debug to a certain IP
+ * @property Option $debug_remoteip_o
  *
  * Hidden
  *
- * @property $transposh_admin_hide_warnings Stores hidden warnings (@since 0.7.6)
+ * @property Option $transposh_admin_hide_warnings Stores hidden warnings (@since 0.7.6)
  * //** FULL VERSION
- * @property $transposh_last_mail_digest Stores date of last digest (@since 1.0.3)
+ * @property Option $transposh_last_mail_digest Stores date of last digest (@since 1.0.3)
  * //** FULLSTOP
  *
  */
