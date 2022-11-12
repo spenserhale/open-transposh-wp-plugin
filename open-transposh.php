@@ -45,8 +45,11 @@ require __DIR__ . '/constants.php';
 require __DIR__ . '/legacy.php';
 require __DIR__ . '/functions.php';
 
-$my_transposh_plugin = new transposh_plugin();
-$tp_logger = new tp_logger();
-
 $open_transposh_plugin = OpenTransposh\Plugin::get_instance(__FILE__);
+
+/** @var OpenTransposh\Plugin|transposh_plugin $my_transposh_plugin */
+$my_transposh_plugin = new transposh_plugin($open_transposh_plugin);
+
+/** @var OpenTransposh\Logging\Logger|tp_logger $tp_logger */
+$tp_logger = new tp_logger(new OpenTransposh\Logging\Logger());
 

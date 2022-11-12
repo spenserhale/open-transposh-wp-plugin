@@ -478,19 +478,17 @@ class Utilities {
 	/**
 	 * Function to display a flag
 	 *
-	 * @param string $path path to flag images
-	 * @param string $flag the flag (normally iso code)
-	 * @param string $language the name of the lanaguage
-	 * @param boolean $css using css code?
+	 * @param  string  $path  path to flag images
+	 * @param  string  $flag  the flag (normally iso code)
+	 * @param  string  $language  the name of the language
+	 * @param  bool  $css  using css code?
 	 *
 	 * @return string Html with flag
 	 */
-	public static function display_flag( $path, $flag, $language, $css = false ) {
-		if ( ! $css ) {
-			return "<img src=\"$path/$flag.png\" title=\"$language\" alt=\"$language\"/>";
-		} else {
-			return "<span title=\"$language\" class=\"trf trf-{$flag}\"></span>";
-		}
+	public static function display_flag( string $path, string $flag, string $language, bool $css = false ): string {
+		return $css
+			? "<span title=\"$language\" class=\"trf trf-$flag\"></span>"
+			: "<img src=\"$path/$flag.png\" title=\"$language\" alt=\"$language\"/>";
 	}
 
 	/**

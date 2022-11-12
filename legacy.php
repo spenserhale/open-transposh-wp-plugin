@@ -1,25 +1,27 @@
 <?php
 
-use OpenTransposh\Legacy\Legacy_Usage_Reporter;
+use OpenTransposh\Core\{Constants, Parser, Parser_Stats, Utilities};
+use OpenTransposh\Legacy\{Legacy_Adapter, Legacy_Usage_Reporter};
+use OpenTransposh\Widgets\{Base_Widget, Plugin_Widget};
 
 /**
  * Legacy Transposh Names for Backwards Compatibility
  */
 
-class tp_logger extends Legacy_Usage_Reporter {}
+class tp_logger extends Legacy_Adapter {}
 
-class transposh_consts extends Legacy_Usage_Reporter {}
+class transposh_plugin extends Legacy_Adapter {}
+
+class transposh_consts extends Constants {}
+
+class transposh_utils extends Utilities {}
 
 class ChromePhp_tp extends Legacy_Usage_Reporter {}
 
-class transposh_utils extends Legacy_Usage_Reporter {}
+class tp_parserstats extends Parser_Stats {}
 
-class tp_parserstats extends Legacy_Usage_Reporter {}
+class tp_parser extends Parser {}
 
-class tp_parser extends Legacy_Usage_Reporter {}
+class transposh_base_widget extends Base_Widget {}
 
-class transposh_plugin extends Legacy_Usage_Reporter {}
-
-class transposh_base_widget extends Legacy_Usage_Reporter {}
-
-class transposh_plugin_widget extends Legacy_Usage_Reporter {}
+class transposh_plugin_widget extends Plugin_Widget {}
