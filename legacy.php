@@ -1,7 +1,7 @@
 <?php
 
 use OpenTransposh\Core\{Constants, Parser, Parser_Stats, Utilities};
-use OpenTransposh\Legacy\{Legacy_Adapter, Legacy_Usage_Reporter};
+use OpenTransposh\Legacy\{Legacy_Adapter};
 use OpenTransposh\Widgets\{Base_Widget, Plugin_Widget};
 
 /**
@@ -15,8 +15,6 @@ class transposh_plugin extends Legacy_Adapter {}
 class transposh_consts extends Constants {}
 
 class transposh_utils extends Utilities {}
-
-class ChromePhp_tp extends Legacy_Usage_Reporter {}
 
 class tp_parserstats extends Parser_Stats {}
 

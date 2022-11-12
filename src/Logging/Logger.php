@@ -2,8 +2,6 @@
 
 namespace OpenTransposh\Logging;
 
-use OpenTransposh\Core\Utilities;
-use OpenTransposh\Libraries\ChromePhp;
 use OpenTransposh\Traits\Static_Instance_Trait;
 
 class Logger {
@@ -52,9 +50,6 @@ class Logger {
 		if ( $severity <= $this->debug_level ) {
 			if ( $this->show_caller ) {
 				$trace = debug_backtrace();
-				if ( $do_backtrace ) {
-					ChromePhp::log( $trace[3] );
-				}
 				if ( isset( $trace[ 2 + $nest ]['class'] ) ) {
 					$log_prefix = str_pad( "{$trace[2 + $nest]['class']}::{$trace[2 + $nest]['function']} {$trace[1 + $nest]['line']}", 55 + $nest, '_' );
 				} else {
@@ -87,19 +82,6 @@ class Logger {
 			if ( $this->printout/* || !isset($this->firephp) */ ) {
 				echo "$log_prefix:$msg";
 				echo ( $this->eolprint ) ? "\n" : "<br/>";
-			} else {
-				if ( ! Utilities::get_clean_server_var( 'REMOTE_ADDR' ) || $this->remoteip != Utilities::get_clean_server_var( 'REMOTE_ADDR' ) ) {
-					return;
-				}
-				if ( ( is_array( $msg ) || is_object( $msg ) ) && $this->show_caller ) {
-					ChromePhp::groupCollapsed( "$log_prefix: object/array" );
-					ChromePhp::log( $msg );
-					ChromePhp::groupEnd();
-				} else if ( is_array( $msg ) || is_object( $msg ) ) {
-					ChromePhp::log( $msg );
-				} else {
-					ChromePhp::log( "$log_prefix:$msg" );
-				}
 			}
 		}
 	}
