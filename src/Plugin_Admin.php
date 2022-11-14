@@ -899,7 +899,7 @@ class Plugin_Admin {
 
 	function on_sidebox_news_content() {
 		echo '<div style="margin:6px">';
-		wp_widget_rss_output( 'http://feeds2.feedburner.com/transposh', array( 'items' => 5 ) );
+        echo '<p>To be announced.</p>';
 		echo '</div>';
 	}
 
