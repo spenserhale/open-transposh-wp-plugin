@@ -1029,6 +1029,9 @@ class Plugin_Admin {
 			$this->add_warning( 'tp_mem_warning', sprintf( __( 'Your current PHP memory limit of %s is quite low, if you experience blank pages please consider increasing it.', TRANSPOSH_TEXT_DOMAIN ), ini_get( 'memory_limit' ) ) . ' <a href="http://transposh.org/faq#blankpages">' . __( 'Check Open Transposh FAQs', TRANSPOSH_TEXT_DOMAIN ) . '</a>' );
 		}
 
+        // TODO Disabling until improve checking process and FAQs
+        return;
+
 		if ( $this->page &&
 		     ! ( class_exists( 'Memcache' ) /* !!&& $this->memcache->connect(TP_MEMCACHED_SRV, TP_MEMCACHED_PORT) */ ) &&
 		     ! function_exists( 'apc_fetch' ) &&
