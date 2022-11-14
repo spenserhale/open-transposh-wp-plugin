@@ -836,6 +836,8 @@ class Plugin_Admin {
 
 		<p><?= __('The Open Transposh Plugin is an open-source fork of the Transposh Plugin. The fork\'s existence stemmed from the original Transposh author, who disagreed with security experts and chose not to fix the reported issues. WordPress removed the plugin from their official plugin directory. This plugin resolves the reported issues to allow the WordPress community to continue to use this plugin securely and access to download from the WordPress plugin directory.', TRANSPOSH_TEXT_DOMAIN) ?></p>
 
+        <p><?= __('The plugin is a drop in replacement and uses the same data identifiers for compatibility.', TRANSPOSH_TEXT_DOMAIN)?></p>
+
 		<ul>
 			<li><a href="https://github.com/oferwald/transposh/"><?= __('Open Transposh GitHub', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
 		</ul>
@@ -868,56 +870,11 @@ class Plugin_Admin {
 
 	function tp_support() {
 		echo '<p>';
-		$this->section( __( 'Open Transposh support', TRANSPOSH_TEXT_DOMAIN )
-			, __( 'Have you encountered any problem with our plugin and need our help?', TRANSPOSH_TEXT_DOMAIN ) . '<br>' .
-			  __( 'Do you need to ask us any question?', TRANSPOSH_TEXT_DOMAIN ) . '<br>' .
-			  __( 'You have two options:', TRANSPOSH_TEXT_DOMAIN ) . '<br>' );
-		$this->header( __( 'Our free support', TRANSPOSH_TEXT_DOMAIN ) );
-		echo '<div class="col-wrap">';
-		echo __( 'There are many channels to reach us and we do try to help as fast as we can', TRANSPOSH_TEXT_DOMAIN ) . '<br>';
-		echo __( 'You can contact us through our contact form on our web site', TRANSPOSH_TEXT_DOMAIN ) . '<br>';
-		echo __( 'Create a ticket for us if you have found any bugs', TRANSPOSH_TEXT_DOMAIN ) . '<br>';
-		echo __( 'Reach us via different forums:', TRANSPOSH_TEXT_DOMAIN );
-		echo '<ul style="list-style-type:disc;margin-' . $this->localeleft . ':20px;">';
-		echo '<li><a href="https://github.com/oferwald/transposh/">';
-		echo __( 'Our development site on github, with wiki and tickets', TRANSPOSH_TEXT_DOMAIN );
-		echo '</a></li><li><a href="https://www.facebook.com/transposh">';
-		echo __( 'Our facebook page', TRANSPOSH_TEXT_DOMAIN );
-		echo '</a></li></ul>';
-		echo __( 'Contact us directly via:', TRANSPOSH_TEXT_DOMAIN );
-		echo '<ul style="list-style-type:disc;margin-' . $this->localeleft . ':20px;">';
-		echo '<li><a href="https://transposh.org/contact-us/">' . __( 'Our contact form', TRANSPOSH_TEXT_DOMAIN ) . '</a></li>';
-		echo '<li><a href="https://transposh.org/redir/newfeature">' . __( 'Suggest a Feature', TRANSPOSH_TEXT_DOMAIN ) . '</a></li>';
-		echo '<li><a href="https://transposh.org/redir/newticket">' . __( 'Report a Bug', TRANSPOSH_TEXT_DOMAIN ) . '</a></li>';
-		echo '</ul>';
+		$this->section( __( 'Open Transposh Support', TRANSPOSH_TEXT_DOMAIN )
+			, __( 'Currently, there is no support options.', TRANSPOSH_TEXT_DOMAIN ) . ' ' .
+			  __( 'In the future, there are plans to setup both community and professional support.', TRANSPOSH_TEXT_DOMAIN )
+		);
 
-		echo '</div>';
-		$this->header( __( 'Professional support option', TRANSPOSH_TEXT_DOMAIN ) );
-		echo '<div class="col-wrap">';
-		echo __( 'For the low low price of $99, we will take express action on your request. By express we mean that your issue will become our top priority, and will resolve ASAP', TRANSPOSH_TEXT_DOMAIN ) . '<br>';
-		echo __( 'This includes helping with various bugs, basic theme/plugins conflicts, or just telling you where the ON button is', TRANSPOSH_TEXT_DOMAIN ) . '<br>';
-		echo __( 'Full money back guarentee! If your problem remains unresolved or you are simply unhappy we will refund your paypal account as soon as you ask (as long as paypal allows it, don\'t come to us three years later!)', TRANSPOSH_TEXT_DOMAIN ) . '<br>';
-		echo __( 'So hit the following button. Thanks!', TRANSPOSH_TEXT_DOMAIN ) . '<br>';
-		echo '<br/>
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="KCCE87P7B2MG8">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
-  ';
-		echo '</div>';
-		$this->header( __( 'Donations', TRANSPOSH_TEXT_DOMAIN ) );
-		echo '<div class="col-wrap">';
-		echo __( 'If you just want to show that you care, this is the button for you. But please think twice before doing this. It will make us happier if you just do something nice for someone in your area, contribute to a local charity, and let us know that you did that :)', TRANSPOSH_TEXT_DOMAIN ) . '<br>';
-		echo '<br/>
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="4E52WJ8WDK79J">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>';
-		echo '</div>';
 		$this->sectionstop();
 	}
 
