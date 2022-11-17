@@ -51,7 +51,7 @@ class Plugin {
 	/** @var string Plugin main file and dir */
 	public $transposh_plugin_basename;
 
-	/** @var boolean Enable rewriting of URLs */
+	/** @var bool Enable rewriting of URLs */
 	public $enable_permalinks_rewrite;
 
 	/** @var string The language to translate the page to, from params */
@@ -60,7 +60,7 @@ class Plugin {
 	/** @var string The language extracted from the url */
 	public $tgl;
 
-	/** @var boolean Are we currently editing the page? */
+	/** @var bool Are we currently editing the page? */
 	public $edit_mode;
 
 	/** @var string Error message displayed for the admin in case of failure */
@@ -75,13 +75,13 @@ class Plugin {
 	/** @var bool might be that page is json... */
 	private $attempt_json = false;
 
-	/** @var boolean Is the wp_redirect being called by transposh? */
+	/** @var bool Is the wp_redirect being called by transposh? */
 	private $transposh_redirect = false;
 
-	/** @var boolean Did we get to process but got an empty buffer with no language? (someone flushed us) */
+	/** @var bool Did we get to process but got an empty buffer with no language? (someone flushed us) */
 	private $tried_buffer = false;
 
-	/** @var boolean Do I need to check for updates by myself? After wordpress checked his */
+	/** @var bool Do I need to check for updates by myself? After wordpress checked his */
 	private $do_update_check = false;
 	private Logger|NullLogger|Query_Monitor_Logger $logger;
 
@@ -109,59 +109,59 @@ class Plugin {
 		$this->ajax_controller = new Ajax_Controller( $this );
 
 		// TODO: get_class_methods to replace said mess, other way?
-		add_filter( 'plugin_action_links_' . $this->transposh_plugin_basename, array( &$this, 'plugin_action_links' ) );
-		add_filter( 'query_vars', array( &$this, 'parameter_queryvars' ) );
-		add_filter( 'rewrite_rules_array', array( &$this, 'update_rewrite_rules' ) );
+		add_filter( 'plugin_action_links_' . $this->transposh_plugin_basename, [ &$this, 'plugin_action_links' ] );
+		add_filter( 'query_vars', [ &$this, 'parameter_queryvars' ] );
+		add_filter( 'rewrite_rules_array', [ &$this, 'update_rewrite_rules' ] );
 		if ( $this->options->enable_url_translate ) {
-			add_filter( 'request', array( &$this, 'request_filter' ) );
+			add_filter( 'request', [ &$this, 'request_filter' ] );
 		}
-		add_filter( 'comment_post_redirect', array( &$this, 'comment_post_redirect_filter' ) );
-		add_filter( 'comment_text', array( &$this, 'comment_text_wrap' ), 9999 ); // this is a late filter...
-		add_action( 'init', array( &$this, 'on_init' ), 0 ); // really high priority
+		add_filter( 'comment_post_redirect', [ &$this, 'comment_post_redirect_filter' ] );
+		add_filter( 'comment_text', [ &$this, 'comment_text_wrap' ], 9999 ); // this is a late filter...
+		add_action( 'init', [ &$this, 'on_init' ], 0 ); // really high priority
 //        add_action('admin_init', array(&$this, 'on_admin_init')); might use to mark where not to work?
-		add_action( 'parse_request', array( &$this, 'on_parse_request' ), 0 ); // should have high enough priority
-		add_action( 'plugins_loaded', array( &$this, 'plugin_loaded' ) );
-		add_action( 'shutdown', array( &$this, 'on_shutdown' ) );
-		add_action( 'wp_print_styles', array( &$this, 'add_transposh_css' ) );
-		add_action( 'wp_print_scripts', array( &$this, 'add_transposh_js' ) );
+		add_action( 'parse_request', [ &$this, 'on_parse_request' ], 0 ); // should have high enough priority
+		add_action( 'plugins_loaded', [ &$this, 'plugin_loaded' ] );
+		add_action( 'shutdown', [ &$this, 'on_shutdown' ] );
+		add_action( 'wp_print_styles', [ &$this, 'add_transposh_css' ] );
+		add_action( 'wp_print_scripts', [ &$this, 'add_transposh_js' ] );
 		if ( ! $this->options->dont_add_rel_alternate ) {
-			add_action( 'wp_head', array( &$this, 'add_rel_alternate' ) );
+			add_action( 'wp_head', [ &$this, 'add_rel_alternate' ] );
 		}
 //        add_action('wp_head', array(&$this,'add_transposh_async'));
-		add_action( 'transposh_backup_event', array( &$this, 'run_backup' ) );
-		add_action( 'transposh_oht_event', array( &$this, 'run_oht' ) );
-		add_action( 'comment_post', array( &$this, 'add_comment_meta_settings' ), 1 );
+		add_action( 'transposh_backup_event', [ &$this, 'run_backup' ] );
+		add_action( 'transposh_oht_event', [ &$this, 'run_oht' ] );
+		add_action( 'comment_post', [ &$this, 'add_comment_meta_settings' ], 1 );
 		// our translation proxy
 //        add_action('wp_ajax_tp_gp', array(&$this, 'on_ajax_nopriv_tp_gp'));
 //        add_action('wp_ajax_nopriv_tp_gp', array(&$this, 'on_ajax_nopriv_tp_gp'));
-		add_action( 'wp_ajax_tp_tp', array( &$this, 'on_ajax_nopriv_tp_tp' ) ); // translate suggest proxy
-		add_action( 'wp_ajax_nopriv_tp_tp', array( &$this, 'on_ajax_nopriv_tp_tp' ) );
-		add_action( 'wp_ajax_tp_oht', array( &$this, 'on_ajax_nopriv_tp_oht' ) );
-		add_action( 'wp_ajax_nopriv_tp_oht', array( &$this, 'on_ajax_nopriv_tp_oht' ) );
+		add_action( 'wp_ajax_tp_tp', [ &$this, 'on_ajax_nopriv_tp_tp' ] ); // translate suggest proxy
+		add_action( 'wp_ajax_nopriv_tp_tp', [ &$this, 'on_ajax_nopriv_tp_tp' ] );
+		add_action( 'wp_ajax_tp_oht', [ &$this, 'on_ajax_nopriv_tp_oht' ] );
+		add_action( 'wp_ajax_nopriv_tp_oht', [ &$this, 'on_ajax_nopriv_tp_oht' ] );
 		// ajax actions in editor
 		// TODO - remove some for non translators
-		add_action( 'wp_ajax_tp_ohtcallback', array( &$this, 'on_ajax_nopriv_tp_ohtcallback' ) );
-		add_action( 'wp_ajax_nopriv_tp_ohtcallback', array( &$this, 'on_ajax_nopriv_tp_ohtcallback' ) );
-		add_action( 'wp_ajax_tp_trans_alts', array( &$this, 'on_ajax_nopriv_tp_trans_alts' ) );
-		add_action( 'wp_ajax_nopriv_tp_trans_alts', array( &$this, 'on_ajax_nopriv_tp_trans_alts' ) );
-		add_action( 'wp_ajax_tp_cookie', array( &$this, 'on_ajax_nopriv_tp_cookie' ) );
-		add_action( 'wp_ajax_nopriv_tp_cookie', array( &$this, 'on_ajax_nopriv_tp_cookie' ) );
-		add_action( 'wp_ajax_tp_cookie_bck', array( &$this, 'on_ajax_nopriv_tp_cookie_bck' ) );
-		add_action( 'wp_ajax_nopriv_tp_cookie_bck', array( &$this, 'on_ajax_nopriv_tp_cookie_bck' ) );
+		add_action( 'wp_ajax_tp_ohtcallback', [ &$this, 'on_ajax_nopriv_tp_ohtcallback' ] );
+		add_action( 'wp_ajax_nopriv_tp_ohtcallback', [ &$this, 'on_ajax_nopriv_tp_ohtcallback' ] );
+		add_action( 'wp_ajax_tp_trans_alts', [ &$this, 'on_ajax_nopriv_tp_trans_alts' ] );
+		add_action( 'wp_ajax_nopriv_tp_trans_alts', [ &$this, 'on_ajax_nopriv_tp_trans_alts' ] );
+		add_action( 'wp_ajax_tp_cookie', [ &$this, 'on_ajax_nopriv_tp_cookie' ] );
+		add_action( 'wp_ajax_nopriv_tp_cookie', [ &$this, 'on_ajax_nopriv_tp_cookie' ] );
+		add_action( 'wp_ajax_tp_cookie_bck', [ &$this, 'on_ajax_nopriv_tp_cookie_bck' ] );
+		add_action( 'wp_ajax_nopriv_tp_cookie_bck', [ &$this, 'on_ajax_nopriv_tp_cookie_bck' ] );
 
 		if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
 			// For super proxy
-			add_action( 'superproxy_reg_event', array( &$this, 'superproxy_reg' ) );
+			add_action( 'superproxy_reg_event', [ &$this, 'superproxy_reg' ] );
 			if ( $this->options->enable_superproxy ) {
-				add_action( 'wp_ajax_proxy', array( &$this, 'on_ajax_nopriv_proxy' ) );
-				add_action( 'wp_ajax_nopriv_proxy', array( &$this, 'on_ajax_nopriv_proxy' ) );
+				add_action( 'wp_ajax_proxy', [ &$this, 'on_ajax_nopriv_proxy' ] );
+				add_action( 'wp_ajax_nopriv_proxy', [ &$this, 'on_ajax_nopriv_proxy' ] );
 			}
 		}//** FULLSTOP
 		// comment_moderation_text - future filter TODO
 		// full post wrapping (should happen late)
-		add_filter( 'the_content', array( &$this, 'post_content_wrap' ), 9999 );
-		add_filter( 'the_excerpt', array( &$this, 'post_content_wrap' ), 9999 );
-		add_filter( 'the_title', array( &$this, 'post_wrap' ), 9999, 2 );
+		add_filter( 'the_content', [ &$this, 'post_content_wrap' ], 9999 );
+		add_filter( 'the_excerpt', [ &$this, 'post_content_wrap' ], 9999 );
+		add_filter( 'the_title', [ &$this, 'post_wrap' ], 9999, 2 );
 
 		// allow to mark the language?
 //        add_action('admin_menu', array(&$this, 'transposh_post_language'));
@@ -170,30 +170,30 @@ class Plugin {
 		//TODO comment_row_actions (filter)
 		// Intergrating with the gettext interface
 		if ( $this->options->transposh_gettext_integration ) {
-			add_filter( 'gettext', array( &$this, 'transposh_gettext_filter' ), 10, 3 );
-			add_filter( 'gettext_with_context', array( &$this, 'transposh_gettext_filter' ), 10, 3 );
-			add_filter( 'ngettext', array( &$this, 'transposh_ngettext_filter' ), 10, 4 );
-			add_filter( 'ngettext_with_context', array( &$this, 'transposh_ngettext_filter' ), 10, 4 );
-			add_filter( 'locale', array( &$this, 'transposh_locale_filter' ) );
+			add_filter( 'gettext', [ &$this, 'transposh_gettext_filter' ], 10, 3 );
+			add_filter( 'gettext_with_context', [ &$this, 'transposh_gettext_filter' ], 10, 3 );
+			add_filter( 'ngettext', [ &$this, 'transposh_ngettext_filter' ], 10, 4 );
+			add_filter( 'ngettext_with_context', [ &$this, 'transposh_ngettext_filter' ], 10, 4 );
+			add_filter( 'locale', [ &$this, 'transposh_locale_filter' ] );
 		}
 
 		// internal update mechnism - is disabled in wporg version unless user enabled this
 		//** WPORG VERSION
 		if ( ! defined( 'FULL_VERSION' ) && $this->options->allow_full_version_upgrade ) {
 			//** WPORGSTOP
-			add_filter( 'http_request_args', array( &$this, 'filter_wordpress_org_update' ), 10, 2 );
-			add_filter( 'pre_set_site_transient_update_plugins', array( &$this, 'check_for_plugin_update' ) );
-			add_filter( 'plugins_api', array( &$this, 'plugin_api_call' ), 10, 3 );
+			add_filter( 'http_request_args', [ &$this, 'filter_wordpress_org_update' ], 10, 2 );
+			add_filter( 'pre_set_site_transient_update_plugins', [ &$this, 'check_for_plugin_update' ] );
+			add_filter( 'plugins_api', [ &$this, 'plugin_api_call' ], 10, 3 );
 			//** WPORG VERSION
 		}
 		//** WPORGSTOP
 		// debug function for bad redirects
-		add_filter( 'wp_redirect', array( &$this, 'on_wp_redirect' ), 10, 2 );
-		add_filter( 'redirect_canonical', array( &$this, 'on_redirect_canonical' ), 10, 2 );
+		add_filter( 'wp_redirect', [ &$this, 'on_wp_redirect' ], 10, 2 );
+		add_filter( 'redirect_canonical', [ &$this, 'on_redirect_canonical' ], 10, 2 );
 
 		// support shortcodes
-		add_shortcode( 'tp', array( &$this, 'tp_shortcode' ) );
-		add_shortcode( 'tpe', array( &$this, 'tp_shortcode' ) );
+		add_shortcode( 'tp', [ &$this, 'tp_shortcode' ] );
+		add_shortcode( 'tpe', [ &$this, 'tp_shortcode' ] );
 		//
 		// FUTURE add_action('update-custom_transposh', array(&$this, 'update'));
 		// CHECK TODO!!!!!!!!!!!!
@@ -202,8 +202,8 @@ class Plugin {
 			$this->tgl = '';
 		}
 
-		register_activation_hook( __FILE__, array( &$this, 'plugin_activate' ) );
-		register_deactivation_hook( __FILE__, array( &$this, 'plugin_deactivate' ) );
+		register_activation_hook( __FILE__, [ &$this, 'plugin_activate' ] );
+		register_deactivation_hook( __FILE__, [ &$this, 'plugin_deactivate' ] );
 
 		return $this;
 	}
@@ -257,14 +257,14 @@ class Plugin {
 		}
 		// if this is not the default language, we need to make sure it redirects to what we believe is the proper url
 		if ( ! $this->options->is_default_language( $this->target_language ) ) {
-			$red = str_replace( array( '%2F', '%3A', '%3B', '%3F', '%3D', '%26' ), array(
+			$red = str_replace( [ '%2F', '%3A', '%3B', '%3F', '%3D', '%26' ], [
 				'/',
 				':',
 				';',
 				'?',
 				'=',
 				'&'
-			), urlencode( $this->rewrite_url( $red ) ) );
+			], urlencode( $this->rewrite_url( $red ) ) );
 		}
 
 		return $red;
@@ -278,10 +278,10 @@ class Plugin {
 		$this->clean_url = Utilities::cleanup_url( Utilities::get_clean_server_var( 'REQUEST_URI' ), $this->home_url, true );
 		// we need this if we are using url translations
 		if ( $this->options->enable_url_translate ) {
-			$this->clean_url = Utilities::get_original_url( $this->clean_url, '', $this->target_language, array(
+			$this->clean_url = Utilities::get_original_url( $this->clean_url, '', $this->target_language, [
 				$this->database,
 				'fetch_original'
-			) );
+			] );
 		}
 
 		return $this->clean_url;
@@ -304,7 +304,7 @@ class Plugin {
 	 *
 	 * @param string $url Url to check
 	 *
-	 * @return boolean Is it a special page?
+	 * @return bool Is it a special page?
 	 */
 	public function is_special_page( $url ) {
 		return ( stripos( $url, '/wp-login.php' ) !== false ||
@@ -376,10 +376,10 @@ class Plugin {
 
 			//translate the entire page
 			$parse                          = new Parser();
-			$parse->fetch_translate_func    = array( &$this->database, 'fetch_translation' );
-			$parse->prefetch_translate_func = array( &$this->database, 'prefetch_translations' );
-			$parse->url_rewrite_func        = array( &$this, 'rewrite_url' );
-			$parse->split_url_func          = array( &$this, 'split_url' );
+			$parse->fetch_translate_func    = [ &$this->database, 'fetch_translation' ];
+			$parse->prefetch_translate_func = [ &$this->database, 'prefetch_translations' ];
+			$parse->url_rewrite_func        = [ &$this, 'rewrite_url' ];
+			$parse->split_url_func          = [ &$this, 'split_url' ];
 			$parse->dir_rtl                 = ( in_array( $this->target_language, Constants::$rtl_languages ) );
 			$parse->lang                    = $this->target_language;
 			$parse->default_lang            = $this->options->is_default_language( $this->target_language );
@@ -469,7 +469,7 @@ class Plugin {
 		load_plugin_textdomain( TRANSPOSH_TEXT_DOMAIN, false, dirname( plugin_basename( __FILE__ ) ) . '/langs' );
 
 		//set the callback for translating the page when it's done
-		ob_start( array( &$this, "process_page" ) );
+		ob_start( [ &$this, "process_page" ] );
 	}
 
 	/**
@@ -495,7 +495,7 @@ class Plugin {
 			return $rules;
 		}
 
-		$newRules    = array();
+		$newRules    = [];
 		$lang_prefix = "(" . str_replace( ',', '|', $this->options->viewable_languages ) . ")/";
 
 		$lang_parameter = "&" . LANG_PARAM . '=$matches[1]';
@@ -580,7 +580,7 @@ class Plugin {
 
 		if ( $this->tried_buffer ) {
 			LogService::legacy_log( "we will retrigger the output buffering" );
-			ob_start( array( &$this, "process_page" ) );
+			ob_start( [ &$this, "process_page" ] );
 		}
 
 		// make themes that support rtl - go rtl http://wordpress.tv/2010/05/01/yoav-farhi-right-to-left-themes-sf10
@@ -644,8 +644,8 @@ class Plugin {
 		// TODO - it has a bug of returning to original language following search, which can be resolved by removing search from widget urls, but maybe later...
 		if ( isset( $wp->query_vars['s'] ) ) {
 			if ( $this->options->enable_search_translate ) {
-				add_action( 'pre_get_posts', array( &$this, 'pre_post_search' ) );
-				add_action( 'posts_where_request', array( &$this, 'posts_where_request' ) );
+				add_action( 'pre_get_posts', [ &$this, 'pre_post_search' ] );
+				add_action( 'posts_where_request', [ &$this, 'posts_where_request' ] );
 			}
 			if ( Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url ) && ! Utilities::get_language_from_url( Utilities::get_clean_server_var( 'REQUEST_URI' ), $this->home_url ) ) {
 				$this->tp_redirect( Utilities::rewrite_url_lang_param( Utilities::get_clean_server_var( "REQUEST_URI" ), $this->home_url, $this->enable_permalinks_rewrite, Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url ), false ) ); //."&stop=y");
@@ -671,7 +671,7 @@ class Plugin {
 
 	/**
 	 * Determine if the current user is allowed to translate.
-	 * @return boolean Is allowed to translate?
+	 * @return bool Is allowed to translate?
 	 */
 	public function is_translator() {
 		return is_user_logged_in() && current_user_can( TRANSLATOR );
@@ -774,7 +774,7 @@ class Plugin {
 
 			LogService::legacy_log( "Messsage to admin: {$this->admin_msg}", 1 );
 			//Some error occured - notify admin and deactivate plugin
-			add_action( 'admin_notices', array( &$this, 'plugin_install_error' ) );
+			add_action( 'admin_notices', [ &$this, 'plugin_install_error' ] );
 		}
 	}
 
@@ -809,7 +809,7 @@ class Plugin {
 		}
 
 		//include the transposh.css
-		wp_enqueue_style( 'transposh', $this->transposh_plugin_url . TRANSPOSH_DIR_CSS . '/transposh.css', array(), TRANSPOSH_PLUGIN_VER );
+		wp_enqueue_style( 'transposh', $this->transposh_plugin_url . TRANSPOSH_DIR_CSS . '/transposh.css', [], TRANSPOSH_PLUGIN_VER );
 
 		LogService::legacy_log( 'Added transposh_css', 4 );
 	}
@@ -823,9 +823,9 @@ class Plugin {
 		{
 			return;
 		} // TODO, check just for settings page admin and pages with our translate
-		wp_register_script( 'transposh', $this->transposh_plugin_url . TRANSPOSH_DIR_JS . '/transposh.js', array( 'jquery' ), TRANSPOSH_PLUGIN_VER, $this->options->enable_footer_scripts );
+		wp_register_script( 'transposh', $this->transposh_plugin_url . TRANSPOSH_DIR_JS . '/transposh.js', [ 'jquery' ], TRANSPOSH_PLUGIN_VER, $this->options->enable_footer_scripts );
 		// true -> 1, false -> nothing
-		$script_params = array(
+		$script_params = [
 			'ajaxurl'    => admin_url( 'admin-ajax.php' ),
 			'plugin_url' => rtrim($this->transposh_plugin_url, '/'),
 			'lang'       => $this->target_language,
@@ -833,7 +833,7 @@ class Plugin {
 			// those two options show if the script can support said engines
 			'prefix'     => SPAN_PREFIX,
 			'preferred'  => array_keys( $this->options->get_sorted_engines() )
-		);
+		];
 
 		$script_params['engines'] = new stdClass();
 		if ( in_array( $this->target_language, Constants::$engines['a']['langs'] ) ) {
@@ -924,7 +924,7 @@ class Plugin {
 	/**
 	 * Determine if the currently selected language (taken from the query parameters) is in the admin's list
 	 * of editable languages and the current user is allowed to translate.
-	 * @return boolean Is translation allowed?
+	 * @return bool Is translation allowed?
 	 */
 	// TODO????
 	public function is_editing_permitted() {
@@ -944,7 +944,7 @@ class Plugin {
 	 * Determine if the currently selected language (taken from the query parameters) is in the admin's list
 	 * of editable languages and that automatic translation has been enabled.
 	 * Note that any user can auto translate. i.e. ignore permissions.
-	 * @return boolean Is automatic translation allowed?
+	 * @return bool Is automatic translation allowed?
 	 * TODO: move to options
 	 */
 	public function is_auto_translate_permitted() {
@@ -969,7 +969,7 @@ class Plugin {
 	 * @return array parts that may be translated
 	 */
 	public function split_url( $href ) {
-		$ret = array();
+		$ret = [];
 		// Ignore urls not from this site
 		if ( ! Utilities::is_rewriteable_url( $href, $this->home_url ) ) {
 			return $ret;
@@ -1012,7 +1012,7 @@ class Plugin {
 	 *
 	 * @param $href Original href
 	 *
-	 * @return boolean Modified href
+	 * @return bool Modified href
 	 */
 	public function rewrite_url( $href ) {
 		LogService::legacy_log( "got: $href", 4 );
@@ -1047,10 +1047,10 @@ class Plugin {
 		// some hackery needed for url translations
 		// first cut home
 		if ( $this->options->enable_url_translate ) {
-			$href = Utilities::translate_url( $href, $this->home_url, $this->target_language, array(
+			$href = Utilities::translate_url( $href, $this->home_url, $this->target_language, [
 				&$this->database,
 				'fetch_translation'
-			) );
+			] );
 		}
 		$href = Utilities::rewrite_url_lang_param( $href, $this->home_url, $this->enable_permalinks_rewrite, $this->target_language, $this->edit_mode, $use_params );
 		LogService::legacy_log( "rewritten: $href", 4 );
@@ -1068,7 +1068,7 @@ class Plugin {
 	public function plugin_action_links( $links ) {
 		LogService::legacy_log( 'in plugin action', 5 );
 
-		return array_merge( array( '<a href="' . admin_url( 'admin.php?page=tp_main' ) . '">' . __( 'Settings' ) . '</a>' ), $links );
+		return array_merge( [ '<a href="' . admin_url( 'admin.php?page=tp_main' ) . '">' . __( 'Settings' ) . '</a>' ], $links );
 	}
 
 	/**
@@ -1105,7 +1105,7 @@ class Plugin {
 			// added slashes screw with quote grouping when done early, so done later
 			$q['s'] = stripslashes( $q['s'] );
 			if ( ! empty( $q['sentence'] ) ) {
-				$q['search_terms'] = array( $q['s'] );
+				$q['search_terms'] = [ $q['s'] ];
 			} else {
 				preg_match_all( '/".*?("|$)|((?<=[\\s",+])|^)[^\\s",+]+/', $q['s'], $matches );
 				$q['search_terms'] = array_map( static function ( $a ) {
@@ -1315,10 +1315,10 @@ class Plugin {
 			LogService::legacy_log( 'Trying to find original url' );
 			$this->got_request = true;
 			// the trick is to replace the URI and put it back afterwards
-			$_SERVER['REQUEST_URI'] = Utilities::get_original_url( $requri, '', $lang, array(
+			$_SERVER['REQUEST_URI'] = Utilities::get_original_url( $requri, '', $lang, [
 				$this->database,
 				'fetch_original'
-			) );
+			] );
 			global $wp;
 			$wp->parse_request();
 			$query                  = $wp->query_vars;
@@ -1351,21 +1351,21 @@ class Plugin {
 			$translation = TP_GTXT_BRK . $translation . TP_GTXT_BRK_CLOSER;
 		}
 
-		return str_replace( array(
+		return str_replace( [
 			'%s',
 			'%1$s',
 			'%2$s',
 			'%3$s',
 			'%4$s',
 			'%5$s'
-		), array(
+		], [
 			TP_GTXT_IBRK . '%s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%1$s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%2$s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%3$s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%4$s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%5$s' . TP_GTXT_IBRK_CLOSER
-		), $translation );
+		], $translation );
 	}
 
 	/**
@@ -1389,21 +1389,21 @@ class Plugin {
 			$translation = TP_GTXT_BRK . $translation . TP_GTXT_BRK_CLOSER;
 		}
 
-		return str_replace( array(
+		return str_replace( [
 			'%s',
 			'%1$s',
 			'%2$s',
 			'%3$s',
 			'%4$s',
 			'%5$s'
-		), array(
+		], [
 			TP_GTXT_IBRK . '%s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%1$s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%2$s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%3$s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%4$s' . TP_GTXT_IBRK_CLOSER,
 			TP_GTXT_IBRK . '%5$s' . TP_GTXT_IBRK_CLOSER
-		), $translation );
+		], $translation );
 	}
 
 	/**
@@ -1485,12 +1485,12 @@ class Plugin {
 
 		if ( isset( $atts['widget'] ) ) {
 			ob_start();
-			$this->widget->widget( array(
+			$this->widget->widget( [
 				'before_widget' => '',
 				'before_title'  => '',
 				'after_widget'  => '',
 				'after_title'   => ''
-			), array( 'title' => '', 'widget_file' => $atts['widget'] ), true );
+			], [ 'title' => '', 'widget_file' => $atts['widget'] ], true );
 			$widgetcontent = ob_get_contents();
 			ob_end_clean();
 
@@ -1544,7 +1544,7 @@ class Plugin {
 		$reqheaders = getallheaders();
 		//OpenTransposh\Logging\Logger($reqheaders);
 		unset( $reqheaders['Host'], $reqheaders['Content-Length'] );
-		$headers = array();
+		$headers = [];
 		foreach ( $reqheaders as $name => $value ) {
 			$headers[] = "$name: $value";
 		}
@@ -1605,7 +1605,7 @@ class Plugin {
 		} else {
 			// item count
 			$i = 0;
-			$q = array();
+			$q = [];
 			foreach ( $_GET['q'] as $p ) {
 				[ , $trans ] = $this->database->fetch_translation( stripslashes( $p ), $tl );
 				if ( ! $trans ) {
@@ -1666,7 +1666,7 @@ class Plugin {
 			for ( $j = 0; $j < $i; $j ++ ) {
 				if ( isset( $r[ $j ] ) ) {
 					$jsonout->results[] = $r[ $j ];
-				} else if ( isset( $result[ $k ] ) ) {
+				} elseif ( isset( $result[ $k ] ) ) {
 					// TODO: no value - original?
 					// There are no results? need to check!
 					$jsonout->results[] = $result[ $k ];
@@ -1712,8 +1712,8 @@ class Plugin {
 	public function get_yandex_translation( $tl, $sl, $q ) {
 		$sid       = '';
 		$timestamp = 0;
-		if ( get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array() ) ) {
-			[ $sid, $timestamp ] = get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array() );
+		if ( get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, [] ) ) {
+			[ $sid, $timestamp ] = get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, [] );
 		}
 		LogService::legacy_log( "yandex sid $sid", 1 );
 		if ( ( $sid == '' ) && ( time() - TRANSPOSH_YANDEXPROXY_DELAY > $timestamp ) ) {
@@ -1746,7 +1746,7 @@ class Plugin {
 				return false;
 			}
 			//return false;
-			update_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array( $sid, time() ) );
+			update_option( TRANSPOSH_OPTIONS_YANDEXPROXY, [ $sid, time() ] );
 			curl_close( $ch );
 		}
 
@@ -1797,7 +1797,7 @@ class Plugin {
 			LogService::legacy_log( 'Some sort of error!', 1 );
 			LogService::legacy_log( $output, 1 );
 			if ( $jsonarr->code == 406 || $jsonarr->code == 405 ) { //invalid session
-				update_option( TRANSPOSH_OPTIONS_YANDEXPROXY, array( '', time() ) );
+				update_option( TRANSPOSH_OPTIONS_YANDEXPROXY, [ '', time() ] );
 			}
 
 			return false;
@@ -1894,8 +1894,8 @@ class Plugin {
 
 // Proxied translation for google translate
 	public function get_google_translation( $tl, $sl, $q ) {
-		if ( get_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, array() ) ) {
-			[ $googlemethod, $timestamp ] = get_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, array() );
+		if ( get_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, [] ) ) {
+			[ $googlemethod, $timestamp ] = get_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, [] );
 			//$googlemethod = 0;
 			//$timestamp = 0;
 			LogService::legacy_log( "Google method $googlemethod, " . date( DATE_RFC2822,
@@ -1922,12 +1922,12 @@ class Plugin {
 			$iqstr = urldecode( $q );
 		}
 		// we avoid curling we had all results prehand
-		$urls = array(
+		$urls = [
 			'http://translate.google.com',
 			'http://212.199.205.226',
 			'http://74.125.195.138',
 			'https://translate.googleapis.com'
-		);
+		];
 
 		$attempt = 1;
 		$failed  = true;
@@ -1965,7 +1965,7 @@ class Plugin {
 				if ( $info['http_code'] != 200 ) {
 					LogService::legacy_log( "method fail - $attempt", 1 );
 					$failed = true;
-					update_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, array( $attempt, time() ) );
+					update_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, [ $attempt, time() ] );
 				}
 				unset( $info );
 			}
@@ -2037,7 +2037,7 @@ class Plugin {
 			echo "only admin is allowed";
 			die();
 		}
-		$oht = get_option( TRANSPOSH_OPTIONS_OHT, array() );
+		$oht = get_option( TRANSPOSH_OPTIONS_OHT, [] );
 		if ( ! isset( $_GET['orglang'] ) ) {
 			$_GET['orglang'] = $this->options->default_language;
 		}
@@ -2047,12 +2047,12 @@ class Plugin {
 			LogService::legacy_log( 'oht false' );
 			echo json_encode( false );
 		} else {
-			$oht[ $key ] = array(
+			$oht[ $key ] = [
 				'q'  => $_GET['q'],
 				'l'  => $_GET['lang'],
 				'ol' => $_GET['orglang'],
 				't'  => $_GET['token']
-			);
+			];
 			LogService::legacy_log( 'oht true' );
 			echo json_encode( true );
 		}
@@ -2071,17 +2071,17 @@ class Plugin {
 	 */
 	public function run_oht() {
 		LogService::legacy_log( "oht should run", 2 );
-		$oht = get_option( TRANSPOSH_OPTIONS_OHT, array() );
+		$oht = get_option( TRANSPOSH_OPTIONS_OHT, [] );
 		LogService::legacy_log( $oht, 3 );
-		$ohtp      = get_option( TRANSPOSH_OPTIONS_OHT_PROJECTS, array() );
+		$ohtp      = get_option( TRANSPOSH_OPTIONS_OHT_PROJECTS, [] );
 		$projectid = time();
 		//send less data
-		$ohtbody = array();
+		$ohtbody = [];
 		$pcount  = 0;
 		foreach ( $oht as $arr ) {
 			$pcount ++;
 			LogService::legacy_log( $arr );
-			$ohtbody[ $arr['t'] ] = array( 'q' => $arr['q'], 'l' => $arr['l'], 'ol' => $arr['ol'] );
+			$ohtbody[ $arr['t'] ] = [ 'q' => $arr['q'], 'l' => $arr['l'], 'ol' => $arr['ol'] ];
 		}
 		$ohtbody['pid']      = $projectid;
 		$ohtbody['id']       = $this->options->oht_id;
@@ -2090,7 +2090,7 @@ class Plugin {
 		$ohtbody['homeurl']  = $this->home_url;
 		LogService::legacy_log( $ohtbody );
 		// now we send this, add to log that it was sent to oht.. we'll also add a timer to make sure it gets back to us
-		$ret = wp_remote_post( 'http://svc.transposh.org/oht.php', array( 'body' => $ohtbody ) );
+		$ret = wp_remote_post( 'http://svc.transposh.org/oht.php', [ 'body' => $ohtbody ] );
 		if ( $ret['response']['code'] == '200' ) {
 			delete_option( TRANSPOSH_OPTIONS_OHT );
 			$ohtp[ $projectid ] = $pcount;
@@ -2104,7 +2104,7 @@ class Plugin {
 	 * callback from one hour translation
 	 */
 	public function on_ajax_nopriv_tp_ohtcallback() {
-		$ohtp = get_option( TRANSPOSH_OPTIONS_OHT_PROJECTS, array() );
+		$ohtp = get_option( TRANSPOSH_OPTIONS_OHT_PROJECTS, [] );
 		LogService::legacy_log( $ohtp );
 		if ( $ohtp[ $_POST['projectid'] ] ) {
 			LogService::legacy_log( $_POST['projectid'] . " was found and will be processed" );
@@ -2167,18 +2167,18 @@ class Plugin {
 		$this->do_update_check = false; // for next time
 		LogService::legacy_log( 'yes, we should', 4 );
 
-		$args           = array(
+		$args           = [
 			'slug'    => $this->transposh_plugin_basename,
 			'version' => TRANSPOSH_PLUGIN_VER,
-		);
-		$request_string = array(
-			'body'       => array(
+		];
+		$request_string = [
+			'body'       => [
 				'action'  => 'basic_check',
 				'request' => serialize( $args ),
 				'api-key' => md5( get_bloginfo( 'url' ) )
-			),
+			],
 			'user-agent' => 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' )
-		);
+		];
 
 		// Start checking for an update
 		$raw_response = wp_remote_post( TRANSPOSH_UPDATE_SERVICE_URL, $request_string );
@@ -2210,14 +2210,14 @@ class Plugin {
 		//$current_version = $plugin_info->checked[$plugin_slug . '/' . $plugin_slug . '.php'];
 		$args->version = '%VERSION';
 
-		$request_string = array(
-			'body'       => array(
+		$request_string = [
+			'body'       => [
 				'action'  => $action,
 				'request' => serialize( $args ),
 				'api-key' => md5( get_bloginfo( 'url' ) )
-			),
+			],
 			'user-agent' => 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' )
-		);
+		];
 
 		$request = wp_remote_post( TRANSPOSH_UPDATE_SERVICE_URL, $request_string );
 
