@@ -1,0 +1,6 @@
+/.github/
+/.idea/
+/build/
+/tests/
+phpunit.xml
+phpunit.xml.dist

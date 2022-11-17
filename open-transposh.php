@@ -1,13 +1,13 @@
 <?php
 /**
-  Plugin Name: Open Transposh Translation Filter
-  Plugin URI: https://github.com/spenserhale/open-transposh-wp-plugin
-  Description: Translation Filter Plugin for WordPress offers a unique approach to blog translation. It allows your blog to combine automatic and human translation aided by your users with an easy-to-use in-context interface.
-  Author: Open Transposh Community
-  Version: 2.0.0
-  License: GPL V3 (https://www.gnu.org/licenses/gpl-3.0.txtt)
-  Text Domain: transposh
-  Domain Path: /langs
+ * Plugin Name: Open Transposh Translation Filter
+ * Plugin URI: https://github.com/spenserhale/open-transposh-wp-plugin
+ * Description: Translation Filter Plugin for WordPress offers a unique approach to blog translation. It allows your blog to combine automatic and human translation aided by your users with an easy-to-use in-context interface.
+ * Author: Open Transposh Community
+ * Version: 2.0.0
+ * License: GPL V3 (https://www.gnu.org/licenses/gpl-3.0.txtt)
+ * Text Domain: transposh
+ *Domain Path: /langs
  */
 
 /**

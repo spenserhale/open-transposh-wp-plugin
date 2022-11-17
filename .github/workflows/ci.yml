@@ -1,0 +1,28 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: php-actions/composer@v6
+      - name: Install dependencies
+        uses: php-actions/composer@v6
+        with:
+          command: install -o --no-dev --no-interaction --prefer-dist
+
+      - name: Create a built branch
+        run: |
+          BRANCH_NAME=$(echo $GITHUB_REF | grep -oP '(?<=refs\/heads\/).*')
+          rm .gitignore
+          mv .deploy.gitignore .gitignore
+          git config --global user.email "ci@company.com"
+          git config --global user.name "Company CI"
+          git remote set-url origin https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY.git
+          git checkout -b $BRANCH_NAME-built
+          git add -A && git commit -m "built from $GITHUB_SHA"
+          git push --force -u origin $BRANCH_NAME-built
+          
