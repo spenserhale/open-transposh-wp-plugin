@@ -95,10 +95,9 @@ class Plugin {
 		$this->transposh_plugin_url = plugin_dir_url( $plugin_file );
 		$this->transposh_plugin_dir = plugin_dir_path( $plugin_file );
 		$this->transposh_plugin_basename = plugin_basename( $plugin_file );
-	}
 
-	public function init(): static {
 		// create and initialize sub-objects
+		$this->logger          = new NullLogger();
 		$this->options         = new Plugin_Options();
 		$this->database        = new Database( $this );
 		$this->admin           = new Plugin_Admin( $this );
@@ -204,8 +203,6 @@ class Plugin {
 
 		register_activation_hook( __FILE__, [ &$this, 'plugin_activate' ] );
 		register_deactivation_hook( __FILE__, [ &$this, 'plugin_deactivate' ] );
-
-		return $this;
 	}
 
 	/**
@@ -2250,8 +2247,6 @@ class Plugin {
 			}
 
 			$this->logger = $logger;
-		} else {
-			$this->logger = new NullLogger();
 		}
 	}
 

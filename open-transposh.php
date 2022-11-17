@@ -46,7 +46,7 @@ require __DIR__ . '/constants.php';
 require __DIR__ . '/legacy.php';
 require __DIR__ . '/functions.php';
 
-$open_transposh_plugin = OpenTransposh\Plugin::get_instance(__FILE__)->init();
+$open_transposh_plugin = OpenTransposh\Plugin::get_instance(__FILE__);
 
 /** @var OpenTransposh\Plugin|transposh_plugin $my_transposh_plugin */
 $my_transposh_plugin = new transposh_plugin($open_transposh_plugin);
