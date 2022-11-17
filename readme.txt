@@ -86,3 +86,4 @@ Ofer Wald, the original author of Transposh, for creating this awesome plugin an
 - Libraries -
 
 - [SimpleHtmlDom](https://github.com/simplehtmldom/simplehtmldom)
+- PSR\Log from PHP Framework Interoperability Group

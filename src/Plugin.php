@@ -2,14 +2,9 @@
 
 namespace OpenTransposh;
 
-use OpenTransposh\Core\Constants;
-use OpenTransposh\Core\Parser;
-use OpenTransposh\Core\Utilities;
-use OpenTransposh\Logging\Logger;
-use OpenTransposh\Logging\LogService;
-use OpenTransposh\Logging\Query_Monitor_Logger;
+use OpenTransposh\Core\{Constants, Parser, Utilities};
+use OpenTransposh\Logging\{Logger, LogService, Query_Monitor_Logger, NullLogger};
 use OpenTransposh\Widgets\Plugin_Widget;
-use Psr\Log\NullLogger;
 use stdClass;
 use WP;
 use WP_Error;
