@@ -2,9 +2,13 @@
 
 namespace OpenTransposh\Logging;
 
-use OpenTransposh\Plugin;
-
 class LogService {
+	private static Logger|NullLogger|Query_Monitor_Logger $instance;
+
+	public static function set_instance( Logger|NullLogger|Query_Monitor_Logger $instance ) {
+		self::$instance = $instance;
+	}
+
 	public static function legacy_log( $message, $severity = 3 ) {
 		$level = match ( $severity ) {
 			0 => 'emergency',
@@ -23,6 +27,6 @@ class LogService {
 			$message = 'Array: ' . var_export( $message, true );
 		}
 
-		Plugin::get_instance()->get_logger()->log( $level, $message );
+		self::$instance->log( $level, $message );
 	}
 }

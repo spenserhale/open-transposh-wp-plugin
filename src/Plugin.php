@@ -96,8 +96,11 @@ class Plugin {
 		$this->transposh_plugin_dir = plugin_dir_path( $plugin_file );
 		$this->transposh_plugin_basename = plugin_basename( $plugin_file );
 
+		$null_logger = new NullLogger();
+		LogService::set_instance( $null_logger );
+
 		// create and initialize sub-objects
-		$this->logger          = new NullLogger();
+		$this->logger          = $null_logger;
 		$this->options         = new Plugin_Options();
 		$this->database        = new Database( $this );
 		$this->admin           = new Plugin_Admin( $this );
@@ -2247,6 +2250,7 @@ class Plugin {
 			}
 
 			$this->logger = $logger;
+			LogService::set_instance( $logger );
 		}
 	}
 
