@@ -89,6 +89,15 @@ class Plugin {
 	 * class constructor
 	 */
 	public function __construct(string $plugin_file) {
+		// "global" vars
+		$this->home_url = get_option( 'home' );
+
+		$this->transposh_plugin_url = plugin_dir_url( $plugin_file );
+		$this->transposh_plugin_dir = plugin_dir_path( $plugin_file );
+		$this->transposh_plugin_basename = plugin_basename( $plugin_file );
+	}
+
+	public function init(): static {
 		// create and initialize sub-objects
 		$this->options         = new Plugin_Options();
 		$this->database        = new Database( $this );
@@ -98,14 +107,6 @@ class Plugin {
 		$this->third_party     = new Integrations( $this );
 		$this->mail            = new Mail( $this );
 		$this->ajax_controller = new Ajax_Controller( $this );
-
-		// "global" vars
-		$this->home_url = get_option( 'home' );
-
-		$this->transposh_plugin_url = plugin_dir_url( $plugin_file );
-		$this->transposh_plugin_dir = plugin_dir_path( $plugin_file );
-		$this->transposh_plugin_basename = plugin_basename( $plugin_file );
-
 
 		// TODO: get_class_methods to replace said mess, other way?
 		add_filter( 'plugin_action_links_' . $this->transposh_plugin_basename, array( &$this, 'plugin_action_links' ) );
@@ -183,7 +184,7 @@ class Plugin {
 			add_filter( 'http_request_args', array( &$this, 'filter_wordpress_org_update' ), 10, 2 );
 			add_filter( 'pre_set_site_transient_update_plugins', array( &$this, 'check_for_plugin_update' ) );
 			add_filter( 'plugins_api', array( &$this, 'plugin_api_call' ), 10, 3 );
-			//** WPORG VERSION            
+			//** WPORG VERSION
 		}
 		//** WPORGSTOP
 		// debug function for bad redirects
@@ -203,6 +204,8 @@ class Plugin {
 
 		register_activation_hook( __FILE__, array( &$this, 'plugin_activate' ) );
 		register_deactivation_hook( __FILE__, array( &$this, 'plugin_deactivate' ) );
+
+		return $this;
 	}
 
 	/**
