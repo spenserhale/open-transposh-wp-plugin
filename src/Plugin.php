@@ -1432,9 +1432,6 @@ class Plugin {
 	}
 
 	/**
-	 * Support for tp shortcodes - [tp]
-	 * @see http://trac.transposh.org/wiki/ShortCodes
-	 *
 	 * @param array $atts
 	 * @param string $content
 	 *
@@ -2174,7 +2171,7 @@ class Plugin {
 
 		$args           = array(
 			'slug'    => $this->transposh_plugin_basename,
-			'version' => '%VERSION%', //$checked_data->checked[$this->transposh_file_location],
+			'version' => TRANSPOSH_PLUGIN_VER,
 		);
 		$request_string = array(
 			'body'       => array(

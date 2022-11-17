@@ -24,7 +24,7 @@ class Backup {
 		$body['home_url'] = $this->transposh->home_url;
 		$body['key']      = $this->transposh->options->transposh_key;
 		$body['v']        = '2';
-		$body['tpv']      = '%VERSION%';
+		$body['tpv']      = TRANSPOSH_PLUGIN_VER;
 
 		return $body;
 	}

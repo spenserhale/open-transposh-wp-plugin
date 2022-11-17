@@ -1,17 +1,5 @@
 <?php
 
-/*
-  Plugin Name: Dropdown selection with image
-  Plugin URI: http://transposh.org/
-  Description: A widget using javascript to present a dropdown selection box with images - adapted from: http://www.jankoatwarpspeed.com/post/2009/07/28/reinventing-drop-down-with-css-jquery.asp
-  Author: Team Transposh
-  Version: 1.0
-  Author URI: http://transposh.org/
-  License: GPL (http://www.gnu.org/licenses/gpl.txt)
- */
-
-
-
 use OpenTransposh\Plugin;
 use OpenTransposh\Widgets\Base_Widget;
 
@@ -28,7 +16,7 @@ class tpw_image_dropdown extends Base_Widget {
 	/**
 	 * This function does the actual HTML for the widget
 	 *
-	 * @param array $args - http://trac.transposh.org/wiki/WidgetWritingGuide#functiontp_widgets_doargs
+	 * @param array $args
 	 */
 	static function tp_widget_do( $args ) {
 		global $my_transposh_plugin;

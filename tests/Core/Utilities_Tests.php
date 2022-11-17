@@ -38,7 +38,7 @@ class Utilities_Tests extends WP_UnitTestCase {
 	public function testRewriteURL() {
 		$edit        = false;
 		$params_only = false;
-		$homeurl     = "http://transposh.org";
+		$homeurl     = "https://transposh.org";
 		$permalinks  = true;
 		$this->assertEquals( "/he/", Utilities::rewrite_url_lang_param( "", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/he/", Utilities::rewrite_url_lang_param( "/", $homeurl, $permalinks, "he", $edit, $params_only ) );
@@ -46,30 +46,30 @@ class Utilities_Tests extends WP_UnitTestCase {
 		$this->assertEquals( "/he/test/", Utilities::rewrite_url_lang_param( "/test/", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/he/test/", Utilities::rewrite_url_lang_param( "/test/?lang=en", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/he/test/", Utilities::rewrite_url_lang_param( "/en/test/?lang=en", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/he", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/fr", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/he/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/fr/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/zh-tw/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/37/", Utilities::rewrite_url_lang_param( "http://transposh.org/37/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh-tw&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&amp;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&#038;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?cat=y", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/he", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/fr", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/he/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/fr/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/zh-tw/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/37/", Utilities::rewrite_url_lang_param( "https://transposh.org/37/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh-tw&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&amp;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&#038;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?cat=y", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "he", $edit, $params_only ) );
 	}
 
 	public function testRewriteURLedit() {
 		$edit        = true;
 		$params_only = false;
-		$homeurl     = "http://transposh.org";
+		$homeurl     = "https://transposh.org";
 		$permalinks  = true;
 		$this->assertEquals( "/he/?edit=1", Utilities::rewrite_url_lang_param( "", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/he/?edit=1", Utilities::rewrite_url_lang_param( "/", $homeurl, $permalinks, "he", $edit, $params_only ) );
@@ -77,30 +77,30 @@ class Utilities_Tests extends WP_UnitTestCase {
 		$this->assertEquals( "/he/test/?edit=1", Utilities::rewrite_url_lang_param( "/test/", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/he/test/?edit=1", Utilities::rewrite_url_lang_param( "/test/?lang=en", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/he/test/?edit=1", Utilities::rewrite_url_lang_param( "/en/test/?lang=en", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/he", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/fr", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/he/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/fr/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/zh-tw/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/37/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/37/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh-tw&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&amp;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&#038;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/he/?cat=y&edit=1", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/he", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/fr", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/he/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/fr/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/zh-tw/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/37/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/37/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh-tw&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&amp;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&#038;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/he/?cat=y&edit=1", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "he", $edit, $params_only ) );
 	}
 
 	public function testRewriteURLparams() {
 		$edit        = false;
 		$params_only = true;
-		$homeurl     = "http://transposh.org";
+		$homeurl     = "https://transposh.org";
 		$permalinks  = true;
 		$this->assertEquals( "?lang=he", Utilities::rewrite_url_lang_param( "", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/?lang=he", Utilities::rewrite_url_lang_param( "/", $homeurl, $permalinks, "he", $edit, $params_only ) );
@@ -108,31 +108,31 @@ class Utilities_Tests extends WP_UnitTestCase {
 		$this->assertEquals( "/test/?lang=he", Utilities::rewrite_url_lang_param( "/test/", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/test/?lang=he", Utilities::rewrite_url_lang_param( "/test/?lang=en", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/test/?lang=he", Utilities::rewrite_url_lang_param( "/en/test/?lang=en", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/he", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/fr", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/he/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/fr/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/zh-tw/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/37/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/37/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh-tw&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&amp;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&#038;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/?cat=y&lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/he", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/fr", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/he/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/fr/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/zh-tw/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/37/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/37/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh-tw&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&amp;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&#038;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/?cat=y&lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "he", $edit, $params_only ) );
 	}
 
 	public function testRewriteURLwithsubdir() {
-		//$GLOBALS[home_url] = "http://transposh.org/test/";
+		//$GLOBALS[home_url] = "https://transposh.org/test/";
 		$edit        = false;
 		$params_only = false;
-		$homeurl     = "http://transposh.org/test/";
+		$homeurl     = "https://transposh.org/test/";
 		$permalinks  = true;
 		$this->assertEquals( "/he/", Utilities::rewrite_url_lang_param( "", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/he/", Utilities::rewrite_url_lang_param( "/", $homeurl, $permalinks, "he", $edit, $params_only ) );
@@ -140,34 +140,34 @@ class Utilities_Tests extends WP_UnitTestCase {
 		$this->assertEquals( "/test/he/", Utilities::rewrite_url_lang_param( "/test/", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/test/he/", Utilities::rewrite_url_lang_param( "/test/?lang=en", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/test/he/", Utilities::rewrite_url_lang_param( "/test/en/?lang=en", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/he", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/fr", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/he/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/fr/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/zh-tw/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/37/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/37/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh-tw&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh&amp;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh&#038;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/he/?cat=y", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/he", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/fr", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/he/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/fr/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/zh-tw/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/37/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/37/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh-tw&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh&amp;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh&#038;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/he/?cat=y", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "he", $edit, $params_only ) );
 
 		$this->assertEquals( "/", Utilities::rewrite_url_lang_param( "/", $homeurl, $permalinks, "", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?cat=y", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?cat=y", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "", $edit, $params_only ) );
 	}
 
 	public function testRewriteURLwithsubdir2() {
-		//$GLOBALS[home_url] = "http://transposh.org/test/";
+		//$GLOBALS[home_url] = "https://transposh.org/test/";
 		$edit        = false;
 		$params_only = true;
-		$homeurl     = "http://transposh.org/test/";
+		$homeurl     = "https://transposh.org/test/";
 		$permalinks  = true;
 		$this->assertEquals( "?lang=he", Utilities::rewrite_url_lang_param( "", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/?lang=he", Utilities::rewrite_url_lang_param( "/", $homeurl, $permalinks, "he", $edit, $params_only ) );
@@ -175,47 +175,47 @@ class Utilities_Tests extends WP_UnitTestCase {
 		$this->assertEquals( "/test/?lang=he", Utilities::rewrite_url_lang_param( "/test/", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/test/?lang=he", Utilities::rewrite_url_lang_param( "/test/?lang=en", $homeurl, $permalinks, "he", $edit, $params_only ) );
 		$this->assertEquals( "/test/?lang=he", Utilities::rewrite_url_lang_param( "/test/en/?lang=en", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/he", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/fr", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/he/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://www.islands.co.il/fr/", Utilities::rewrite_url_lang_param( "http://www.islands.co.il/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/zh-tw/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/37/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/37/", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh-tw&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh&amp;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh&#038;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?cat=y&lang=he", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/he", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/fr", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/he/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://www.islands.co.il/fr/", Utilities::rewrite_url_lang_param( "https://www.islands.co.il/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/he", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/he/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/zh-tw/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/37/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/37/", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh-tw&edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh&amp;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh&#038;edit=1", $homeurl, $permalinks, "he", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?cat=y&lang=he", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "he", $edit, $params_only ) );
 
 		$this->assertEquals( "", Utilities::rewrite_url_lang_param( "", $homeurl, $permalinks, "", $edit, $params_only ) );
 		$this->assertEquals( "/", Utilities::rewrite_url_lang_param( "/", $homeurl, $permalinks, "", $edit, $params_only ) );
-		$this->assertEquals( "http://transposh.org/test/?cat=y", Utilities::rewrite_url_lang_param( "http://transposh.org/test/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "", $edit, $params_only ) );
+		$this->assertEquals( "https://transposh.org/test/?cat=y", Utilities::rewrite_url_lang_param( "https://transposh.org/test/fr/?lang=zh&#038;edit=1&cat=y", $homeurl, $permalinks, "", $edit, $params_only ) );
 	}
 
 	public function testCleanupURL() {
-		$homeurl = "http://www.algarve-abc.de/ferienhaus-westalgarve/";
-		$this->assertEquals( "http://www.algarve-abc.de/ferienhaus-westalgarve/test", Utilities::cleanup_url( "http://www.algarve-abc.de/ferienhaus-westalgarve/en/test", $homeurl ) );
-		$this->assertEquals( "http://www.algarve-abc.de/ferienhaus-westalgarve", Utilities::cleanup_url( "http://www.algarve-abc.de/ferienhaus-westalgarve", $homeurl ) );
-		$this->assertEquals( "http://www.algarve-abc.de/ferienhaus-westalgarve", Utilities::cleanup_url( "http://www.algarve-abc.de/ferienhaus-westalgarve/en", $homeurl ) );
-		$this->assertEquals( "http://www.algarve-abc.de/ferienhaus-westalgarve/", Utilities::cleanup_url( "http://www.algarve-abc.de/ferienhaus-westalgarve/en/", $homeurl ) );
-		$this->assertEquals( "/ferienhaus-westalgarve/", Utilities::cleanup_url( "http://www.algarve-abc.de/ferienhaus-westalgarve/en/", $homeurl, true ) );
+		$homeurl = "https://www.algarve-abc.de/ferienhaus-westalgarve/";
+		$this->assertEquals( "https://www.algarve-abc.de/ferienhaus-westalgarve/test", Utilities::cleanup_url( "https://www.algarve-abc.de/ferienhaus-westalgarve/en/test", $homeurl ) );
+		$this->assertEquals( "https://www.algarve-abc.de/ferienhaus-westalgarve", Utilities::cleanup_url( "https://www.algarve-abc.de/ferienhaus-westalgarve", $homeurl ) );
+		$this->assertEquals( "https://www.algarve-abc.de/ferienhaus-westalgarve", Utilities::cleanup_url( "https://www.algarve-abc.de/ferienhaus-westalgarve/en", $homeurl ) );
+		$this->assertEquals( "https://www.algarve-abc.de/ferienhaus-westalgarve/", Utilities::cleanup_url( "https://www.algarve-abc.de/ferienhaus-westalgarve/en/", $homeurl ) );
+		$this->assertEquals( "/ferienhaus-westalgarve/", Utilities::cleanup_url( "https://www.algarve-abc.de/ferienhaus-westalgarve/en/", $homeurl, true ) );
 	}
 
 	public function testCleanupURL2() {
-		$homeurl     = "http://www.algarve-abc.de/ferienhaus-westalgarve/";
+		$homeurl     = "https://www.algarve-abc.de/ferienhaus-westalgarve/";
 		$params_only = true;
-		$this->assertEquals( "http://www.algarve-abc.de/ferienhaus-westalgarve/test", Utilities::cleanup_url( "http://www.algarve-abc.de/ferienhaus-westalgarve/en/test", $homeurl ) );
-		$this->assertEquals( "http://www.algarve-abc.de/ferienhaus-westalgarve", Utilities::cleanup_url( "http://www.algarve-abc.de/ferienhaus-westalgarve", $homeurl ) );
-		$this->assertEquals( "http://www.algarve-abc.de/ferienhaus-westalgarve", Utilities::cleanup_url( "http://www.algarve-abc.de/ferienhaus-westalgarve/en", $homeurl ) );
-		$this->assertEquals( "http://www.algarve-abc.de/ferienhaus-westalgarve/", Utilities::cleanup_url( "http://www.algarve-abc.de/ferienhaus-westalgarve/en/", $homeurl ) );
-		$this->assertEquals( "/ferienhaus-westalgarve/", Utilities::cleanup_url( "http://www.algarve-abc.de/ferienhaus-westalgarve/en/", $homeurl, true ) );
+		$this->assertEquals( "https://www.algarve-abc.de/ferienhaus-westalgarve/test", Utilities::cleanup_url( "https://www.algarve-abc.de/ferienhaus-westalgarve/en/test", $homeurl ) );
+		$this->assertEquals( "https://www.algarve-abc.de/ferienhaus-westalgarve", Utilities::cleanup_url( "https://www.algarve-abc.de/ferienhaus-westalgarve", $homeurl ) );
+		$this->assertEquals( "https://www.algarve-abc.de/ferienhaus-westalgarve", Utilities::cleanup_url( "https://www.algarve-abc.de/ferienhaus-westalgarve/en", $homeurl ) );
+		$this->assertEquals( "https://www.algarve-abc.de/ferienhaus-westalgarve/", Utilities::cleanup_url( "https://www.algarve-abc.de/ferienhaus-westalgarve/en/", $homeurl ) );
+		$this->assertEquals( "/ferienhaus-westalgarve/", Utilities::cleanup_url( "https://www.algarve-abc.de/ferienhaus-westalgarve/en/", $homeurl, true ) );
 	}
 
 	public function testCleanupURL3() {
@@ -226,7 +226,7 @@ class Utilities_Tests extends WP_UnitTestCase {
 	}
 
 	public function testCleanupURL4() {
-		$homeurl = "http://www.algarve-abc.de";
+		$homeurl = "https://www.algarve-abc.de";
 		$this->assertEquals( "/", Utilities::cleanup_url( "/he", $homeurl, true ) );
 	}
 
@@ -238,7 +238,7 @@ class Utilities_Tests extends WP_UnitTestCase {
 		$this->assertEquals( "/test", Utilities::get_original_url( "/test", '', 'en', $callback ) );
 		$this->assertEquals( "/test/", Utilities::get_original_url( "/test/", '', 'en', $callback ) );
 		$this->assertEquals( "www.islands.co.il/he/test/", Utilities::get_original_url( "www.islands.co.il/he/test/", 'www.islands.co.il', 'en', $callback ) );
-		$this->assertEquals( "http://www.islands.co.il/he/test/", Utilities::get_original_url( "http://www.islands.co.il/he/test/", 'http://www.islands.co.il', 'en', $callback ) );
+		$this->assertEquals( "https://www.islands.co.il/he/test/", Utilities::get_original_url( "https://www.islands.co.il/he/test/", 'https://www.islands.co.il', 'en', $callback ) );
 	}
 
 	public function testTranslateURL() {
@@ -250,19 +250,19 @@ class Utilities_Tests extends WP_UnitTestCase {
 		$this->assertEquals( "/test/", Utilities::translate_url( "/test/", '', 'en', $callback ) );
 		$this->assertEquals( "www.islands.co.il/he/test/", Utilities::translate_url( "www.islands.co.il/he/test/", 'www.islands.co.il', 'en', $callback ) );
 		$this->assertEquals( "www.islands.co.il?lang=he", Utilities::translate_url( "www.islands.co.il?lang=he", 'www.islands.co.il', 'en', $callback ) );
-		$this->assertEquals( "http://www.islands.co.il/he/test/", Utilities::translate_url( "http://www.islands.co.il/he/test/", 'http://www.islands.co.il', 'en', $callback ) );
-		$this->assertEquals( "http://www.islands.co.il/he/test/?edit=1", Utilities::translate_url( "http://www.islands.co.il/he/test/?edit=1", 'http://www.islands.co.il', 'en', $callback ) );
+		$this->assertEquals( "https://www.islands.co.il/he/test/", Utilities::translate_url( "https://www.islands.co.il/he/test/", 'https://www.islands.co.il', 'en', $callback ) );
+		$this->assertEquals( "https://www.islands.co.il/he/test/?edit=1", Utilities::translate_url( "https://www.islands.co.il/he/test/?edit=1", 'https://www.islands.co.il', 'en', $callback ) );
 	}
 
 	public function testGrabLanguage() {
-		$home_url = "http://transposh.org";
-		$this->assertEquals( "he", Utilities::get_language_from_url( "http://transposh.org/he/test/", $home_url ) );
-		$this->assertEquals( "he", Utilities::get_language_from_url( "http://transposh.org/he", $home_url ) );
-		$this->assertEquals( "he", Utilities::get_language_from_url( "http://transposh.org/?lang=he", $home_url ) );
-		$this->assertEquals( "he", Utilities::get_language_from_url( "http://transposh.org/he/?lang=he", $home_url ) );
-		$this->assertEquals( "he", Utilities::get_language_from_url( "http://transposh.org/he/?lang=he&fakeparam=no", $home_url ) );
-		$this->assertEquals( "he", Utilities::get_language_from_url( "http://transposh.org/he/?fake=no&lang=he&fakeparam=no", $home_url ) );
-		$this->assertEquals( "he", Utilities::get_language_from_url( "http://transposh.org/hello/test/?lang=he", $home_url ) );
+		$home_url = "https://transposh.org";
+		$this->assertEquals( "he", Utilities::get_language_from_url( "https://transposh.org/he/test/", $home_url ) );
+		$this->assertEquals( "he", Utilities::get_language_from_url( "https://transposh.org/he", $home_url ) );
+		$this->assertEquals( "he", Utilities::get_language_from_url( "https://transposh.org/?lang=he", $home_url ) );
+		$this->assertEquals( "he", Utilities::get_language_from_url( "https://transposh.org/he/?lang=he", $home_url ) );
+		$this->assertEquals( "he", Utilities::get_language_from_url( "https://transposh.org/he/?lang=he&fakeparam=no", $home_url ) );
+		$this->assertEquals( "he", Utilities::get_language_from_url( "https://transposh.org/he/?fake=no&lang=he&fakeparam=no", $home_url ) );
+		$this->assertEquals( "he", Utilities::get_language_from_url( "https://transposh.org/hello/test/?lang=he", $home_url ) );
 	}
 
 }

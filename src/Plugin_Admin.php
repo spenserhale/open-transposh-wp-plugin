@@ -372,11 +372,7 @@ class Plugin_Admin {
 			'id'      => 'transposh-help', // This should be unique for the screen.
 			'title'   => __( 'Open Transposh Help', TRANSPOSH_TEXT_DOMAIN ),
 			// retrieve the function output and set it as tab content
-			'content' => '<h3>' . __( 'Open Transposh makes your blog translatable', TRANSPOSH_TEXT_DOMAIN ) . '</h3>' .
-			             '<p>' . __( 'For further help and assistance, please look at the following resources:', TRANSPOSH_TEXT_DOMAIN ) . '</p>' .
-			             '<a href="http://transposh.org/">' . __( 'Plugin homepage', TRANSPOSH_TEXT_DOMAIN ) . '</a><br/>' .
-			             '<a href="http://transposh.org/faq/">' . __( 'Frequently asked questions', TRANSPOSH_TEXT_DOMAIN ) . '</a><br/>' .
-			             '<a href="http://trac.transposh.org/">' . __( 'Development website', TRANSPOSH_TEXT_DOMAIN ) . '</a><br/>'
+			'content' => '<h3>' . __( 'Open Transposh makes your blog translatable', TRANSPOSH_TEXT_DOMAIN ) . '</h3>'
 		) );
 		$screen->add_help_tab( array(
 			'id'      => 'languages', // This should be unique for the screen.
@@ -560,14 +556,6 @@ class Plugin_Admin {
 
 	// Show normal settings
 	function tp_settings() {
-		if ( ! defined( 'FULL_VERSION' ) ) { //** WPORG VERSION
-			$this->section( __( 'Upgrade to full version', TRANSPOSH_TEXT_DOMAIN ) );
-			$this->checkbox( $this->transposh->options->allow_full_version_upgrade_o
-				, __( 'Allow upgrading to full version', TRANSPOSH_TEXT_DOMAIN )
-				, __( 'Allow upgrading to full version from http://transposh.org, which has no limit on languages used and includes a full set of widgets', TRANSPOSH_TEXT_DOMAIN ) );
-			$this->sectionstop();
-		} //** WPORGSTOP
-
 		$this->section( __( 'Translation related settings', TRANSPOSH_TEXT_DOMAIN ) );
 
 		/*
@@ -596,9 +584,10 @@ class Plugin_Admin {
 		$this->sectionstop();
 
 		$this->section( __( 'General settings', TRANSPOSH_TEXT_DOMAIN ) );
+        $site_url = get_site_url();
 		$this->checkbox( $this->transposh->options->enable_permalinks_o, __( 'Rewrite URLs', TRANSPOSH_TEXT_DOMAIN )
 			, __( 'Rewrite URLs to be search engine friendly, ' .
-			      'e.g.  (http://transposh.org/<strong>en</strong>). ' .
+			      "e.g.  ($site_url<strong>en</strong>). " .
 			      'Requires that permalinks will be enabled.', TRANSPOSH_TEXT_DOMAIN ) );
 		$this->checkbox( $this->transposh->options->enable_footer_scripts_o
 			, __( 'Add scripts to footer', TRANSPOSH_TEXT_DOMAIN )
@@ -627,8 +616,7 @@ class Plugin_Admin {
 			, __( 'Allow collecting usage statistics', TRANSPOSH_TEXT_DOMAIN )
 			, __( 'This option enables collection of statistics by Open Transposh that will be used to improve the product.', TRANSPOSH_TEXT_DOMAIN ) );
 
-		/* WIP2
-		  echo '<a href="http://transposh.org/services/index.php?flags='.$flags.'">Gen sprites</a>'; */
+
 		$this->sectionstop();
 
 		$this->section( __( 'Mail settings', TRANSPOSH_TEXT_DOMAIN ) );
@@ -670,7 +658,7 @@ class Plugin_Admin {
 		$this->textinput( $this->transposh->options->transposh_key_o
 			, ''
 			, __( 'Service key', TRANSPOSH_TEXT_DOMAIN ) );
-		echo '<a target="_blank" href="http://transposh.org/faq/#restore">' . __( 'How to restore?', TRANSPOSH_TEXT_DOMAIN ) . '</a><br/>';
+		echo '<a target="_blank" href="https://transposh.org/faq/#restore">' . __( 'How to restore?', TRANSPOSH_TEXT_DOMAIN ) . '</a><br/>';
 		$this->sectionstop();
 
 		//** FULL VERSION
@@ -732,9 +720,12 @@ class Plugin_Admin {
 		echo "</ul></div>";
 		$this->sectionstop();
 
-		$this->section( __( 'Professional Translation Settings', TRANSPOSH_TEXT_DOMAIN ), __( '<a href="http://transposh.org/redir/oht">One Hour Translation</a>, is the largest professional translation service online, with thousands of business customers, including 57% of the Fortune 500 companies, and over 15000 translators worldwide.', TRANSPOSH_TEXT_DOMAIN ) .
-		                                                                                  '<br/>' .
-		                                                                                  __( 'One Hour Translation provides high-quality, fast professional translation to/from any language, and has specific domain expertise in SW localization, technical, business, and legal translations.', TRANSPOSH_TEXT_DOMAIN ) );
+		$this->section(
+			__( 'Professional Translation Settings', TRANSPOSH_TEXT_DOMAIN ),
+        __( '<a href="http://transposh.org/redir/oht">One Hour Translation</a>, is the largest professional translation service online, with thousands of business customers, including 57% of the Fortune 500 companies, and over 15000 translators worldwide.', TRANSPOSH_TEXT_DOMAIN ) .
+			'<br/>' .
+			__( 'One Hour Translation provides high-quality, fast professional translation to/from any language, and has specific domain expertise in SW localization, technical, business, and legal translations.', TRANSPOSH_TEXT_DOMAIN )
+        );
 
 		$this->textinput( $this->transposh->options->oht_id_o
 			, array( 'ohticon.png', __( 'One Hour Translation account ID', TRANSPOSH_TEXT_DOMAIN ) )
@@ -983,7 +974,7 @@ class Plugin_Admin {
 	/** UTILITY FUNCTIONS  END * */
 	function tp_notices() {
 		if ( (int) ini_get( 'memory_limit' ) < 64 && strpos( strtolower( ini_get( 'memory_limit' ) ), 'g' ) == false ) {
-			$this->add_warning( 'tp_mem_warning', sprintf( __( 'Your current PHP memory limit of %s is quite low, if you experience blank pages please consider increasing it.', TRANSPOSH_TEXT_DOMAIN ), ini_get( 'memory_limit' ) ) . ' <a href="http://transposh.org/faq#blankpages">' . __( 'Check Open Transposh FAQs', TRANSPOSH_TEXT_DOMAIN ) . '</a>' );
+			$this->add_warning( 'tp_mem_warning', sprintf( __( 'Your current PHP memory limit of %s is quite low, if you experience blank pages please consider increasing it.', TRANSPOSH_TEXT_DOMAIN ), ini_get( 'memory_limit' ) ) . ' <a href="https://transposh.org/faq#blankpages">' . __( 'Check Open Transposh FAQs', TRANSPOSH_TEXT_DOMAIN ) . '</a>' );
 		}
 
         // TODO Disabling until improve checking process and FAQs
@@ -995,7 +986,7 @@ class Plugin_Admin {
 		     ! function_exists( 'apcu_fetch' ) &&
 		     ! function_exists( 'xcache_get' ) &&
 		     ! function_exists( 'eaccelerator_get' ) ) {
-			$this->add_warning( 'tp_cache_warning', __( 'We were not able to find a supported in-memory caching engine, installing one can improve performance.', TRANSPOSH_TEXT_DOMAIN ) . ' <a href="http://transposh.org/faq#performance">' . __( 'Check Open Transposh FAQs', TRANSPOSH_TEXT_DOMAIN ) . '</a>', 'updated' );
+			$this->add_warning( 'tp_cache_warning', __( 'We were not able to find a supported in-memory caching engine, installing one can improve performance.', TRANSPOSH_TEXT_DOMAIN ) . ' <a href="https://transposh.org/faq#performance">' . __( 'Check Open Transposh FAQs', TRANSPOSH_TEXT_DOMAIN ) . '</a>', 'updated' );
 		}
 	}
 

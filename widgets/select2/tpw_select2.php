@@ -1,17 +1,5 @@
 <?php
 
-/*
-  Plugin Name: Select2 based Dropdown
-  Plugin URI: http://transposh.org/
-  Description: A nice select2 based widget based on the select2 library (http://ivaynberg.github.com/select2/index.html)
-  Author: Team Transposh
-  Version: 1.0
-  Author URI: http://transposh.org/
-  License: GPL (http://www.gnu.org/licenses/gpl.txt)
- */
-
-
-
 use OpenTransposh\Widgets\Base_Widget;
 
 class tpw_select2 extends Base_Widget {

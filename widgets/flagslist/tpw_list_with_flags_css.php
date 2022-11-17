@@ -1,17 +1,5 @@
 <?php
 
-/*
-  Plugin Name: List with flags (CSS)
-  Plugin URI: http://transposh.org/
-  Description: Widget with flags links (using css sprites) followed by language name
-  Author: Team Transposh
-  Version: 1.0.1
-  Author URI: http://transposh.org/
-  License: GPL (http://www.gnu.org/licenses/gpl.txt)
- */
-
-
-
 use OpenTransposh\Core\Utilities;
 use OpenTransposh\Plugin;
 use OpenTransposh\Widgets\Base_Widget;
@@ -29,7 +17,7 @@ class tpw_list_with_flags_css extends Base_Widget {
 	/**
 	 * Creates the list of flags (using css sprites) - followed by a language name link
 	 *
-	 * @param array $args - http://trac.transposh.org/wiki/WidgetWritingGuide#functiontp_widgets_doargs
+	 * @param array $args
 	 *
 	 * @global Plugin $my_transposh_plugin
 	 */

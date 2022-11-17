@@ -1,5 +1,8 @@
 <?php
 
+//Define for transposh plugin version
+const TRANSPOSH_PLUGIN_VER = '2.0.0';
+
 //** FULL VERSION
 const FULL_VERSION = true;
 //** FULLSTOP
@@ -34,9 +37,6 @@ const TRANSPOSH_UPDATE_SERVICE_URL  = 'http://svc.transposh.org/update-check';
 
 //Define the new capability that will be assigned to roles - translator
 const TRANSLATOR = 'translator';
-
-//Define for transposh plugin version
-const TRANSPOSH_PLUGIN_VER = '%VERSION%';
 
 //Current jQuery UI
 const JQUERYUI_VER = '1.12.1';
