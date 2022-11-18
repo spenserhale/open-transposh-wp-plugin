@@ -1,21 +1,11 @@
 <?php
 
-
-
-/**
- * Contains db realated function which are likely to be specific for each environment.
- * This implementation for use with mysql within wordpress
- *
- */
-
 namespace OpenTransposh;
 
 use OpenTransposh\Core\Utilities;
 use OpenTransposh\Logging\LogService;
+use Memcache;
 
-/**
- * Table name in database for storing translations
- */
 class Database {
 	const TRANSPOSH_OPTIONS_DBSETUP = 'transposh_inside_dbupgrade';
 
@@ -45,7 +35,7 @@ class Database {
 		$this->translation_table     = $GLOBALS['wpdb']->prefix . TRANSLATIONS_TABLE;
 		$this->translation_log_table = $GLOBALS['wpdb']->prefix . TRANSLATIONS_LOG;
 
-		if ( class_exists( 'Memcache' ) ) {
+		if ( class_exists( Memcache::class ) ) {
 			if ( $this->transposh->options->debug_enable ) {
 				LogService::legacy_log( 'Trying pecl-Memcache!', 3 );
 			}
@@ -56,17 +46,6 @@ class Database {
 				LogService::legacy_log( 'Memcache seems working' );
 			}
 		}
-		// I have space in keys issues...
-		/* elseif (class_exists('Memcached')) {
-		  OpenTransposh\Logging\Logger('I am using pecl-Memcached!', 3);
-		  $this->memcache_working = true;
-		  $this->memcache = new Memcached();
-		  //if (!count($this->memcache->getServerList())) {
-		  $this->memcache->addServer(TP_MEMCACHED_SRV, TP_MEMCACHED_PORT);
-		  // }
-		  //@$this->memcache->connect(TP_MEMCACHED_SRV, TP_MEMCACHED_PORT) or $this->memcache_working = false;
-		  } */
-		//OpenTransposh\Logging\Logger($this->memcache_working); // TODO!! make sure it does something
 	}
 
 	/**

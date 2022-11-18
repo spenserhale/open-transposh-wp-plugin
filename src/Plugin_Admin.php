@@ -14,6 +14,7 @@ namespace OpenTransposh;
 use OpenTransposh\Core\Constants;
 use OpenTransposh\Core\Utilities;
 use OpenTransposh\Logging\LogService;
+use Memcache;
 
 
 // class that reperesent the admin page
@@ -981,7 +982,7 @@ class Plugin_Admin {
         return;
 
 		if ( $this->page &&
-		     ! ( class_exists( 'Memcache' ) /* !!&& $this->memcache->connect(TP_MEMCACHED_SRV, TP_MEMCACHED_PORT) */ ) &&
+		     ! ( class_exists( Memcache::class ) /* !!&& $this->memcache->connect(TP_MEMCACHED_SRV, TP_MEMCACHED_PORT) */ ) &&
 		     ! function_exists( 'apc_fetch' ) &&
 		     ! function_exists( 'apcu_fetch' ) &&
 		     ! function_exists( 'xcache_get' ) &&
