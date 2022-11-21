@@ -831,7 +831,7 @@ class Plugin_Admin {
         <p><?= __('The plugin is a drop in replacement and uses the same data identifiers for compatibility.', TRANSPOSH_TEXT_DOMAIN)?></p>
 
 		<ul>
-			<li><a href="https://github.com/oferwald/transposh/"><?= __('Open Transposh GitHub', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
+			<li><a href="https://github.com/spenserhale/open-transposh/"><?= __('Open Transposh GitHub', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
 		</ul>
 
 		<h3><?= __('Reported Vulnerabilities', TRANSPOSH_TEXT_DOMAIN) ?></h3>

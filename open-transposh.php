@@ -1,29 +1,33 @@
 <?php
 /**
- * Plugin Name: Open Transposh Translation Filter
- * Plugin URI: https://github.com/spenserhale/open-transposh-wp-plugin
- * Description: Translation Filter Plugin for WordPress offers a unique approach to blog translation. It allows your blog to combine automatic and human translation aided by your users with an easy-to-use in-context interface.
- * Author: Open Transposh Community
- * Version: 2.0.0
- * License: GPL V3 (https://www.gnu.org/licenses/gpl-3.0.txtt)
- * Text Domain: transposh
- *Domain Path: /langs
+ * Open Transposh Translation Filter
+ *
+ * @package           Open Transposh Translation Filter
+ * @author            Spenser Ha;e
+ * @copyright         2022 Spenser Hale
+ * @license           GPL-3.0-or-later
+ *
+ * @credits
+ * Copyright 2009 - 2022 by Transposh Team (Ofer Wald) https://transposh.org/
+ *
+ * @wordpress-plugin
+ * Plugin Name:       Open Transposh Translation Filter
+ * Plugin URI:        https://github.com/spenserhale/open-transposh
+ * Description:       A Translation Filter Plugin for WordPress offers a unique approach to blog translation. It allows your blog to combine automatic and human translation aided by your users with an easy-to-use in-context interface.
+ * Version:           2.0.2
+ * Requires at least: 6.0
+ * Requires PHP:      8.1
+ * Author:            Spenser Hale
+ * Author URI:        https://www.spenserhale.com/
+ * Domain Path:       /langs
+ * Text Domain:       transposh
+ * License:           GPL v3 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-3.0.txt
+ * Update URI:        https://example.com/my-plugin/
  */
 
 /**
- * Open Transposh 2.0.0 a fork of Transposh
- *
- * Copyright 2022 by Spenser Hale
- * Copyright 2009 - 2022 by Transposh Team (Ofer Wald)
- *
- * Licensed under GNU General Public License 3.0 or later.
- * Some rights reserved. See COPYING, AUTHORS.
- *
- * @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
- */
-
-/**
- * simplehtmldom Copyright
+ * Simple HTML Dom Copyright
  *
  * Version: 1.11 ($Rev: 175 $)
  * Website: http://sourceforge.net/projects/simplehtmldom/
