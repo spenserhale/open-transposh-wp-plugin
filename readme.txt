@@ -1,17 +1,18 @@
-=== Open Transposh WordPress Translation ===
+=== Open Transposh ===
 Contributors: spenserhale
-Donate link: https://www.paypal.com/donate/?hosted_button_id=S8PSX2BELM3D6
 Tags: translation, translate, i18n, widget, filter, buddypress, bilingual, multilingual, transposh, language, google translate, bing translate, context, wiki, RTL, Hebrew, Spanish, French, Russian, English, Arabic, Portuguese
-Requires at least: 5.8
-Tested up to: 6.1
-Stable tag: 2.0.0
+Donate link: https://www.paypal.com/donate/?hosted_button_id=S8PSX2BELM3D6
+Requires at least: 6.0
+Tested up to: 6.1.1
+Requires PHP: 8.1
+Stable tag: 2.0.3
+License: GPL v3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
-Open Transposh is a fork of Transposh, a WordPress plugin that allows you to translate your site into multiple languages.
-
-Transposh adds best of breed translation support to wordpress, 117 languages are automatically translated and can be manually corrected with ease.
+A Translation Filter Plugin for WordPress offers a unique approach to blog translation. It allows your blog to combine automatic and human translation aided by your users with an easy-to-use in-context interface.
 
 == Description ==
-Open Transposh translation filter for WordPress offers a unique approach to blog translation. It allows your blog to combine automatic translation with human translation aided by your users with an easy to use in-context interface.
+The Open Transposh Plugin is an open-source fork of the Transposh Plugin. The fork\'s existence stemmed from the original Transposh author, who disagreed with security experts and chose not to fix the reported issues. WordPress removed the plugin from their official plugin directory. This plugin resolves the reported issues to allow the WordPress community to continue to use this plugin securely and access to download from the WordPress plugin directory. The plugin is a drop in replacement and uses the same data identifiers for compatibility.
 
 [youtube http://www.youtube.com/watch?v=hN0WppbhoFQ]
 
@@ -42,8 +43,7 @@ You can watch the video above, made by Fabrice Meuwissen of obviousidea.com whic
 Technology has been thoroughly tested on a large dynamic site with millions of monthly page views. Feel free to visit [Colnect](https://colnect.com "website for collectors"), the best site for collectors.
 
 == Installation ==
-
-1. Install and activate the plugin through the 'Plugins' menu in WordPress
+1. Install and activate the plugin through the Plugins menu in WordPress
 1. On the Language setting page - choose which languages you would like viewable, translatable and which language is currently used (default) by clicking and dragging
 1. On the Settings page - select which user roles can translate
 1. You may also elect to disable/enable the automatic translation mode
@@ -51,7 +51,6 @@ Technology has been thoroughly tested on a large dynamic site with millions of m
 1. You are good to go
 
 == Frequently Asked Questions ==
-
 You can find FAQS on the [Transposh site](https://transposh.org/faq)
 
 == Screenshots ==
