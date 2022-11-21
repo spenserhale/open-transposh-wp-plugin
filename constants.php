@@ -1,7 +1,7 @@
 <?php
 
 //Define for transposh plugin version
-const TRANSPOSH_PLUGIN_VER = '2.0.2';
+const TRANSPOSH_PLUGIN_VER = '2.0.3';
 
 // FULL_VERSION is a legacy check, all features are enabled.
 //** FULL VERSION

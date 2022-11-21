@@ -1,8 +1,14 @@
 <?php
 /**
- * Open Transposh Translation Filter
+ * Open Transposh
  *
- * @package           Open Transposh Translation Filter
+ * The Open Transposh Plugin is an open-source fork of the Transposh Plugin. The fork's existence stemmed from the
+ * original Transposh author, who disagreed with security experts and chose not to fix the reported issues.
+ * WordPress removed the plugin from their official plugin directory. This plugin resolves the reported issues to allow
+ * the WordPress community to continue to use this plugin securely and access to download from the WordPress plugin
+ * directory. The plugin is a drop in replacement and uses the same data identifiers for compatibility.
+ *
+ * @package           Open Transposh
  * @author            Spenser Ha;e
  * @copyright         2022 Spenser Hale
  * @license           GPL-3.0-or-later
@@ -11,10 +17,10 @@
  * Copyright 2009 - 2022 by Transposh Team (Ofer Wald) https://transposh.org/
  *
  * @wordpress-plugin
- * Plugin Name:       Open Transposh Translation Filter
+ * Plugin Name:       Open Transposh
  * Plugin URI:        https://github.com/spenserhale/open-transposh
  * Description:       A Translation Filter Plugin for WordPress offers a unique approach to blog translation. It allows your blog to combine automatic and human translation aided by your users with an easy-to-use in-context interface.
- * Version:           2.0.2
+ * Version:           2.0.3
  * Requires at least: 6.0
  * Requires PHP:      8.1
  * Author:            Spenser Hale
