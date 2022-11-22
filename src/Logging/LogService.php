@@ -10,6 +10,10 @@ class LogService {
 	}
 
 	public static function legacy_log( $message, $severity = 3 ) {
+		if ( empty( $message ) ) {
+			return;
+		}
+		
 		$level = match ( $severity ) {
 			0 => 'emergency',
 			1 => 'alert',
