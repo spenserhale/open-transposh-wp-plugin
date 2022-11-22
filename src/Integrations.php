@@ -11,6 +11,7 @@ namespace OpenTransposh;
 use OpenTransposh\Core\Constants;
 use OpenTransposh\Core\Utilities;
 use OpenTransposh\Logging\LogService;
+use GoogleSitemapGenerator;
 
 class Integrations {
 
