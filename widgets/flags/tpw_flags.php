@@ -1,4 +1,13 @@
 <?php
+/**
+ * Plugin Name: Flags
+ * Plugin URI: http://transposh.org/
+ * Description: Widget with flags links
+ * Author: Team Transposh
+ * Version: 1.0
+ * Author URI: http://transposh.org/
+ * License: GPL (http://www.gnu.org/licenses/gpl.txt)
+ */
 
 use OpenTransposh\Core\Utilities;
 use OpenTransposh\Plugin;
@@ -32,5 +41,3 @@ class tpw_flags extends Base_Widget {
 	}
 
 }
-
-
