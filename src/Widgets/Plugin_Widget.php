@@ -76,23 +76,15 @@ class Plugin_Widget extends WP_Widget {
 
 		// Followed by subwisgets selection
 		$widgets = $this->get_widgets();
-		if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
-			// Upload dir widgets
-			$upload     = wp_upload_dir();
-			$upload_dir = $upload['basedir'] . '/' . TRANSPOSH_DIR_UPLOAD . '/' . TRANSPOSH_DIR_WIDGETS;
-			$widgets2   = $this->get_widgets( $upload_dir );
-			foreach ( $widgets2 as $file => $widget ) {
-				$widget['Name']         = '(*) ' . $widget['Name'];
-				$widgets[ '*' . $file ] = $widget;
-			}
-		} //** FULLSTOP
+		if( defined( 'OPEN_TRANSPOSH_ENABLE_LEGACY_WIDGETS' ) ) {
+			$widgets = array_merge( $widgets, $this->get_legacy_widgets() );
+		}
 
 		echo '<p><label for="' . $this->get_field_name( 'widget_file' ) . '">' . __( 'Style:', TRANSPOSH_TEXT_DOMAIN ) .
 		     '<select id="' . $this->get_field_id( 'widget_file' ) . '" name="' . $this->get_field_name( 'widget_file' ) . '">';
-		foreach ( $widgets as $file => $widget ) {
-			LogService::legacy_log( $widget, 4 );
-			$selected = ( isset( $instance['widget_file'] ) && $instance['widget_file'] == $file ) ? ' selected="selected"' : '';
-			echo "<option value=\"$file\"$selected>{$widget['Name']}</option>";
+		foreach ( $widgets as $file => $name ) {
+			$selected = ( isset( $instance['widget_file'] ) && $instance['widget_file'] === $file ) ? ' selected="selected"' : '';
+			echo "<option value=\"$file\"$selected>{$name}</option>";
 		}
 		echo '</select>' .
 		     '</label></p>';
@@ -343,18 +335,32 @@ class Plugin_Widget extends WP_Widget {
 		self::$draw_calls ++;
 	}
 
+
+	private function get_widgets() {
+
+		return [
+			'default/tpw_default.php' => 'Default',
+			'dropdown/tpw_image_dropdown.php' => 'Dropdown selection with image',
+			'flags/tpw_flags.php' => 'Flags',
+			'flags/tpw_flags_css.php' => 'Flags (With CSS)',
+			'flagslist/tpw_list_with_flags.php' => 'List with flags',
+			'flagslist/tpw_list_with_flags_css.php' => 'List with flags (CSS)',
+			'select2/tpw_select2.php' => 'Select2 based Dropdown',
+		];
+	}
+
 	/**
 	 * Inspired (and used code) from the get_plugins function of wordpress
 	 */
-	public function get_widgets( $widget_folder = '' ) {
+	private function get_legacy_widgets() {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		get_plugins();
 
+		// Upload dir widgets
+		$upload     = wp_upload_dir();
+		$widget_root = $upload['basedir'] . '/' . TRANSPOSH_DIR_UPLOAD . '/' . TRANSPOSH_DIR_WIDGETS;
+
 		$tp_widgets  = array();
-		$widget_root = $this->transposh->transposh_plugin_dir . "widgets";
-		if ( ! empty( $widget_folder ) ) {
-			$widget_root = $widget_folder;
-		}
 
 		// Files in wp-content/widgets directory
 		$widgets_dir  = @opendir( $widget_root );
@@ -408,7 +414,12 @@ class Plugin_Widget extends WP_Widget {
 			return strnatcasecmp( $a["Name"], $b["Name"] );
 		} );
 
-		return $tp_widgets;
+		$widgets = array();
+		foreach ( $tp_widgets as $file => $widget ) {
+			$widgets[ '*' . $file ] = '(*) ' . $widget['Name'];
+		}
+
+		return $widgets;
 	}
 
 }
