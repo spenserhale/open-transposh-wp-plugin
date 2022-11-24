@@ -96,7 +96,7 @@ class Parser {
 	/**
 	 * Determine if the current position in buffer is a white space.
 	 *
-	 * @param char $char
+	 * @param string $char
 	 *
 	 * @return boolean true if current position marks a white space
 	 */
@@ -253,8 +253,8 @@ class Parser {
 	 * Determine if the current position in buffer is a sentence breaker, e.g. '.' or ',' .
 	 * Note html markups are not considered sentence breaker within the scope of this function.
 	 *
-	 * @param char $char charcter checked if breaker
-	 * @param char $nextchar needed for checking if . or - breaks
+	 * @param string $char charcter checked if breaker
+	 * @param string $nextchar needed for checking if . or - breaks
 	 *
 	 * @return int length of breaker if current position marks a break in sentence
 	 */
@@ -359,7 +359,7 @@ class Parser {
 			// Some HTML entities make us break, almost all but apostrophies
 			if ( $this->ent_breaks && $len_of_entity = $this->is_html_entity( $string, $pos ) ) {
 				$entity = substr( $string, $pos, $len_of_entity );
-				if ( ( $this->is_white_space( @$string[ $pos + $len_of_entity ] ) || $this->is_entity_breaker( $entity ) ) && ! $this->is_entity_letter( $entity ) ) {
+				if ( ( $this->is_white_space( $string[ $pos + $len_of_entity ] ?? '' ) || $this->is_entity_breaker( $entity ) ) && ! $this->is_entity_letter( $entity ) ) {
 					LogService::legacy_log( "entity ($entity) breaks", 4 );
 					$this->tag_phrase( $string, $start, $pos );
 					$start = $pos + $len_of_entity;
@@ -403,7 +403,12 @@ class Parser {
 				$start = $pos;
 				//$this->in_get_text_inner = !$this->in_get_text_inner;
 			} // will break translation unit when there's a breaker ",.[]()..."
-			elseif ( $this->punct_breaks && $senb_len = $this->is_sentence_breaker( $string[ $pos ], @$string[ $pos + 1 ], @$string[ $pos + 2 ] ) ) {
+			elseif ( $this->punct_breaks &&
+			         $senb_len = $this->is_sentence_breaker(
+				         $string[ $pos ] ?? '',
+				         $string[ $pos + 1 ] ?? '',
+				         $string[ $pos + 2 ] ?? ''
+			         ) ) {
 //                logger ("sentence breaker...");
 				$this->tag_phrase( $string, $start, $pos );
 				$pos   += $senb_len;
@@ -414,8 +419,11 @@ class Parser {
 			elseif ( $this->num_breaks && $num_len = $this->is_number( $string, $pos ) ) {
 //                logger ("numnum... $num_len");
 				// this is the case of B2 or B2,
-				if ( ( $start == $pos ) || ( $this->is_white_space( $string[ $pos - 1 ] ) || ( $this->is_sentence_breaker( @$string[ $pos + $num_len - 1 ], @$string[ $pos + $num_len ], @$string[ $pos + $num_len + 1 ] ) ) ) &&
-				                           ( $this->is_white_space( @$string[ $pos + $num_len ] ) || $this->is_sentence_breaker( @$string[ $pos + $num_len ], @$string[ $pos + $num_len + 1 ], @$string[ $pos + $num_len + 2 ] ) ) ) {
+				if (
+					( $start == $pos ) ||
+					( $this->is_white_space( $string[ $pos - 1 ] ?? '' ) || ( $this->is_sentence_breaker( $string[ $pos + $num_len - 1 ] ?? '', $string[ $pos + $num_len ] ?? '', $string[ $pos + $num_len + 1 ] ?? '' ) ) ) &&
+                    ( $this->is_white_space( $string[ $pos + $num_len ] ?? '' ) || $this->is_sentence_breaker( $string[ $pos + $num_len ] ?? '', $string[ $pos + $num_len + 1 ] ?? '', $string[ $pos + $num_len + 2 ] ?? '' ) )
+				) {
 					// we will now compensate on the number followed by breaker case, if we need to
 //                            logger ("compensate part1?");
 					if ( ! ( ( $start == $pos ) || $this->is_white_space( $string[ $pos - 1 ] ) ) ) {
