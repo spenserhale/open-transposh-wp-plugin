@@ -3,10 +3,6 @@
 //Define for transposh plugin version
 const TRANSPOSH_PLUGIN_VER = '2.0.6';
 
-// FULL_VERSION is a legacy check, all features are enabled.
-//** FULL VERSION
-const FULL_VERSION = true;
-//** FULLSTOP
 //Language indicator in URL. i.e. lang=en
 const LANG_PARAM = 'lang';
 

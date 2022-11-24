@@ -151,14 +151,12 @@ class Plugin {
 		add_action( 'wp_ajax_tp_cookie_bck', [ &$this, 'on_ajax_nopriv_tp_cookie_bck' ] );
 		add_action( 'wp_ajax_nopriv_tp_cookie_bck', [ &$this, 'on_ajax_nopriv_tp_cookie_bck' ] );
 
-		if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
-			// For super proxy
-			add_action( 'superproxy_reg_event', [ &$this, 'superproxy_reg' ] );
-			if ( $this->options->enable_superproxy ) {
-				add_action( 'wp_ajax_proxy', [ &$this, 'on_ajax_nopriv_proxy' ] );
-				add_action( 'wp_ajax_nopriv_proxy', [ &$this, 'on_ajax_nopriv_proxy' ] );
-			}
-		}//** FULLSTOP
+		// For super proxy
+		add_action( 'superproxy_reg_event', [ &$this, 'superproxy_reg' ] );
+		if ( $this->options->enable_superproxy ) {
+			add_action( 'wp_ajax_proxy', [ &$this, 'on_ajax_nopriv_proxy' ] );
+			add_action( 'wp_ajax_nopriv_proxy', [ &$this, 'on_ajax_nopriv_proxy' ] );
+		}
 		// comment_moderation_text - future filter TODO
 		// full post wrapping (should happen late)
 		add_filter( 'the_content', [ &$this, 'post_content_wrap' ], 9999 );
@@ -890,23 +888,16 @@ class Plugin {
 		foreach ( $widget_args as $lang ) {
 			if ( ! $lang['active'] ) {
 				echo '<link rel="alternate" hreflang="' . $lang['isocode'] . '" href="';
-				if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
-					if ( $this->options->full_rel_alternate ) {
-						$current_url = ( is_ssl() ? 'https://' : 'http://' ) . Utilities::get_clean_server_var( 'HTTP_HOST' ) . Utilities::get_clean_server_var( 'REQUEST_URI' );
-						$url         = Utilities::rewrite_url_lang_param( $current_url, $this->home_url, $this->enable_permalinks_rewrite, $lang['isocode'], $this->edit_mode );
-						if ( $this->options->is_default_language( $lang['isocode'] ) ) {
-							$url = Utilities::cleanup_url( $url, $this->home_url );
-						}
-						echo $url;
-					} else {
-						echo $lang['url'];
+				if ( $this->options->full_rel_alternate ) {
+					$current_url = ( is_ssl() ? 'https://' : 'http://' ) . Utilities::get_clean_server_var( 'HTTP_HOST' ) . Utilities::get_clean_server_var( 'REQUEST_URI' );
+					$url         = Utilities::rewrite_url_lang_param( $current_url, $this->home_url, $this->enable_permalinks_rewrite, $lang['isocode'], $this->edit_mode );
+					if ( $this->options->is_default_language( $lang['isocode'] ) ) {
+						$url = Utilities::cleanup_url( $url, $this->home_url );
 					}
-				} //** FULLSTOP    
-				if ( ! defined( 'FULL_VERSION' ) ) { //** WPORG VERSION
+					echo $url;
+				} else {
 					echo $lang['url'];
-				} // WPORGSTOP
-
-				echo '"/>';
+				}
 			}
 		}
 	}

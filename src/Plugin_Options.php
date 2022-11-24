@@ -18,10 +18,6 @@ use OpenTransposh\Logging\LogService;
  * @property Option $sorted_languages_o
  *
  * Settings
- * //** WPORG VERSION
- * @property boolean $allow_full_version_upgrade    Option to allow to upgrade to full version
- * @property Option $allow_full_version_upgrade_o
- * //** WPORGSTOP
  * @property boolean $enable_default_translate      Option to enable/disable default language translation
  * @property Option $enable_default_translate_o
  * @property boolean $enable_search_translate       Option to enable/disable default language translation @since 0.3.6
@@ -191,9 +187,6 @@ class Plugin_Options {
 		$this->register_option( 'viewable_languages', TP_OPT_STRING );
 		$this->register_option( 'sorted_languages', TP_OPT_STRING );
 
-		if ( ! defined( 'FULL_VERSION' ) ) { //** WPORG VERSION
-			$this->register_option( 'allow_full_version_upgrade', TP_OPT_BOOLEAN, 0 );
-		} //** WPORGSTOP
 		$this->register_option( 'enable_default_translate', TP_OPT_BOOLEAN, 0 );
 		$this->register_option( 'enable_search_translate', TP_OPT_BOOLEAN, 1 );
 		$this->register_option( 'transposh_gettext_integration', TP_OPT_BOOLEAN, 1 );
@@ -215,11 +208,9 @@ class Plugin_Options {
 
 		$this->register_option( 'transposh_backup_schedule', TP_OPT_OTHER, 2 );
 		$this->register_option( 'transposh_key', TP_OPT_STRING );
-		if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
-			$this->register_option( 'enable_superproxy', TP_OPT_BOOLEAN, 0 );
-			$this->register_option( 'superproxy_key', TP_OPT_STRING );
-			$this->register_option( 'superproxy_ips', TP_OPT_STRING );
-		} //** FULLSTOP
+		$this->register_option( 'enable_superproxy', TP_OPT_BOOLEAN, 0 );
+		$this->register_option( 'superproxy_key', TP_OPT_STRING );
+		$this->register_option( 'superproxy_ips', TP_OPT_STRING );
 
 		$this->register_option( 'enable_autotranslate', TP_OPT_BOOLEAN, 1 );
 		$this->register_option( 'enable_autoposttranslate', TP_OPT_BOOLEAN, 1 );
@@ -238,9 +229,7 @@ class Plugin_Options {
 		$this->register_option( 'enable_url_translate', TP_OPT_BOOLEAN, 0 );
 		$this->register_option( 'jqueryui_override', TP_OPT_STRING );
 		$this->register_option( 'dont_add_rel_alternate', TP_OPT_BOOLEAN, 0 );
-		if ( defined( 'FULL_VERSION' ) ) { //** FULL VERSION
-			$this->register_option( 'full_rel_alternate', TP_OPT_BOOLEAN, 0 );
-		} //** FULLSTOP
+		$this->register_option( 'full_rel_alternate', TP_OPT_BOOLEAN, 0 );
 		$this->register_option( 'parser_dont_break_puncts', TP_OPT_BOOLEAN, 0 );
 		$this->register_option( 'parser_dont_break_numbers', TP_OPT_BOOLEAN, 0 );
 		$this->register_option( 'parser_dont_break_entities', TP_OPT_BOOLEAN, 0 );
