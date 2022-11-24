@@ -26,5 +26,3 @@ class tpw_default extends Base_Widget {
 	}
 
 }
-
-

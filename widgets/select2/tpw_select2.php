@@ -28,5 +28,3 @@ class tpw_select2 extends Base_Widget {
 	}
 
 }
-
-

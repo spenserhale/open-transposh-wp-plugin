@@ -34,5 +34,3 @@ class tpw_image_dropdown extends Base_Widget {
 	}
 
 }
-
-

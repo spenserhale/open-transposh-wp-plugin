@@ -21,5 +21,3 @@ class tpw_flags_css extends Base_Widget {
 	}
 
 }
-
-

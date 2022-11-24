@@ -36,5 +36,3 @@ class tpw_list_with_flags extends Base_Widget {
 	}
 
 }
-
-
