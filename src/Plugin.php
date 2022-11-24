@@ -3,6 +3,7 @@
 namespace OpenTransposh;
 
 use OpenTransposh\Core\{Constants, Parser, Utilities};
+use JsonException;
 use OpenTransposh\Logging\{Logger, LogService, Query_Monitor_Logger, NullLogger};
 use OpenTransposh\Widgets\Plugin_Widget;
 use stdClass;
@@ -1143,29 +1144,63 @@ class Plugin {
 	public function superproxy_reg() {
 		$url = "http://superproxy.transposh.net/?action=register&version=0.1&entry_url=" . admin_url( 'admin-ajax.php' );
 
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $url );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		$output = curl_exec( $ch );
-		if ( $output === false ) {
-			echo 'Curl error: ' . curl_error( $ch );
-			die();
+		$response = wp_remote_get( $url );
+		if ( is_wp_error( $response ) ) {
+			Logging\Query_Monitor_Logger::error( $response );
+
+			wp_send_json_error( $response );
+			exit();
 		}
 
-		LogService::legacy_log( $output );
-		curl_close( $ch );
+		$code = wp_remote_retrieve_response_code( $response );
+		if ( 200 !== $code ) {
+			$error = new WP_Error( 'super_proxy_error', 'Super Proxy returned a non 200 response code', [
+				'code' => $code,
+			] );
+			Logging\Query_Monitor_Logger::error( $error );
 
-		$info = json_decode( $output );
-		LogService::legacy_log( $info );
-		if ( isset( $info->id ) ) {
-			$this->options->superproxy_key = $info->id;
+			wp_send_json_error( $response );
+			exit();
+		}
+
+		$content = wp_remote_retrieve_body( $response );
+		if ( empty( $content ) ) {
+			$error = new WP_Error( 'super_proxy_error', 'Super Proxy returned an empty response', [
+				'code' => $code,
+			] );
+			Logging\Query_Monitor_Logger::error( $error );
+
+			wp_send_json_error( $response );
+			exit();
+		}
+
+		try {
+			$json = json_decode( $content, false, 512, JSON_THROW_ON_ERROR );
+		} catch ( JsonException $e ) {
+			Logging\Query_Monitor_Logger::error( $e );
+
+			wp_send_json_error( $e->getCode() );
+			exit();
+		}
+
+		if ( isset( $json->id ) ) {
+			$this->options->superproxy_key = $json->id;
 			$this->options->update_options();
 		}
-		if ( isset( $info->ips ) ) {
-			$this->options->superproxy_ips = json_encode( $info->ips );
+		if ( isset( $json->ips ) ) {
+			try {
+				$this->options->superproxy_ips = json_encode( $json->ips, JSON_THROW_ON_ERROR );
+			} catch ( JsonException $e ) {
+				Logging\Query_Monitor_Logger::error( $e );
+
+				wp_send_json_error( $e->getCode() );
+				exit();
+			}
 			$this->options->update_options();
 		}
-		die();
+
+		wp_send_json_success();
+		exit();
 	}
 
 	//** FULLSTOP
@@ -1506,54 +1541,52 @@ class Plugin {
 			die( $errstr );
 		}
 
-		// We need curl for this proxy
-		if ( ! function_exists( 'curl_init' ) ) {
-			$errstr = "Error: 504: fatal error - curl";
-			LogService::legacy_log( $errstr );
-			die( $errstr );
-		}
+		$encoded_url     = $_GET['url'];
+		$url             = base64_decode( $encoded_url );
+		$request_headers = getallheaders();
 
-		// Create proxy request
-		$encoded_url = $_GET['url'];
-		$url         = base64_decode( $encoded_url );
-		$ch          = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $url );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		curl_setopt( $ch, CURLOPT_HEADER, 1 );
-
-		// Send the headers we got
-		$reqheaders = getallheaders();
-		//OpenTransposh\Logging\Logger($reqheaders);
-		unset( $reqheaders['Host'], $reqheaders['Content-Length'] );
+		unset( $request_headers['Host'], $request_headers['Content-Length'] );
 		$headers = [];
-		foreach ( $reqheaders as $name => $value ) {
+		foreach ( $request_headers as $name => $value ) {
 			$headers[] = "$name: $value";
 		}
-		//OpenTransposh\Logging\Logger($headers);
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 
-		// Handle POST method
-		if ( Utilities::get_clean_server_var( 'REQUEST_METHOD' ) === 'POST' ) {
-			//OpenTransposh\Logging\Logger($_POST);
-			curl_setopt( $ch, CURLOPT_POST, true );
-			foreach ( $_POST as $key => $value ) {
-				$post .= $amp . $key . "=" . urlencode( $value );
-				$amp  = "&";
-			}
-			curl_setopt( $ch, CURLOPT_POSTFIELDS, $post ); //$_POST);
+		$response = wp_remote_request( $url, [
+			'method'  => Utilities::get_clean_server_var( 'REQUEST_METHOD' ),
+			'headers' => $headers,
+			'body'    => $_POST
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			Logging\Query_Monitor_Logger::error( $response );
+
+			wp_send_json_error( $response );
+			exit();
 		}
 
-		LogService::legacy_log( "Before curl" );
-		$output = curl_exec( $ch );
-		LogService::legacy_log( "After curl" );
-		if ( $output === false ) {
-			$errstr = "Error: " . curl_errno( $ch ) . ' ' . curl_error( $ch );
-			LogService::legacy_log( $errstr );
-			die( $errstr );
+		$code = wp_remote_retrieve_response_code( $response );
+		if ( 200 !== $code ) {
+			$error = new WP_Error( 'super_proxy_error', 'Super Proxy returned a non 200 response code', [
+				'code' => $code,
+			] );
+			Logging\Query_Monitor_Logger::error( $error );
+
+			wp_send_json_error( $response );
+			exit();
 		}
 
-		echo $output;
-		curl_close( $ch );
+		$content = wp_remote_retrieve_body( $response );
+		if ( empty( $content ) ) {
+			$error = new WP_Error( 'super_proxy_error', 'Super Proxy returned an empty response', [
+				'code' => $code,
+			] );
+			Logging\Query_Monitor_Logger::error( $error );
+
+			wp_send_json_error( $response );
+			exit();
+		}
+
+		echo $content;
 		die();
 	}
 
@@ -1696,43 +1729,37 @@ class Plugin {
 		if ( get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, [] ) ) {
 			[ $sid, $timestamp ] = get_option( TRANSPOSH_OPTIONS_YANDEXPROXY, [] );
 		}
-		LogService::legacy_log( "yandex sid $sid", 1 );
 		if ( ( $sid == '' ) && ( time() - TRANSPOSH_YANDEXPROXY_DELAY > $timestamp ) ) {
-			// attempt key refresh on error
-			$url = 'https://translate.yandex.com/';
-			LogService::legacy_log( $url, 1 );
-			$ch = curl_init();
-			// yandex wants a referer someimes
-			curl_setopt( $ch, CURLOPT_REFERER, "https://translate.yandex.com/" );
-			curl_setopt( $ch, CURLOPT_URL, $url );
-			curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-			//must set agent for google to respond with utf-8
-			$UA = Utilities::get_clean_server_var( "HTTP_USER_AGENT", FILTER_DEFAULT );
-//                OpenTransposh\Logging\Logger($UA,1);
-			curl_setopt( $ch, CURLOPT_USERAGENT, $UA );
-			$output = curl_exec( $ch );
-			//  OpenTransposh\Logging\Logger($output,1);
-			$sidpos = strpos( $output, "SID: '" ) + 6;
-//                OpenTransposh\Logging\Logger($sidpos,1);
-//                OpenTransposh\Logging\Logger(strlen($output),1);
-			$newout = substr( $output, $sidpos );
-//                OpenTransposh\Logging\Logger($newout,1);
-//                OpenTransposh\Logging\Logger(strpos($newout, "',")-2);
-			$sid = substr( $newout, 0, strpos( $newout, "'," ) - 2 );
-			LogService::legacy_log( "new sid: $sid", 1 );
-			//$sid = strrev(substr($sid, 0, 8)) . '.' . strrev(substr($sid, 9, 8)) . '.' . strrev(substr($sid, 18, 8));
-			if ( $output === false ) {
-				LogService::legacy_log( 'Curl error: ' . curl_error( $ch ) );
+			$response = wp_remote_get( 'https://translate.yandex.com/', [
+				'headers' => [
+					'Referer'    => 'https://translate.yandex.com/',
+					'User-Agent' => Utilities::get_clean_server_var( "HTTP_USER_AGENT" ),
+				],
+			] );
+
+			if ( is_wp_error( $response ) ) {
+				$response->add_data( 'yandex', 'engine' );
+				Logging\Query_Monitor_Logger::error( $response );
 
 				return false;
 			}
-			//return false;
+
+			$content = wp_remote_retrieve_body( $response );
+			if ( empty( $content ) ) {
+				Logging\Query_Monitor_Logger::error( 'yandex response is empty' );
+
+				return false;
+			}
+
+			$sidpos = strpos( $content, "SID: '" ) + 6;
+			$newout = substr( $content, $sidpos );
+			$sid    = substr( $newout, 0, strpos( $newout, "'," ) - 2 );
+
 			update_option( TRANSPOSH_OPTIONS_YANDEXPROXY, [ $sid, time() ] );
-			curl_close( $ch );
 		}
 
 		if ( ! $sid ) {
-			LogService::legacy_log( 'No SID, gotta bail:' . $timestamp, 1 );
+			Logging\Query_Monitor_Logger::emergency( 'No SID for yandex, cannot proceed: at' . $timestamp );
 
 			return false;
 		}
@@ -1748,43 +1775,65 @@ class Plugin {
 		} else {
 			$qstr = '&text=' . $q;
 		}
+
 		$url = 'https://translate.yandex.net/api/v1/tr.json/translate?lang=' . $sl . $tl . $qstr . '&srv=tr-url&id=' . $sid . '-0-0';
-		LogService::legacy_log( $url, 1 );
-//        OpenTransposh\Logging\Logger($q, 1);
-		$ch = curl_init();
-		// yandex wants a referer someimes
-		curl_setopt( $ch, CURLOPT_REFERER, "https://translate.yandex.com/" );
-		curl_setopt( $ch, CURLOPT_URL, $url );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		//must set agent for google to respond with utf-8
-		curl_setopt( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0' );
-		$output = curl_exec( $ch );
-		if ( $output === false ) {
-			LogService::legacy_log( 'Curl error: ' . curl_error( $ch ), 1 );
+
+		$response = wp_remote_get(
+			$url, [
+			'headers' => [
+				'Referer' => 'https://translate.yandex.com/',
+				'User-Agent' => Utilities::get_clean_server_var( "HTTP_USER_AGENT" ),
+			],
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			$response->add_data( 'yandex', 'engine' );
+			$response->add_data( $url, 'url' );
+			Logging\Query_Monitor_Logger::error( $response );
 
 			return false;
 		}
-		curl_close( $ch );
-		LogService::legacy_log( $output, 1 );
-		$jsonarr = json_decode( $output );
-		LogService::legacy_log( $jsonarr, 3 );
-		if ( ! $jsonarr ) {
-			LogService::legacy_log( 'No JSON here, failing', 1 );
-			LogService::legacy_log( $output, 3 );
+
+		$code = wp_remote_retrieve_response_code( $response );
+		if ( 200 !== $code ) {
+			$error = new WP_Error( 'yandex_error', 'Yandex returned a non 200 response code', [
+				'code' => $code,
+				'url'  => $url,
+			] );
+			Logging\Query_Monitor_Logger::error( $error );
 
 			return false;
 		}
-		if ( $jsonarr->code != 200 ) {
-			LogService::legacy_log( 'Some sort of error!', 1 );
-			LogService::legacy_log( $output, 1 );
-			if ( $jsonarr->code == 406 || $jsonarr->code == 405 ) { //invalid session
+
+		$content = wp_remote_retrieve_body( $response );
+		if ( empty( $content ) ) {
+			$error = new WP_Error( 'yandex_error', 'Yandex returned no body content', [
+				'url'     => $url,
+			] );
+			Logging\Query_Monitor_Logger::error( $error );
+
+			return false;
+		}
+
+		try {
+			$json = json_decode( $content, false, 512, JSON_THROW_ON_ERROR );
+		} catch ( JsonException $e ) {
+			Logging\Query_Monitor_Logger::error( $e );
+
+			return false;
+		}
+
+
+		if ( $json->code != 200 ) {
+			Logging\Query_Monitor_Logger::error( "Yandex responded with an error code ($json->code) in body" );
+			if ( $json->code == 406 || $json->code == 405 ) { //invalid session
 				update_option( TRANSPOSH_OPTIONS_YANDEXPROXY, [ '', time() ] );
 			}
 
 			return false;
 		}
 
-		return $jsonarr->text;
+		return $json->text;
 	}
 
 	// Proxied Baidu translate suggestions
@@ -1801,33 +1850,34 @@ class Plugin {
 		} else {
 			$qstr .= $q;
 		}
-		$url = 'http://fanyi.baidu.com/v2transapi';
-		LogService::legacy_log( $url, 3 );
-		LogService::legacy_log( $q, 3 );
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $url );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-		//must set agent for google to respond with utf-8
-		curl_setopt( $ch, CURLOPT_USERAGENT, 'Mozilla/5.0' );
-		curl_setopt( $ch, CURLOPT_POST, true );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $qstr );
-		$output = curl_exec( $ch );
-		if ( $output === false ) {
-			LogService::legacy_log( 'Curl error: ' . curl_error( $ch ) );
+
+		$response = wp_remote_post( 'https://fanyi.baidu.com/v2transapi', [
+			'body'    => $qstr,
+			'headers' => [
+				'Content-Type'     => 'application/x-www-form-urlencoded; charset=UTF-8',
+				'X-Requested-With' => 'XMLHttpRequest',
+				'Referer'          => 'https://fanyi.baidu.com/',
+			],
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			$response->add_data( 'baidu', 'engine' );
+			$response->add_data( $qstr, 'body' );
+			Logging\Query_Monitor_Logger::error( $response );
 
 			return false;
 		}
-		curl_close( $ch );
-		LogService::legacy_log( $output, 3 );
-		$jsonarr = json_decode( $output );
-		LogService::legacy_log( $jsonarr, 3 );
-		if ( ! $jsonarr ) {
-			LogService::legacy_log( 'No JSON here, failing' );
-			LogService::legacy_log( $output, 3 );
+
+		try {
+			$json = json_decode( wp_remote_retrieve_body( $response ), false, 512, JSON_THROW_ON_ERROR );
+		} catch ( JsonException $e ) {
+			Logging\Query_Monitor_Logger::error( $e );
 
 			return false;
 		}
-		foreach ( $jsonarr->trans_result->data as $val ) {
+
+		$result = [];
+		foreach ( $json->trans_result->data as $val ) {
 			$result[] = $val->dst;
 		}
 
@@ -1903,11 +1953,11 @@ class Plugin {
 			$iqstr = urldecode( $q );
 		}
 		// we avoid curling we had all results prehand
-		$urls = [
-			'http://translate.google.com',
+		static $urls = [
+			'https://translate.google.com',
+			'https://translate.googleapis.com',
 			'http://212.199.205.226',
 			'http://74.125.195.138',
-			'https://translate.googleapis.com'
 		];
 
 		$attempt = 1;
@@ -1915,77 +1965,101 @@ class Plugin {
 		foreach ( $urls as $gurl ) {
 			if ( $googlemethod < $attempt && $failed ) {
 				$failed = false;
-				LogService::legacy_log( "Attempt: $attempt", 1 );
-				$url = $gurl . '/translate_a/t?client=te&v=1.0&tl=' . $tl . '&sl=' . $sl . '&tk=' . $this->iq( $iqstr, '406448.272554134' );
-				LogService::legacy_log( $url, 3 );
-				LogService::legacy_log( $q, 3 );
-				LogService::legacy_log( $iqstr, 3 );
-				$ch = curl_init();
-				curl_setopt( $ch, CURLOPT_URL, $url );
-				curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-				//must set agent for google to respond with utf-8
-				$UA = Utilities::get_clean_server_var( "HTTP_USER_AGENT" );
-				LogService::legacy_log( $UA, 1 );
-				curl_setopt( $ch, CURLOPT_USERAGENT, $UA );
-				curl_setopt( $ch, CURLOPT_POST, true );
-				curl_setopt( $ch, CURLOPT_POSTFIELDS, $qstr );
-				// timeout is probably a good idea
-				curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 2 );
-				curl_setopt( $ch, CURLOPT_TIMEOUT, 7 );
+				$url    = $gurl . '/translate_a/t?client=te&v=1.0&tl=' . $tl . '&sl=' . $sl . '&tk=' . $this->iq( $iqstr,
+						'406448.272554134' );
 
-				//if the attempt is 2 or more, we skip ipv6 and use an alternative user agent
-				if ( $attempt > 1 ) {
-					curl_setopt( $ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4 );
-					curl_setopt( $ch, CURLOPT_USERAGENT, Utilities::get_clean_server_var( 'HTTP_USER_AGENT' ) );
-				}
-				$output = curl_exec( $ch );
-				$info   = curl_getinfo( $ch );
-				LogService::legacy_log( 'Curl code is: ' . $info['http_code'], 1 );
-				curl_close( $ch );
-				LogService::legacy_log( $output, 3 );
-				if ( $info['http_code'] != 200 ) {
-					LogService::legacy_log( "method fail - $attempt", 1 );
-					$failed = true;
+				// replace curl with wp_remote_post
+				$response = wp_remote_post( $url, [
+					'body'    => $qstr,
+					'headers' => [
+						'User-Agent'             => Utilities::get_clean_server_var( "HTTP_USER_AGENT" ),
+						'Accept'                 => '*/*',
+						'Accept-Language'        => 'en-US,en;q=0.8',
+						'Accept-Encoding'        => 'gzip,deflate,sdch',
+						'Content-Type'           => 'application/x-www-form-urlencoded;charset=UTF-8',
+						'X-HTTP-Method-Override' => 'GET',
+						'Origin'                 => $gurl,
+						'Referer'                => $gurl,
+						'Accept-Charset'         => 'utf-8;',
+						'Connection'             => 'keep-alive',
+					],
+					'timeout' => 10,
+				] );
+
+				if ( is_wp_error( $response ) ) {
+					$response->add_data( $attempt, 'attempt' );
+					$response->add_data( 'google', 'engine' );
+					$response->add_data( $url, 'url' );
+					$response->add_data( $q, 'query' );
+					$response->add_data( $qstr, 'body' );
+					Logging\Query_Monitor_Logger::error( $response );
+
 					update_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, [ $attempt, time() ] );
+					$failed = true;
+					continue;
 				}
-				unset( $info );
+
+				$code = wp_remote_retrieve_response_code( $response );
+				if ( 200 !== $code ) {
+					$error = new WP_Error( 'google_error', 'Google returned a non 200 response code', [
+						'code'    => $code,
+						'attempt' => $attempt,
+						'engine'  => 'google',
+						'url'     => $url,
+						'query'   => $q,
+						'body'    => $qstr,
+					] );
+					Logging\Query_Monitor_Logger::error( $error );
+
+					update_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, [ $attempt, time() ] );
+					$failed = true;
+					continue;
+				}
+
+				$content = wp_remote_retrieve_body( $response );
+				if ( empty( $content ) ) {
+					$error = new WP_Error( 'google_error', 'Google returned no body content', [
+						'code'    => $code,
+						'attempt' => $attempt,
+						'engine'  => 'google',
+						'url'     => $url,
+						'query'   => $q,
+						'body'    => $qstr,
+					] );
+					Logging\Query_Monitor_Logger::error( $error );
+
+					update_option( TRANSPOSH_OPTIONS_GOOGLEPROXY, [ $attempt, time() ] );
+					$failed = true;
+					continue;
+				}
 			}
 			$attempt ++;
 		}
 
-		// TODO - last attempt, with key
-
 		if ( $failed ) {
-			LogService::legacy_log( 'out of options, die for the day!', 1 );
+			Logging\Query_Monitor_Logger::emergency( 'Out of options to get Google translation' );
 
 			return false;
 		}
 
-		if ( $output === false ) {
-			LogService::legacy_log( 'Curl error: ' . curl_error( $ch ) );
+		try {
+			$json = json_decode( $content, false, 512, JSON_THROW_ON_ERROR );
+		} catch ( JsonException $e ) {
+			$content = str_replace( ',,', ',', $content );
 
-			return false;
-		}
-
-		LogService::legacy_log( $output, 3 );
-		// weird output that happens - $output='[[[[["Nnọọ"]],,"en"],[[["ụwa"]],,"en"],[[["Kedu ihe na-eme"]],,"en"]]]';
-		$jsonarr = json_decode( $output );
-		if ( ! $jsonarr ) {
-			LogService::legacy_log( "google didn't return Proper JSON, lets try to recover", 2 );
-			$newout = str_replace( ',,', ',', $output );
-			LogService::legacy_log( $newout );
-			$jsonarr = json_decode( $newout );
-			if ( ! $jsonarr ) {
-				LogService::legacy_log( 'No JSON here, failing' );
-				LogService::legacy_log( $output, 3 );
+			try {
+				$json = json_decode( $content, false, 512, JSON_THROW_ON_ERROR );
+			} catch ( JsonException $e ) {
+				Logging\Query_Monitor_Logger::error( $e );
 
 				return false;
 			}
 		}
-		LogService::legacy_log( $jsonarr );
-		if ( is_array( $jsonarr ) ) {
-			if ( is_array( $jsonarr[0] ) ) {
-				foreach ( $jsonarr as $val ) {
+
+		$result = [];
+		if ( is_array( $json ) ) {
+			if ( is_array( $json[0] ) ) {
+				foreach ( $json as $val ) {
 					// need to drill
 					while ( is_array( $val ) ) {
 						$val = $val[0];
@@ -1993,18 +2067,11 @@ class Plugin {
 					$result[] = $val;
 				}
 			} else {
-				// yes - it was all that was needed to fix the Google 2022 translation change
-				$result = $jsonarr;
+				$result = $json;
 			}
 		} else {
-			$result[] = $jsonarr;
+			$result[] = $json;
 		}
-
-		/*
-          //        header('Content-type: text/html; charset=utf-8');
-
-          }
-         */
 
 		return $result;
 	}
