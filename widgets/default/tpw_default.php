@@ -1,15 +1,5 @@
 <?php
 /**
- * Plugin Name: Default
- * Plugin URI: http://transposh.org/
- * Description: Default widget for transposh
- * Author: Team Transposh
- * Version: 1.0
- * Author URI: http://transposh.org/
- * License: GPL (http://www.gnu.org/licenses/gpl.txt)
- */
-
-/**
  * This widget is the default language list widget, the one which provides a drop down select box which allows to choose a new target language
  */
 
