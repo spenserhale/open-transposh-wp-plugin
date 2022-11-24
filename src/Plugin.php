@@ -179,16 +179,6 @@ class Plugin {
 			add_filter( 'locale', [ &$this, 'transposh_locale_filter' ] );
 		}
 
-		// internal update mechnism - is disabled in wporg version unless user enabled this
-		//** WPORG VERSION
-		if ( ! defined( 'FULL_VERSION' ) && $this->options->allow_full_version_upgrade ) {
-			//** WPORGSTOP
-			add_filter( 'http_request_args', [ &$this, 'filter_wordpress_org_update' ], 10, 2 );
-			add_filter( 'pre_set_site_transient_update_plugins', [ &$this, 'check_for_plugin_update' ] );
-			add_filter( 'plugins_api', [ &$this, 'plugin_api_call' ], 10, 3 );
-			//** WPORG VERSION
-		}
-		//** WPORGSTOP
 		// debug function for bad redirects
 		add_filter( 'wp_redirect', [ &$this, 'on_wp_redirect' ], 10, 2 );
 		add_filter( 'redirect_canonical', [ &$this, 'on_redirect_canonical' ], 10, 2 );
@@ -2146,92 +2136,6 @@ class Plugin {
 			$this->tp_redirect( $my_transposh_plugin->home_url );
 		}
 		die();
-	}
-
-	// Catch the wordpress.org update post
-	public function filter_wordpress_org_update( $arr, $url ) {
-		LogService::legacy_log( $url, 5 );
-		if ( str_contains( $url, "api.wordpress.org/plugins/update-check/" ) ) {
-			$this->do_update_check = true;
-		}
-
-		return $arr;
-	}
-
-	public function check_for_plugin_update( $checked_data ) {
-		global $wp_version;
-		LogService::legacy_log( 'should we check for upgrades?', 4 );
-		if ( ! $this->do_update_check ) {
-			return $checked_data; // thanks wizzud (don't kill the transient)
-		}
-		$this->do_update_check = false; // for next time
-		LogService::legacy_log( 'yes, we should', 4 );
-
-		$args           = [
-			'slug'    => $this->transposh_plugin_basename,
-			'version' => TRANSPOSH_PLUGIN_VER,
-		];
-		$request_string = [
-			'body'       => [
-				'action'  => 'basic_check',
-				'request' => serialize( $args ),
-				'api-key' => md5( get_bloginfo( 'url' ) )
-			],
-			'user-agent' => 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' )
-		];
-
-		// Start checking for an update
-		$raw_response = wp_remote_post( TRANSPOSH_UPDATE_SERVICE_URL, $request_string );
-
-		LogService::legacy_log( $raw_response, 5 );
-
-		if ( ! is_wp_error( $raw_response ) && ( $raw_response['response']['code'] == 200 ) ) {
-			$response = unserialize( $raw_response['body'] );
-		}
-
-		if ( is_object( $response ) && ! empty( $response ) ) // Feed the update data into WP updater
-		{
-			$checked_data->response[ $this->transposh_plugin_basename ] = $response;
-		}
-
-		return $checked_data;
-	}
-
-	// Take over the Plugin info screen
-	public function plugin_api_call( $def, $action, $args ) {
-		global $wp_version;
-
-		if ( ! isset( $args->slug ) || ( $args->slug != $this->transposh_plugin_basename ) ) {
-			return false;
-		}
-
-		// Get the current version
-		$plugin_info = get_site_transient( 'update_plugins' );
-		//$current_version = $plugin_info->checked[$plugin_slug . '/' . $plugin_slug . '.php'];
-		$args->version = '%VERSION';
-
-		$request_string = [
-			'body'       => [
-				'action'  => $action,
-				'request' => serialize( $args ),
-				'api-key' => md5( get_bloginfo( 'url' ) )
-			],
-			'user-agent' => 'WordPress/' . $wp_version . '; ' . get_bloginfo( 'url' )
-		];
-
-		$request = wp_remote_post( TRANSPOSH_UPDATE_SERVICE_URL, $request_string );
-
-		if ( is_wp_error( $request ) ) {
-			$res = new WP_Error( 'plugins_api_failed', __( 'An Unexpected HTTP Error occurred during the API request.</p> <p><a href="?" onclick="document.location.reload(); return false;">Try again</a>', TRANSPOSH_TEXT_DOMAIN ), $request->get_error_message() );
-		} else {
-			$res = unserialize( $request['body'] );
-
-			if ( $res === false ) {
-				$res = new WP_Error( 'plugins_api_failed', __( 'An unknown error occurred', TRANSPOSH_TEXT_DOMAIN ), $request['body'] );
-			}
-		}
-
-		return $res;
 	}
 
 	/**

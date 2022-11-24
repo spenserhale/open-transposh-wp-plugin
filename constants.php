@@ -34,7 +34,6 @@ define( 'TP_GTXT_IBRK_CLOSER', chr( 4 ) ); // Gettext inner breaker closer
 //External services
 const TRANSPOSH_BACKUP_SERVICE_URL  = 'http://svc.transposh.org/backup';
 const TRANSPOSH_RESTORE_SERVICE_URL = 'http://svc.transposh.org/restore';
-const TRANSPOSH_UPDATE_SERVICE_URL  = 'http://svc.transposh.org/update-check';
 
 //Define the new capability that will be assigned to roles - translator
 const TRANSLATOR = 'translator';
