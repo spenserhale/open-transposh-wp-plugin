@@ -1595,14 +1595,16 @@ class Plugin {
 		// we are permissive for sites using multiple domains and such
 		Ajax_Controller::allow_cors();
 		// get the needed params
-		$tl = $_GET['tl'];
+		$tl = sanitize_text_field( $_GET['tl'] ?? '' );
+
 		// avoid handling inactive languages
 		if ( ! $this->options->is_active_language( $tl ) ) {
 			return;
 		}
-		$sl          = $_GET['sl'] ?? '';
+		$sl = sanitize_text_field( $_GET['sl'] ?? '');
+
 		$suggestmode = false; // the suggest mode takes one string only, and does not save to the database
-		if ( isset( $_GET['m'] ) && $_GET['m'] == 's' ) {
+		if ( isset( $_GET['m'] ) && $_GET['m'] === 's' ) {
 			$suggestmode = true;
 		}
 		if ( $suggestmode ) {
@@ -2079,11 +2081,11 @@ class Plugin {
 			echo "only admin is allowed";
 			die();
 		}
-		$oht = get_option( TRANSPOSH_OPTIONS_OHT, [] );
-		if ( ! isset( $_GET['orglang'] ) ) {
-			$_GET['orglang'] = $this->options->default_language;
-		}
-		$key = $_GET['token'] . '@' . $_GET['lang'] . '@' . $_GET['orglang'];
+		$oht     = get_option( TRANSPOSH_OPTIONS_OHT, [] );
+		$orglang = isset( $_GET['orglang'] ) ? sanitize_text_field( $_GET['orglang'] ) : $this->options->default_language;
+		$lang    = sanitize_text_field( $_GET['lang'] ?? '' );
+		$token   = sanitize_text_field( $_GET['token'] ?? '' );
+		$key     = $token . '@' . $lang . '@' . $orglang;
 		if ( isset( $oht[ $key ] ) ) {
 			unset( $oht[ $key ] );
 			LogService::legacy_log( 'oht false' );
@@ -2091,9 +2093,9 @@ class Plugin {
 		} else {
 			$oht[ $key ] = [
 				'q'  => $_GET['q'],
-				'l'  => $_GET['lang'],
-				'ol' => $_GET['orglang'],
-				't'  => $_GET['token']
+				'l'  => $lang,
+				'ol' => $orglang,
+				't'  => $token
 			];
 			LogService::legacy_log( 'oht true' );
 			echo json_encode( true );

@@ -30,9 +30,11 @@ class Ajax_Controller {
 	 */
 	public function handle_translation_history() {
 		self::send_headers();
+		$token = stripslashes( $_POST['token'] );
+		$lang = sanitize_text_field( $_POST['lang'] );
 		if ( isset( $_POST['timestamp'] ) ) {
 			$result = $this->plugin->database->del_translation_history(
-				stripslashes( $_POST['token'] ), $_POST['lang'], $_POST['timestamp']
+				$token, $lang, sanitize_text_field( $_POST['timestamp'] )
 			);
 			if ( $result ) {
 				wp_send_json_success();
@@ -40,7 +42,7 @@ class Ajax_Controller {
 				wp_send_json_error();
 			}
 		} else {
-			$this->get_translation_history(stripslashes( $_POST['token'] ), $_POST['lang']);
+			$this->get_translation_history( $token, $lang );
 		}
 	}
 	
