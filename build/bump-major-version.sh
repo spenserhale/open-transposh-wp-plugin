@@ -7,5 +7,6 @@ if [ ! -f open-transposh.php ]; then
   fi
 fi
 
+# MAJOR version when you make incompatible API changes
 deno run --allow-run --allow-read --allow-write build/bump-version.ts major
 exit 0;

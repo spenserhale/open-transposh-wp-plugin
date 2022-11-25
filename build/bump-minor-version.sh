@@ -7,5 +7,6 @@ if [ ! -f open-transposh.php ]; then
   fi
 fi
 
+# MINOR version when you add functionality in a backwards compatible manner
 deno run --allow-run --allow-read --allow-write build/bump-version.ts minor
 exit 0;

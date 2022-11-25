@@ -7,5 +7,6 @@ if [ ! -f open-transposh.php ]; then
   fi
 fi
 
+# PATCH version when you make backwards compatible bug fixes
 deno run --allow-run --allow-read --allow-write build/bump-version.ts patch
 exit 0;
