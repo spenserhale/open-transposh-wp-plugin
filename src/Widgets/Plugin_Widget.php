@@ -21,7 +21,7 @@ class Plugin_Widget extends WP_Widget {
 	public static $first_init = true;
 
 	/** @staticvar int Counts call to the widget do to generate unique IDs */
-	public static $draw_calls = '';
+	public static int $number_of_draw_calls = 0;
 
 	public function __construct(?Plugin $transposh = null) {
 		$this->transposh = $transposh ?? Plugin::get_instance();
@@ -300,7 +300,7 @@ class Plugin_Widget extends WP_Widget {
 				echo $after_widget;
 			}
 			// increase the number of calls for unique IDs
-			self::$draw_calls ++;
+			self::$number_of_draw_calls ++;
 
 			return;
 		}
@@ -310,7 +310,7 @@ class Plugin_Widget extends WP_Widget {
 			// this is the set default language line
 			if ( $this->transposh->options->widget_allow_set_deflang ) {
 				if ( ( isset( $_COOKIE['TR_LNG'] ) && $_COOKIE['TR_LNG'] != $this->transposh->target_language ) || ( ! isset( $_COOKIE['TR_LNG'] ) && ! $this->transposh->options->is_default_language( $this->transposh->target_language ) ) ) {
-					echo '<a id="' . SPAN_PREFIX . 'setdeflang' . self::$draw_calls . '" class="' . SPAN_PREFIX . 'setdeflang' . '" onClick="return false;" href="' . admin_url( 'admin-ajax.php' ) . '?action=tp_cookie_bck">' . __( 'Set as default language', TRANSPOSH_TEXT_DOMAIN ) . '</a><br/>';
+					echo '<a id="' . SPAN_PREFIX . 'setdeflang' . self::$number_of_draw_calls . '" class="' . SPAN_PREFIX . 'setdeflang' . '" onClick="return false;" href="' . admin_url( 'admin-ajax.php' ) . '?action=tp_cookie_bck">' . __( 'Set as default language', TRANSPOSH_TEXT_DOMAIN ) . '</a><br/>';
 				}
 			}
 			// add the edit checkbox only for translators for languages marked as editable
@@ -325,14 +325,14 @@ class Plugin_Widget extends WP_Widget {
 			echo '<p>No languages available for display. Check the Open Transposh settings (Admin).</p>';
 		}
 
-		echo '<div id="' . SPAN_PREFIX . 'credit' . self::$draw_calls . '">';
+		echo '<div id="' . SPAN_PREFIX . 'credit' . self::$number_of_draw_calls . '">';
 
 		echo '</div>';
 		if ( isset( $after_widget ) ) {
 			echo $after_widget;
 		}
 		// increase the number of calls for unique IDs
-		self::$draw_calls ++;
+		self::$number_of_draw_calls ++;
 	}
 
 
