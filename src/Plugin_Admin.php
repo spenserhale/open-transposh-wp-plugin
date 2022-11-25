@@ -495,15 +495,17 @@ class Plugin_Admin {
 		foreach ( $this->transposh->options->get_sorted_langs() as $langcode => $langrecord ) {
 			LogService::legacy_log( $langcode, 5 );
 			list ( $langname, $langorigname, $flag ) = explode( ",", $langrecord );
-			echo '<li id="' . $langcode . '" class="languages ' . ( $this->transposh->options->is_active_language( $langcode ) || $this->transposh->options->is_default_language( $langcode ) ? "lng_active" : "" )
+			$is_active_language = $this->transposh->options->is_active_language( $langcode );
+			$is_default_language = $this->transposh->options->is_default_language( $langcode );
+			echo '<li id="' . esc_attr($langcode) . '" class="languages ' . ( $is_active_language || $is_default_language ? "lng_active" : "" )
 			     . '"><div style="float:' . $this->localeleft . '">'
 			     . Utilities::display_flag( "{$this->transposh->transposh_plugin_url}img/flags", $flag, false /* $langorigname,$this->transposh->options->get_widget_css_flags() */ )
 			     // DOC THIS BUGBUG fix!
-			     . '<input type="hidden" name="languages[]" value="' . $langcode . ( $this->transposh->options->is_active_language( $langcode ) ? ",v" : "," ) . '" />'
+			     . '<input type="hidden" name="languages[]" value="' . esc_html($langcode) . ( $is_active_language ? ",v" : "," ) . '" />'
 			     . '&nbsp;<span class="langname">' . $langorigname . '</span><span class="langname hidden">' . $langname . '</span></div>';
 			foreach ( Constants::$engines as $enginecode => $enginerecord ) {
 				if ( in_array( $langcode, $enginerecord['langs'] ) ) {
-					echo '<img width="16" height="16" alt="' . $enginecode . '" class="logoicon" title="' . esc_attr( sprintf( __( 'Language supported by %s translate', TRANSPOSH_TEXT_DOMAIN ), $enginerecord['name'] ) ) . '" src="' . $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_IMG . '/' . $enginerecord['icon'] . '"/>';
+					echo '<img width="16" height="16" alt="' . esc_html($enginecode) . '" class="logoicon" title="' . esc_attr( sprintf( __( 'Language supported by %s translate', TRANSPOSH_TEXT_DOMAIN ), $enginerecord['name'] ) ) . '" src="' . $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_IMG . '/' . $enginerecord['icon'] . '"/>';
 				} else {
 					echo '<div class="logoicon" style="margin:9px"></div>';
 				}
