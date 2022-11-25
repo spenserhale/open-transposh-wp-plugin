@@ -21,7 +21,7 @@ class Database {
 	/** @var string translation log table name */
 	private $translation_log_table;
 
-	/** @var boolean is memcached working */
+	/** @var bool is memcached working */
 	private $memcache_working = false;
 
 	/** @var Memcache the memcached connection object */
@@ -108,7 +108,7 @@ class Database {
 	 * @param array $translated
 	 * @param int $ttl time to live in the cache
 	 *
-	 * @return boolean true if stored successfully
+	 * @return bool true if stored successfully
 	 */
 	function cache_store( $original, $lang, $translated, $ttl ) {
 		if ( ! TP_ENABLE_CACHE ) {

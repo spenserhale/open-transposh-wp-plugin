@@ -134,8 +134,8 @@ class Utilities {
 	 *
 	 * @param string $url - Original URL to rewrite
 	 * @param string $lang - Target language code
-	 * @param boolean $is_edit - should url indicate editing
-	 * @param boolean $use_params_only - only use paramaters and avoid permalinks
+	 * @param  bool  $is_edit - should url indicate editing
+	 * @param  bool  $use_params_only - only use paramaters and avoid permalinks
 	 */
 // Should send a transposh interface to here TODO - enable permalinks rewrite
 // TODO - Should be able to not write default language for url (done with empty lang?)
@@ -452,7 +452,7 @@ class Utilities {
 	 * @param url to be checked $url
 	 * @param the base url of the site $home_url
 	 *
-	 * @return boolean if this is rewriteable
+	 * @return bool if this is rewriteable
 	 */
 	public static function is_rewriteable_url( $url, $home_url ) {
 		if ( ! is_array( $home_url ) ) {

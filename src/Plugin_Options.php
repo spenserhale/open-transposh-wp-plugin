@@ -18,35 +18,35 @@ use OpenTransposh\Logging\LogService;
  * @property Option $sorted_languages_o
  *
  * Settings
- * @property boolean $enable_default_translate      Option to enable/disable default language translation
+ * @property bool $enable_default_translate      Option to enable/disable default language translation
  * @property Option $enable_default_translate_o
- * @property boolean $enable_search_translate       Option to enable/disable default language translation @since 0.3.6
+ * @property bool $enable_search_translate       Option to enable/disable default language translation @since 0.3.6
  * @property Option $enable_search_translate_o
- * @property boolean $transposh_gettext_integration Make the gettext interface optional (@since 0.6.4)
+ * @property bool $transposh_gettext_integration Make the gettext interface optional (@since 0.6.4)
  * @property Option $transposh_gettext_integration_o
- * @property boolean $transposh_locale_override     Allow override for default locale (@since 0.7.5)
+ * @property bool $transposh_locale_override     Allow override for default locale (@since 0.7.5)
  * @property Option $transposh_locale_override_o
  *
- * @property boolean $enable_permalinks             Option to enable/disable rewrite of permalinks
+ * @property bool $enable_permalinks             Option to enable/disable rewrite of permalinks
  * @property Option $enable_permalinks_o
- * @property boolean $enable_footer_scripts         Option to enable/disable footer scripts (2.8 and up)
+ * @property bool $enable_footer_scripts         Option to enable/disable footer scripts (2.8 and up)
  * @property Option $enable_footer_scripts_o
- * @property boolean $enable_detect_redirect        Option to enable detect and redirect language @since 0.3.8
+ * @property bool $enable_detect_redirect        Option to enable detect and redirect language @since 0.3.8
  * @property Option $enable_detect_redirect_o
- * @property boolean $enable_geoip_redirect         Option to enable language redirection based on geoip detection @since 1.0.2
+ * @property bool $enable_geoip_redirect         Option to enable language redirection based on geoip detection @since 1.0.2
  * @property Option $enable_geoip_redirect_o
- * @property boolean $transposh_collect_stats       Should I allow collecting of anonymous stats (@since 0.7.6)
+ * @property bool $transposh_collect_stats       Should I allow collecting of anonymous stats (@since 0.7.6)
  * @property Option $transposh_collect_stats_o
  * @property string $mail_to                    Option defining recipient (Admin if empty) (@since 1.0.3)
  * @property Option $mail_to_o
- * @property boolean $mail_ontranslate           Should I send mail immediately on human translation (@since 1.0.3)
+ * @property bool $mail_ontranslate           Should I send mail immediately on human translation (@since 1.0.3)
  * @property Option $mail_ontranslate_o
  * //** FULL VERSION
- * @property boolean $mail_ontranslate_buffer    Should I buffer immediate human translation (@since 1.0.3)
+ * @property bool $mail_ontranslate_buffer    Should I buffer immediate human translation (@since 1.0.3)
  * @property Option $mail_ontranslate_buffer_o
- * @property boolean $mail_digest                Should I send a daily digest of translations today (@since 1.0.3)
+ * @property bool $mail_digest                Should I send a daily digest of translations today (@since 1.0.3)
  * @property Option $mail_digest_o
- * @property boolean $mail_ignore_admin          Ignore translations made by the admin (@since 1.0.3)
+ * @property bool $mail_ignore_admin          Ignore translations made by the admin (@since 1.0.3)
  * @property Option $mail_ignore_admin_o
  * //** FULLSTOP
  *
@@ -55,7 +55,7 @@ use OpenTransposh\Logging\LogService;
  * @property string $transposh_key                 Stores the site key to transposh services (backup @since 0.5.0)
  * @property Option $transposh_key_o
  * //** FULL VERSION
- * @property boolean $enable_superproxy             Enable superproxy
+ * @property bool $enable_superproxy             Enable superproxy
  * @property Option $enable_superproxy_o
  * @property string $superproxy_key                Stores the superproxy key
  * @property Option $superproxy_key_o
@@ -65,9 +65,9 @@ use OpenTransposh\Logging\LogService;
  *
  *  Engines
  *
- * @property boolean $enable_autotranslate          Option to enable/disable auto translation
+ * @property bool $enable_autotranslate          Option to enable/disable auto translation
  * @property Option $enable_autotranslate_o
- * @property boolean $enable_autoposttranslate      Option to enable/disable auto translation of posts
+ * @property bool $enable_autoposttranslate      Option to enable/disable auto translation of posts
  * @property Option $enable_autoposttranslate_o
  * @property string $msn_key                       Option to store the msn API key
  * @property Option $msn_key_o
@@ -84,32 +84,32 @@ use OpenTransposh\Logging\LogService;
  *
  * Widget
  *
- * @property boolean $widget_progressbar            Option allowing progress bar display
+ * @property bool $widget_progressbar            Option allowing progress bar display
  * @property Option $widget_progressbar_o
- * @property boolean $widget_allow_set_deflang      Allows user to set his default language per #63 @since 0.3.8
+ * @property bool $widget_allow_set_deflang      Allows user to set his default language per #63 @since 0.3.8
  * @property Option $widget_allow_set_deflang_o
  * @property string $widget_theme                  Allows theming of the progressbar and edit window @since 0.7.0
  * @property Option $widget_theme_o
  *
  * Advanced
  *
- * @property boolean $enable_url_translate          Option to enable/disable url translation @since 0.5.3
+ * @property bool $enable_url_translate          Option to enable/disable url translation @since 0.5.3
  * @property Option $enable_url_translate_o
  * @property string $jqueryui_override             Option to override the jQueryUI version @since 0.9.1
  * @property Option $jqueryui_override_o
- * @property boolean $dont_add_rel_alternate        Option to disable the rel=alternate adding to the page @since 0.9.2
+ * @property bool $dont_add_rel_alternate        Option to disable the rel=alternate adding to the page @since 0.9.2
  * @property Option $dont_add_rel_alternate_o
  * //** FULL VERSION
- * @property boolean $full_rel_alternate            Option to create fully qualified rel=alternate @since 1.0.1
+ * @property bool $full_rel_alternate            Option to create fully qualified rel=alternate @since 1.0.1
  * @property Option $full_rel_alternate_o
  * //** FULLSTOP
- * @property boolean $parser_dont_break_puncts      Option to allow punctuations such as , . ( not to break @since 0.9.0
+ * @property bool $parser_dont_break_puncts      Option to allow punctuations such as , . ( not to break @since 0.9.0
  * @property Option $parser_dont_break_puncts_o
- * @property boolean $parser_dont_break_numbers     Option to allow numbers not to break @since 0.9.0
+ * @property bool $parser_dont_break_numbers     Option to allow numbers not to break @since 0.9.0
  * @property Option $parser_dont_break_numbers_o
- * @property boolean $parser_dont_break_entities    Option to allow html entities not to break @since 0.9.0
+ * @property bool $parser_dont_break_entities    Option to allow html entities not to break @since 0.9.0
  * @property Option $parser_dont_break_entities_o
- * @property boolean $debug_enable Option to enable debug
+ * @property bool $debug_enable Option to enable debug
  * @property Option $debug_enable_o
  * @property int $debug_loglevel Option holding the level of logging
  * @property Option $debug_loglevel_o
@@ -131,7 +131,7 @@ class Plugin_Options {
 	/** @var array storing all our options */
 	private $options = array();
 
-	/** @var boolean set to true if any option was changed */
+	/** @var bool set to true if any option was changed */
 	private $changed = false;
 	private $vars = array();
 
@@ -330,7 +330,7 @@ class Plugin_Options {
 	 *
 	 * @param string $language
 	 *
-	 * @return boolean Is this the default language?
+	 * @return bool Is this the default language?
 	 */
 	public function is_default_language( $language ) { // XXXX
 		return ( $this->default_language == $language || '' == $language );
@@ -338,7 +338,7 @@ class Plugin_Options {
 
 	/**
 	 * Determine if the given language in on the list of active languages
-	 * @return boolean Is this language viewable?
+	 * @return bool Is this language viewable?
 	 */
 	public function is_active_language( $language ) {
 		if ( $this->is_default_language( $language ) ) {

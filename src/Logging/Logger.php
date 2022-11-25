@@ -13,13 +13,13 @@ class Logger {
 	/** @var int Tracing level, 0 is disabled (almost) and higher numbers show more debug info */
 	private $debug_level = 3;
 
-	/** @var boolean should logging be outputted to stdout */
+	/** @var bool should logging be outputted to stdout */
 	public $printout = false;
 
-	/** @var boolean should logging outputted to stdout include an EOL */
+	/** @var bool should logging outputted to stdout include an EOL */
 	public $eolprint = false;
 
-	/** @var boolean shell we show which function called the logger */
+	/** @var bool shell we show which function called the logger */
 	public $show_caller = true;
 
 	/** @var mixed used for remote firephp debugging */

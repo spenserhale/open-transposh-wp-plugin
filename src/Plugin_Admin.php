@@ -938,7 +938,7 @@ class Plugin_Admin {
 	 * @param Option $tpo
 	 * @param string $label
 	 * @param array $options
-	 * @param boolean $use_key
+	 * @param  bool  $use_key
 	 */
 	private function select( $tpo, $head, $label, $options, $use_key = true ) {
 		$this->header( $head );

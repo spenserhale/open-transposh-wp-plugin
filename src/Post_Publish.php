@@ -20,7 +20,7 @@ class Post_Publish {
 	/** @var Plugin Container class */
 	private $transposh;
 
-	/** @var boolean Did we just edited/saved? */
+	/** @var bool Did we just edited/saved? */
 	private $just_published = false;
 
 	/**

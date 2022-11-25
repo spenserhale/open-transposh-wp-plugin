@@ -46,7 +46,7 @@ class Parser {
 	/** @var string Contains the iso of the target language */
 	public $lang;
 
-	/** @var boolean Contains the fact that this language is the default one (only parse other lanaguage spans) */
+	/** @var bool Contains the fact that this language is the default one (only parse other lanaguage spans) */
 	public $default_lang = false;
 
 	/** @var string Contains the iso of the source language - if a lang attribute is found, assumed to be en by default */
@@ -59,7 +59,7 @@ class Parser {
 	public $is_auto_translate;
 	public $feed_fix;
 
-	/** @var boolean should we attempt to handle page as json */
+	/** @var bool should we attempt to handle page as json */
 	public $might_json = false;
 	//first three are html, later 3 come from feeds xml (link is problematic...)
 	protected $ignore_tags = array(
@@ -74,10 +74,10 @@ class Parser {
 	/** @var Parser_Stats Contains parsing statistics */
 	private $stats;
 
-	/** @var boolean Are we inside a translated gettext */
+	/** @var bool Are we inside a translated gettext */
 	private $in_get_text = false;
 
-	/** @var boolean Are we inside an inner text %s in gettext */
+	/** @var bool Are we inside an inner text %s in gettext */
 	private $in_get_text_inner = false;
 
 	/** @var string Additional header information */
@@ -98,7 +98,7 @@ class Parser {
 	 *
 	 * @param string $char
 	 *
-	 * @return boolean true if current position marks a white space
+	 * @return bool true if current position marks a white space
 	 */
 	public function is_white_space( $char ) {
 		if ( ! $char ) {
@@ -111,7 +111,7 @@ class Parser {
 	/**
 	 * Determine if the current position in page points to a character in the
 	 * range of a-z (case insensetive).
-	 * @return boolean true if a-z
+	 * @return bool true if a-z
 	 */
 	public function is_a_to_z_character( $char ) {
 		return ( ( $char >= 'a' && $char <= 'z' ) || ( $char >= 'A' && $char <= 'Z' ) ) ? true : false;
@@ -119,7 +119,7 @@ class Parser {
 
 	/**
 	 * Determine if the current position is a digit.
-	 * @return boolean true if a digit
+	 * @return bool true if a digit
 	 */
 	public function is_digit( $char ) {
 		return ( ( $char >= '0' && $char <= '9' ) ) ? true : false;
@@ -155,7 +155,7 @@ class Parser {
 	 *
 	 * @param string $entity - html entity to check
 	 *
-	 * @return boolean true if not a breaker (apostrophy)
+	 * @return bool true if not a breaker (apostrophy)
 	 */
 	public function is_entity_breaker( $entity ) { // &#8216;&#8217;??
 		return ! ( stripos( '&#8216;&#8217;&apos;&quot;&#039;&#39;&rsquo;&lsquo;&rdquo;&ldquo;', $entity ) !== false );
@@ -589,7 +589,7 @@ class Parser {
 	 * @param string $original_text
 	 * @param string $translated_text
 	 * @param int $source (Either "0" for Human, "1" for Machine or "" for untouched)
-	 * @param boolean $for_hidden_element
+	 * @param  bool  $for_hidden_element
 	 * @param string $src_lang - if source lang of element is different that default (eg. wrapped in lang="xx" attr)
 	 *
 	 * @return string
