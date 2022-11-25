@@ -812,35 +812,35 @@ class Plugin_Admin {
 
 		$this->section( __( 'About Open Transposh Plugin', TRANSPOSH_TEXT_DOMAIN ) ); ?>
 
-		<p><?= __('The Open Transposh Plugin is an open-source fork of the Transposh Plugin. The fork\'s existence stemmed from the original Transposh author, who disagreed with security experts and chose not to fix the reported issues. WordPress removed the plugin from their official plugin directory. This plugin resolves the reported issues to allow the WordPress community to continue to use this plugin securely and access to download from the WordPress plugin directory.', TRANSPOSH_TEXT_DOMAIN) ?></p>
+		<p><?php echo __('The Open Transposh Plugin is an open-source fork of the Transposh Plugin. The fork\'s existence stemmed from the original Transposh author, who disagreed with security experts and chose not to fix the reported issues. WordPress removed the plugin from their official plugin directory. This plugin resolves the reported issues to allow the WordPress community to continue to use this plugin securely and access to download from the WordPress plugin directory.', TRANSPOSH_TEXT_DOMAIN) ?></p>
 
-        <p><?= __('The plugin is a drop in replacement and uses the same data identifiers for compatibility.', TRANSPOSH_TEXT_DOMAIN)?></p>
+        <p><?php echo __('The plugin is a drop in replacement and uses the same data identifiers for compatibility.', TRANSPOSH_TEXT_DOMAIN)?></p>
 
 		<ul>
-			<li><a href="https://github.com/spenserhale/open-transposh/"><?= __('Open Transposh GitHub', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
+			<li><a href="https://github.com/spenserhale/open-transposh/"><?php echo __('Open Transposh GitHub', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
 		</ul>
 
-		<h3><?= __('Reported Vulnerabilities', TRANSPOSH_TEXT_DOMAIN) ?></h3>
+		<h3><?php echo __('Reported Vulnerabilities', TRANSPOSH_TEXT_DOMAIN) ?></h3>
 
-		<p><?= __('To resolve the reported vulnerabilities, the anonymous editing feature has been removed. All editors are required to have a WordPress user to make translations.', TRANSPOSH_TEXT_DOMAIN) ?></p>
+		<p><?php echo __('To resolve the reported vulnerabilities, the anonymous editing feature has been removed. All editors are required to have a WordPress user to make translations.', TRANSPOSH_TEXT_DOMAIN) ?></p>
 
 		<ul>
-			<li><a href="https://nvd.nist.gov/vuln/detail/CVE-2022-2461"><?= __('CVE-2022-2461', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
-			<li><a href="https://nvd.nist.gov/vuln/detail/CVE-2022-2462"><?= __('CVE-2022-2462', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
+			<li><a href="https://nvd.nist.gov/vuln/detail/CVE-2022-2461"><?php echo __('CVE-2022-2461', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
+			<li><a href="https://nvd.nist.gov/vuln/detail/CVE-2022-2462"><?php echo __('CVE-2022-2462', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
 		</ul>
 
 
-		<h3><?= __('Transposh Overview', TRANSPOSH_TEXT_DOMAIN) ?></h3>
+		<h3><?php echo __('Transposh Overview', TRANSPOSH_TEXT_DOMAIN) ?></h3>
 
-		<p><?= __('The Transposh Translation Filter Plugin for WordPress offers a unique approach to blog translation. It allows your blog to combine automatic and human translation aided by your users with an easy-to-use in-context interface.', TRANSPOSH_TEXT_DOMAIN) ?></p>
+		<p><?php echo __('The Transposh Translation Filter Plugin for WordPress offers a unique approach to blog translation. It allows your blog to combine automatic and human translation aided by your users with an easy-to-use in-context interface.', TRANSPOSH_TEXT_DOMAIN) ?></p>
 
-		<h3><?= __('Transposh History', TRANSPOSH_TEXT_DOMAIN) ?></h3>
+		<h3><?php echo __('Transposh History', TRANSPOSH_TEXT_DOMAIN) ?></h3>
 
-		<p><?= __('Ofer Wald started Transposh in 2008 and is dedicated to providing tools to ease website translation. Launched transposh.org on 17/02/2009. They uploaded Transposh Translation Filter for WordPress on 28/02/2009.', TRANSPOSH_TEXT_DOMAIN) ?></p>
+		<p><?php echo __('Ofer Wald started Transposh in 2008 and is dedicated to providing tools to ease website translation. Launched transposh.org on 17/02/2009. They uploaded Transposh Translation Filter for WordPress on 28/02/2009.', TRANSPOSH_TEXT_DOMAIN) ?></p>
 
 		<ul>
-			<li><a href="https://transposh.org/"><?= __('Transposh Website', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
-			<li><a href="https://github.com/oferwald/transposh/"><?= __('Transposh GitHub', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
+			<li><a href="https://transposh.org/"><?php echo __('Transposh Website', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
+			<li><a href="https://github.com/oferwald/transposh/"><?php echo __('Transposh GitHub', TRANSPOSH_TEXT_DOMAIN) ?></a></li>
 		</ul>
 
 		<?php $this->sectionstop();
