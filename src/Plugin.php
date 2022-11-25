@@ -121,6 +121,7 @@ class Plugin {
 		add_filter( 'comment_post_redirect', [ &$this, 'comment_post_redirect_filter' ] );
 		add_filter( 'comment_text', [ &$this, 'comment_text_wrap' ], 9999 ); // this is a late filter...
 		add_action( 'init', [ &$this, 'on_init' ], 0 ); // really high priority
+		add_action( 'admin_init', [ &$this, 'on_admin_init' ] );
 //        add_action('admin_init', array(&$this, 'on_admin_init')); might use to mark where not to work?
 		add_action( 'parse_request', [ &$this, 'on_parse_request' ], 0 ); // should have high enough priority
 		add_action( 'plugins_loaded', [ &$this, 'plugin_loaded' ] );
@@ -392,10 +393,6 @@ class Plugin {
 		return $buffer;
 	}
 
-//    function on_admin_init() {
-//        OpenTransposh\Logging\Logger("admin init called");
-//    }
-
 	/**
 	 * Setup a buffer that will contain the contents of the html page.
 	 * Once processing is completed the buffer will go into the translation process.
@@ -409,49 +406,13 @@ class Plugin {
 			$this->enable_permalinks_rewrite = true;
 		}
 
-		// this is an ajax special case, currently crafted and tested on buddy press, lets hope this won't make hell break loose.
-		// it basically sets language based on referred when accessing wp-load.php (which is the way bp does ajax)
-		LogService::legacy_log( substr( Utilities::get_clean_server_var( 'SCRIPT_FILENAME' ), - 11 ), 5 );
-		if ( str_ends_with( Utilities::get_clean_server_var( 'SCRIPT_FILENAME' ), 'wp-load.php' ) ) {
-			$this->target_language = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
-			$this->attempt_json    = true;
-		}
-
-		//buddypress old activity
-		if ( isset( $_POST['action'] ) && $_POST['action'] == 'activity_get_older_updates' ) {
-			$this->target_language = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
-			$this->attempt_json    = true;
-		}
-		//alm news
-		if ( isset( $_GET['action'] ) && $_GET['action'] == 'alm_query_posts' ) {
-			$this->target_language = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
-		}
-		//woocommerce_update_order_review
-		if ( isset( $_POST['action'] ) && $_POST['action'] == 'woocommerce_update_order_review' ) {
-			$this->target_language = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
-			$this->attempt_json    = true;
-		}
-
-		if ( isset( $_GET['wc-ajax'] ) && $_GET['wc-ajax'] == 'update_order_review' ) {
-			$this->target_language = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
-			$this->attempt_json    = true;
-		}
-
-		//woocommerce_get_refreshed_fragments
-		if ( isset( $_POST['action'] ) && $_POST['action'] == 'woocommerce_get_refreshed_fragments' ) {
-			$this->target_language = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
-			$this->attempt_json    = true;
-		}
-
-		if ( isset( $_POST['action'] ) && $_POST['action'] == 'woocommerce_add_to_cart' ) {
-			$this->target_language = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
-			$this->attempt_json    = true;
-		}
-
 		LogService::legacy_log( Utilities::get_clean_server_var( 'REQUEST_URI' ), 5 );
 		if ( strpos( Utilities::get_clean_server_var( 'REQUEST_URI' ), '/wpv-ajax-pagination/' ) === true ) {
 			LogService::legacy_log( 'wpv pagination', 5 );
-			$this->target_language = Utilities::get_language_from_url( Utilities::get_clean_server_var( 'HTTP_REFERER' ), $this->home_url );
+			$this->target_language = Utilities::get_language_from_url(
+				Utilities::get_clean_server_var( 'HTTP_REFERER' ),
+				$this->home_url
+			);
 		}
 
 		// load translation files for transposh
@@ -459,6 +420,39 @@ class Plugin {
 
 		//set the callback for translating the page when it's done
 		ob_start( [ &$this, "process_page" ] );
+	}
+
+	public function on_admin_init() {
+		//alm news
+		if ( isset( $_GET['action'] ) && $_GET['action'] === 'alm_query_posts' ) {
+			$this->target_language = Utilities::get_language_from_url(
+				Utilities::get_clean_server_var( 'HTTP_REFERER' ),
+				$this->home_url
+			);
+		}
+
+		if ( isset( $_GET['wc-ajax'] ) && $_GET['wc-ajax'] === 'update_order_review' ) {
+			$this->target_language = Utilities::get_language_from_url(
+				Utilities::get_clean_server_var( 'HTTP_REFERER' ),
+				$this->home_url
+			);
+			$this->attempt_json    = true;
+		}
+
+		if ( isset( $_POST['action'] ) ) {
+			switch ( $_POST['action'] ) {
+				case 'activity_get_older_updates': //buddypress old activity
+				case 'woocommerce_add_to_cart':
+				case 'woocommerce_get_refreshed_fragments':
+				case 'woocommerce_update_order_review':
+					$this->target_language = Utilities::get_language_from_url(
+						Utilities::get_clean_server_var( 'HTTP_REFERER' ),
+						$this->home_url
+					);
+					$this->attempt_json    = true;
+					break;
+			}
+		}
 	}
 
 	/**
