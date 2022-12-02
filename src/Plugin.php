@@ -882,17 +882,15 @@ class Plugin {
 		LogService::legacy_log( $widget_args, 4 );
 		foreach ( $widget_args as $lang ) {
 			if ( ! $lang['active'] ) {
-				echo '<link rel="alternate" hreflang="' . $lang['isocode'] . '" href="';
+				$url = $lang['url'];
 				if ( $this->options->full_rel_alternate ) {
 					$current_url = ( is_ssl() ? 'https://' : 'http://' ) . Utilities::get_clean_server_var( 'HTTP_HOST' ) . Utilities::get_clean_server_var( 'REQUEST_URI' );
 					$url         = Utilities::rewrite_url_lang_param( $current_url, $this->home_url, $this->enable_permalinks_rewrite, $lang['isocode'], $this->edit_mode );
 					if ( $this->options->is_default_language( $lang['isocode'] ) ) {
 						$url = Utilities::cleanup_url( $url, $this->home_url );
 					}
-					echo $url;
-				} else {
-					echo $lang['url'];
 				}
+				echo "<link rel='alternate' hreflang='{$lang['isocode']}' href='$url' />";
 			}
 		}
 	}
