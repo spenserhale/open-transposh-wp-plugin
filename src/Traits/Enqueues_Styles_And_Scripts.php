@@ -10,4 +10,8 @@ trait Enqueues_Styles_And_Scripts {
 	private function jsSource($path): string {
 		return $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . $path;
 	}
+
+	private function jquerySource($path): string {
+		return $this->transposh->transposh_plugin_url . 'jquery-ui' . $path;
+	}
 }
