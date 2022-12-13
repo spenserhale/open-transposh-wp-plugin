@@ -366,7 +366,7 @@
                 $.fn.propAttr = $.fn.prop || $.fn.attr;
                 $.xLazyLoader({
                     js: t_jp.jQueryUI + 'jquery-ui.min.js',
-                    css: t_jp.jQueryUI + 'themes/' + t_jp.theme + '/jquery-ui.css',
+                    css: t_jp.jQueryUI + 'themes/' + t_jp.theme + '/jquery-ui.min.css',
                     success: callback
                 });
             });

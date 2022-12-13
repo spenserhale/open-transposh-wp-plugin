@@ -855,11 +855,7 @@ class Plugin {
 		// set theme when it is needed
 		if ( $this->edit_mode ) {
 			$script_params['theme'] = $this->options->widget_theme;
-			if ( $this->options->jqueryui_override ) {
-				$script_params['jQueryUI'] = '//ajax.googleapis.com/ajax/libs/jqueryui/' . $this->options->jqueryui_override . '/';
-			} else {
-				$script_params['jQueryUI'] = '//ajax.googleapis.com/ajax/libs/jqueryui/' . JQUERYUI_VER . '/';
-			}
+			$script_params['jQueryUI'] = $this->transposh_plugin_url . 'jquery-ui/';
 		}
 
 //          'l10n_print_after' => 'try{convertEntities(inlineEditL10n);}catch(e){};'

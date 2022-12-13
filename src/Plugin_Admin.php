@@ -15,10 +15,13 @@ use OpenTransposh\Core\Constants;
 use OpenTransposh\Core\Utilities;
 use OpenTransposh\Logging\LogService;
 use Memcache;
+use OpenTransposh\Traits\Enqueues_Styles_And_Scripts;
 
 
 // class that reperesent the admin page
 class Plugin_Admin {
+    use Enqueues_Styles_And_Scripts;
+
 	const TR_NONCE = 'transposh_nonce';
 
 	/** @var Plugin $transposh father class */
@@ -214,7 +217,6 @@ class Plugin_Admin {
 				$this->transposh->options->enable_url_translate   = TP_FROM_POST;
 				$this->transposh->options->dont_add_rel_alternate = TP_FROM_POST;
                 $this->transposh->options->full_rel_alternate     = TP_FROM_POST;
-				$this->transposh->options->jqueryui_override          = TP_FROM_POST;
 				$this->transposh->options->parser_dont_break_puncts   = TP_FROM_POST;
 				$this->transposh->options->parser_dont_break_numbers  = TP_FROM_POST;
 				$this->transposh->options->parser_dont_break_entities = TP_FROM_POST;
@@ -331,9 +333,9 @@ class Plugin_Admin {
 				// NOTE: When wordpress will have .css for the jQueryUI we'll be able to use the built-in jqueryui
 				// wp_enqueue_script('jquery-ui-progressbar');
 
-				wp_enqueue_style( 'jqueryui', '//ajax.googleapis.com/ajax/libs/jqueryui/' . JQUERYUI_VER . '/themes/ui-lightness/jquery-ui.css', array(), JQUERYUI_VER );
-				wp_enqueue_script( 'jqueryui', '//ajax.googleapis.com/ajax/libs/jqueryui/' . JQUERYUI_VER . '/jquery-ui.min.js', array( 'jquery' ), JQUERYUI_VER, true );
-				wp_enqueue_script( 'transposh_backend', $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . '/admin/backendtranslate.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
+				wp_enqueue_style( 'jqueryui', $this->jquerySource('/themes/ui-lightness/jquery-ui.min.css'), [], JQUERYUI_VER );
+				wp_enqueue_script( 'jqueryui', $this->jquerySource( '/jquery-ui.min.js'), [ 'jquery' ], JQUERYUI_VER, true );
+                wp_enqueue_script( 'transposh_backend', $this->transposh->transposh_plugin_url . TRANSPOSH_DIR_JS . '/admin/backendtranslate.js', array( 'transposh' ), TRANSPOSH_PLUGIN_VER, true );
 				$script_params = array(
 					'l10n_print_after' =>
 						't_be.a_langs = ' . json_encode( Constants::$engines['a']['langs'] ) . ';' .
@@ -753,7 +755,6 @@ class Plugin_Admin {
 
 	function tp_advanced() {
 		$this->checkbox( $this->transposh->options->enable_url_translate_o, __( 'Enable url translation', TRANSPOSH_TEXT_DOMAIN ) . ' (' . __( 'experimental', TRANSPOSH_TEXT_DOMAIN ) . ')', __( 'Allow translation of permalinks and urls', TRANSPOSH_TEXT_DOMAIN ) );
-		$this->textinput( $this->transposh->options->jqueryui_override_o, __( 'Override jQueryUI version', TRANSPOSH_TEXT_DOMAIN ) . " (" . JQUERYUI_VER . ")", __( 'Version', TRANSPOSH_TEXT_DOMAIN ) );
 		$this->checkbox( $this->transposh->options->dont_add_rel_alternate_o, __( 'Disable adding rel=alternate to the html', TRANSPOSH_TEXT_DOMAIN ), __( 'Disable the feature that adds the alternate language list to your page html header', TRANSPOSH_TEXT_DOMAIN ) );
         $this->checkbox( $this->transposh->options->full_rel_alternate_o, __( 'Add rel=alternate with fully qualified urls', TRANSPOSH_TEXT_DOMAIN ), __( 'This will make google happy and will increase size of html by a lot', TRANSPOSH_TEXT_DOMAIN ) );
 		$this->section( __( 'Parser related settings', TRANSPOSH_TEXT_DOMAIN )

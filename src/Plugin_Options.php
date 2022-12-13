@@ -95,8 +95,6 @@ use OpenTransposh\Logging\LogService;
  *
  * @property bool $enable_url_translate          Option to enable/disable url translation @since 0.5.3
  * @property Option $enable_url_translate_o
- * @property string $jqueryui_override             Option to override the jQueryUI version @since 0.9.1
- * @property Option $jqueryui_override_o
  * @property bool $dont_add_rel_alternate        Option to disable the rel=alternate adding to the page @since 0.9.2
  * @property Option $dont_add_rel_alternate_o
  * //** FULL VERSION
@@ -227,7 +225,6 @@ class Plugin_Options {
 		$this->register_option( 'widget_allow_set_deflang', TP_OPT_BOOLEAN, 0 );
 		$this->register_option( 'widget_theme', TP_OPT_STRING, 'ui-lightness' );
 		$this->register_option( 'enable_url_translate', TP_OPT_BOOLEAN, 0 );
-		$this->register_option( 'jqueryui_override', TP_OPT_STRING );
 		$this->register_option( 'dont_add_rel_alternate', TP_OPT_BOOLEAN, 0 );
 		$this->register_option( 'full_rel_alternate', TP_OPT_BOOLEAN, 0 );
 		$this->register_option( 'parser_dont_break_puncts', TP_OPT_BOOLEAN, 0 );
