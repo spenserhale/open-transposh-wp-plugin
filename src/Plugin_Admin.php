@@ -1162,7 +1162,11 @@ class Plugin_Admin {
 	// getting phrases of a post (if we are in admin)
 	function on_ajax_tp_post_phrases() {
 		$this->admins_only();
-		$this->transposh->postpublish->get_post_phrases( filter_input( INPUT_POST, 'post', FILTER_VALIDATE_INT ) );
+		$post_id = filter_input( INPUT_POST, 'post', FILTER_VALIDATE_INT );
+        if( ! $post_id ) {
+            wp_send_json_error( 'Invalid post id' );
+        }
+		$this->transposh->postpublish->get_post_phrases( $post_id );
 		die();
 	}
 

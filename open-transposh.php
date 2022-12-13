@@ -50,6 +50,12 @@
 
 defined( 'ABSPATH' ) or die();
 
+if ( version_compare( $GLOBALS['wp_version'], '3.3', '<=' ) ) {
+	/** @noinspection ForgottenDebugOutputInspection */
+	error_log( 'Open Transposh requires WordPress 3.3 or newer.' );
+	return;
+}
+
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/constants.php';
 require __DIR__ . '/legacy.php';
